@@ -32,14 +32,23 @@ const NODE_POS = [
  * @typedef {{ t: string, a: number, rotulo: string, href: string, atual: boolean }} PlanetaCfg
  * @typedef {{ T: number, inner: boolean, pl: PlanetaCfg[] }} OrbitaCfg
  * @typedef {{ sunM: string, nodes: PlanetaCfg[] }} ConstelacaoCfg
- * @typedef {{ big: OrbitaCfg[], cons: ConstelacaoCfg | null, sunG: string, sig: string[] | null }} Cfg
+ * @typedef {import('./config.js').AssinaturaGrande} AssinaturaGrande
+ * @typedef {{ big: OrbitaCfg[], cons: ConstelacaoCfg | null, sunG: string, sig: string[] | null, sigGrande?: AssinaturaGrande | null }} Cfg
  *
  * @typedef {{ t: string, a: number, rotulo: string, href: string, atual: boolean, w: number, h: number }} Planeta
  * @typedef {{ off: number, cx: number, cy: number, rx: number, ry: number, T: number, pl: Planeta[] }} Orbita
  * @typedef {{ cx: number, cy: number, w: number, h: number }} Caixa
  * @typedef {Caixa & { t: string, rotulo: string, href: string, atual: boolean }} No
  * @typedef {{ cx: number, cy: number, rx: number, ry: number, nodes: No[], hub: Caixa }} Constelacao
- * @typedef {Caixa & { cwm: number, lines: string[] }} Assinatura
+ * @typedef {object} MedidasGrande medidas da composição em tamanhos mistos, em px
+ * @property {AssinaturaGrande} textos
+ * @property {number} s fonte das palavras grandes
+ * @property {number} ap fonte das linhas pequenas
+ * @property {number} lp altura da linha pequena
+ * @property {number} lg altura da linha grande
+ * @property {number} folga espaço antes do rodapé, para a descendente da palavra grande
+ * @property {number} respiro espaço entre o filete do rodapé e o texto dele
+ * @typedef {Caixa & { cwm: number, lines: string[], grande?: MedidasGrande }} Assinatura
  *
  * @typedef {object} Layout
  * @property {number} fs fonte dos nomes
@@ -389,6 +398,132 @@ export function pickPhases(L) {
 
 /** @typedef {{ L: Layout, ok: boolean }} Encaixe */
 /** @typedef {(fs: number) => number} LarguraDoCaractere */
+/**
+ * @typedef {object} OpcoesFit
+ * @property {() => number} [agora] relógio em milissegundos (injetável nos testes)
+ * @property {(texto: string) => number} [medirGrande] largura do texto nas palavras grandes
+ *   a 100px; sem ela, a frase fica só no modo pequeno
+ */
+
+/** Parâmetros da composição em tamanhos mistos. */
+export const GRANDE = Object.freeze({
+  RECUO: 0.38, // recuo das linhas 3 e 4, em fração da largura da caixa
+  LARGURA_INICIAL: 0.27, // a busca começa com a caixa em 27% da largura do céu
+  MAX: 104, // fonte grande máxima, px
+  MIN: 40, // abaixo disso, volta para a frase pequena
+  PASSO: 0.9, // cada tentativa reduz a fonte grande em 10%
+  LH_GRANDE: 0.82,
+  LH_PEQUENO: 1.17,
+  FOLGA: 0.16, // em fração da fonte grande
+  RESPIRO: 0.35, // em fração da fonte pequena
+  MARGEM_DIREITA: 12,
+  MARGEM_INFERIOR: 10,
+});
+
+/**
+ * Medidas da composição para a fonte grande `s`. A largura da caixa é a maior entre a
+ * palavra grande de cima e o recuo mais a de baixo (caixa = max(w1, w2 / (1 - recuo))),
+ * sem deixar de caber as linhas pequenas e o rodapé.
+ * @param {AssinaturaGrande} g
+ * @param {number} s fonte grande
+ * @param {number} ap fonte pequena
+ * @param {number} cwp largura do caractere na fonte pequena
+ * @param {(texto: string) => number} medir largura a 100px
+ */
+export function medidasGrande(g, s, ap, cwp, medir) {
+  const livre = 1 - GRANDE.RECUO;
+  const larguraPequena = (/** @type {string} */ t) => (t.length + 0.5) * cwp;
+  const w = Math.max(
+    (medir(g.grande1) * s) / 100,
+    (medir(g.grande2) * s) / 100 / livre,
+    larguraPequena(g.pequeno1),
+    larguraPequena(g.pequeno2) / livre,
+    larguraPequena(g.rodape[0] + "  " + g.rodape[1]),
+  );
+  const lp = ap * GRANDE.LH_PEQUENO;
+  const lg = s * GRANDE.LH_GRANDE;
+  const folga = s * GRANDE.FOLGA;
+  const respiro = ap * GRANDE.RESPIRO;
+  const h = 3 * lp + 2 * lg + folga + 1 + respiro;
+  return { w, h, medidas: { textos: g, s, ap, lp, lg, folga, respiro } };
+}
+
+/**
+ * Pontos das linhas da constelação (centro a nó e nó a nó), como desenhadas.
+ * @param {Constelacao} c
+ * @returns {import('./geometria.js').Ponto[]}
+ */
+function pontosConstelacao(c) {
+  const nd = c.nodes.map((n) => ({ x: n.cx, y: n.cy }));
+  const hub = { x: c.hub.cx, y: c.hub.cy };
+  /** @type {[import('./geometria.js').Ponto, import('./geometria.js').Ponto][]} */
+  const segs = nd.map((n) => [hub, n]);
+  for (let i = 0; i + 1 < nd.length; i++) segs.push([nd[i], nd[i + 1]]);
+  if (nd.length > 2) segs.push([nd[nd.length - 1], nd[0]]);
+  const pts = [];
+  for (const [a, b] of segs)
+    for (let k = 0; k <= 40; k++)
+      pts.push({
+        x: a.x + ((b.x - a.x) * k) / 40,
+        y: a.y + ((b.y - a.y) * k) / 40,
+      });
+  return pts;
+}
+
+/**
+ * Troca a frase pequena pela composição em tamanhos mistos, da maior fonte grande que
+ * cabe para a menor. Usa as mesmas regras do layout (staticConflict: planetas em todas as
+ * fases, linhas de órbita, oval da constelação, corpos fixos, borda) e ainda confere as
+ * linhas da constelação. Sem tamanho que caiba, ou sem tempo, devolve o encaixe intacto.
+ * @param {Encaixe} r encaixe já aprovado com a frase pequena
+ * @param {Cfg} cfg
+ * @param {((texto: string) => number) | undefined} medir
+ * @param {() => boolean} semTempo
+ * @returns {Encaixe}
+ */
+export function comAssinaturaGrande(r, cfg, medir, semTempo) {
+  const L = r.L;
+  const pequena = L.sig;
+  if (!r.ok || !medir || !cfg.sigGrande || !pequena) return r;
+  const g = cfg.sigGrande;
+  const ap = Math.max(11, L.fs * L.mem);
+  const cwp = (L.cw * ap) / L.fs;
+  const porPx =
+    Math.max(medir(g.grande1), medir(g.grande2) / (1 - GRANDE.RECUO)) / 100;
+  const linhas = L.cons ? pontosConstelacao(L.cons) : [];
+  // de 27% da largura do céu (entre 40 e 104px) para baixo, 10% por vez; a última tentativa é 40px
+  const inicio = Math.min(GRANDE.MAX, (GRANDE.LARGURA_INICIAL * L.W) / porPx);
+  for (
+    let s = Math.max(GRANDE.MIN, inicio);
+    ;
+    s = Math.max(GRANDE.MIN, s * GRANDE.PASSO)
+  ) {
+    if (semTempo()) return r;
+    const { w, h, medidas } = medidasGrande(g, s, ap, cwp, medir);
+    /** @type {Assinatura} */
+    const sig = {
+      w,
+      h,
+      cwm: pequena.cwm,
+      lines: pequena.lines,
+      cx: L.W - w / 2 - GRANDE.MARGEM_DIREITA,
+      cy: L.H - h / 2 - GRANDE.MARGEM_INFERIOR,
+      grande: medidas,
+    };
+    const L2 = {
+      ...L,
+      sig,
+      fixed: L.fixed.map((f) => (f === pequena ? sig : f)),
+    };
+    const tocaConstelacao = linhas.some(
+      (P) =>
+        Math.abs(P.x - sig.cx) < sig.w / 2 + 6 &&
+        Math.abs(P.y - sig.cy) < sig.h / 2 + 6,
+    );
+    if (!tocaConstelacao && !staticConflict(L2)) return { L: L2, ok: true };
+    if (s === GRANDE.MIN) return r;
+  }
+}
 
 /**
  * Maior fonte de nome (até a escolhida) e maior escala em que nada sobrepõe.
@@ -399,11 +534,20 @@ export function pickPhases(L) {
  * @param {number} H
  * @param {LarguraDoCaractere} cwOf
  * @param {number} budget orçamento em milissegundos
- * @param {() => number} agora relógio em milissegundos
+ * @param {OpcoesFit} [opcoes]
  * @returns {Encaixe}
  */
-export function fitOnce(cfg, fs0, W, H, cwOf, budget, agora = Date.now) {
+export function fitOnce(cfg, fs0, W, H, cwOf, budget, opcoes = {}) {
+  const agora = opcoes.agora || Date.now;
   const t0 = agora();
+  /** @param {Encaixe} r */
+  const comGrande = (r) =>
+    comAssinaturaGrande(
+      r,
+      cfg,
+      opcoes.medirGrande,
+      () => agora() - t0 > budget,
+    );
   const ms = [1.1, 1, 0.85];
   const modes = cfg.cons && W >= 1.3 * H ? [true, false] : [false];
   /**
@@ -428,7 +572,7 @@ export function fitOnce(cfg, fs0, W, H, cwOf, budget, agora = Date.now) {
         for (const m of ms) {
           if (agora() - t0 > budget) return desistir();
           const r = tryIt(fs, sc, m, land);
-          if (r) return r;
+          if (r) return comGrande(r);
         }
       }
     }
@@ -436,7 +580,7 @@ export function fitOnce(cfg, fs0, W, H, cwOf, budget, agora = Date.now) {
   for (let f2 = 11; f2 >= 10; f2--) {
     for (const m of ms) {
       const r = tryIt(f2, 0.45, m, false);
-      if (r) return r;
+      if (r) return comGrande(r);
     }
   }
   return desistir();
@@ -450,13 +594,13 @@ export function fitOnce(cfg, fs0, W, H, cwOf, budget, agora = Date.now) {
  * @param {number} W
  * @param {number} H
  * @param {LarguraDoCaractere} cwOf
- * @param {() => number} [agora] relógio em milissegundos (injetável nos testes)
+ * @param {OpcoesFit} [opcoes]
  * @returns {Encaixe}
  */
-export function fit(cfg, fs0, W, H, cwOf, agora = Date.now) {
-  const r = fitOnce(cfg, fs0, W, H, cwOf, 1200, agora);
+export function fit(cfg, fs0, W, H, cwOf, opcoes = {}) {
+  const r = fitOnce(cfg, fs0, W, H, cwOf, 1200, opcoes);
   if (!r.ok && cfg.cons) {
-    const r2 = fitOnce({ ...cfg, cons: null }, fs0, W, H, cwOf, 600, agora);
+    const r2 = fitOnce({ ...cfg, cons: null }, fs0, W, H, cwOf, 600, opcoes);
     if (r2.ok) return r2;
   }
   return r;

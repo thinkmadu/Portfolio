@@ -184,6 +184,63 @@
     0 0 9px var(--fundo),
     0 0 14px var(--fundo);
 }
+/* frase em tamanhos mistos: caixa e medidas em px vêm do layout (--pf-ag, --pf-ap,
+   --pf-ag-folga, --pf-ap-respiro); a altura somada aqui é a mesma que o layout reservou */
+.pf-assina-g {
+  transform: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  white-space: normal;
+  font-weight: 500;
+}
+.pf-ag-p {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--pf-ap);
+  line-height: 1.17;
+  white-space: pre;
+  color: var(--texto-suave);
+}
+.pf-ag-g,
+.pf-ag-medida {
+  font-family: var(--font-grande);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  white-space: pre;
+}
+.pf-ag-g {
+  display: block;
+  font-size: var(--pf-ag);
+  line-height: 0.82;
+  color: var(--texto);
+}
+.pf-ag-medida {
+  position: absolute;
+  visibility: hidden;
+  font-size: 100px;
+  line-height: 1;
+}
+.pf-ag-recuo {
+  margin-left: 38%;
+}
+.pf-ag-acento {
+  color: var(--acento);
+}
+.pf-ag-rodape {
+  display: flex;
+  justify-content: space-between;
+  align-self: stretch;
+  margin-top: var(--pf-ag-folga);
+  padding-top: var(--pf-ap-respiro);
+  border-top: 1px solid var(--linha);
+  font-family: var(--font-mono);
+  font-size: var(--pf-ap);
+  line-height: 1.17;
+  white-space: pre;
+  color: var(--texto-suave);
+}
 .pf-assina-txt {
   display: none;
   margin: 0;

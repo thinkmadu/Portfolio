@@ -1,11 +1,26 @@
-/* JetBrains Mono variável (pesos 100 a 800), subconjunto latino, hospedada no repositório.
-   Origem: @fontsource-variable/jetbrains-mono 5.3.0; licença em ../fonts/OFL.txt. */
+/* Fontes hospedadas no repositório, subconjunto latino, licença SIL OFL 1.1 (ver ../fonts/). */
+
+/* JetBrains Mono variável (pesos 100 a 800). Origem: @fontsource-variable/jetbrains-mono 5.3.0. */
 @font-face {
   font-family: "JetBrains Mono";
   font-style: normal;
   font-display: swap;
   font-weight: 100 800;
   src: url("../fonts/jetbrains-mono-latin-wght-normal.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+/* Familjen Grotesk 700, só para as palavras grandes da assinatura.
+   Origem: @fontsource/familjen-grotesk 5.3.0. */
+@font-face {
+  font-family: "Familjen Grotesk";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url("../fonts/familjen-grotesk-latin-700-normal.woff2") format("woff2");
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
     U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,

@@ -76,7 +76,7 @@ describe.each(Object.entries(CASOS))(
     it.each(referencia.casos[nome].map((r) => [`${r.W}x${r.H}`, r]))(
       "%s",
       (_, ref) => {
-        const r = fit(cfg, 22, ref.W, ref.H, cwOf, relogioParado);
+        const r = fit(cfg, 22, ref.W, ref.H, cwOf, { agora: relogioParado });
         expect({
           ok: r.ok,
           fs: r.L.fs,
@@ -98,7 +98,7 @@ describe("nada sobreposto quando ok", () => {
   for (const [nome, opts] of Object.entries(CASOS)) {
     const cfg = buildCfg(opts);
     for (const [W, H] of ESPERADO) {
-      const r = fit(cfg, 22, W, H, cwOf, relogioParado);
+      const r = fit(cfg, 22, W, H, cwOf, { agora: relogioParado });
       if (!r.ok) continue;
       it(`${nome} ${W}x${H}`, () => {
         expect(staticConflict(r.L)).toBe(false);
@@ -140,7 +140,7 @@ describe("casos de borda", () => {
     // relógio que avança 1s por leitura: o primeiro encaixe estoura o orçamento na hora
     let t = 0;
     const relogio = () => (t += 1000);
-    const r = fit(buildCfg({}), 22, 1340, 690, cwOf, relogio);
+    const r = fit(buildCfg({}), 22, 1340, 690, cwOf, { agora: relogio });
     expect(r.ok).toBe(false);
     expect(r.L.fs).toBe(10);
   });

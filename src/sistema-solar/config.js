@@ -4,13 +4,23 @@
  * @typedef {{ rotulo: string, href?: string, atual?: boolean }} Item
  * @typedef {{ centro?: string, centroHref?: string, nos?: Item[] }} Secundario
  *
+ * @typedef {object} AssinaturaGrande frase em tamanhos mistos, na ordem de leitura
+ * @property {string} pequeno1 linha pequena de cima
+ * @property {string} grande1 palavra grande
+ * @property {string} pequeno2 linha pequena recuada
+ * @property {string} grande2 palavra grande recuada, na cor de acento
+ * @property {[string, string]} rodape textos do rodapé, à esquerda e à direita
+ *
  * @typedef {object} Opcoes
  * @property {string} [centro] texto do sol (padrão `thinkmadu`)
  * @property {string} [centroHref] destino do sol (padrão `#sobre`)
  * @property {Item[]} [contatos] órbita de dentro, até 4
  * @property {Item[]} [areas] órbita de fora, até 6
  * @property {Secundario | null} [secundario] constelação; `null` tira
- * @property {string | string[] | null | false} [assinatura] frase do canto; `null` tira
+ * @property {string | string[] | Partial<AssinaturaGrande> | null | false} [assinatura] frase do
+ *   canto: objeto (ou omitida) para a composição em tamanhos mistos, string ou lista para as
+ *   linhas pequenas, `null` tira
+ * @property {string} [assinaturaIdioma] atributo `lang` da frase, quando difere da página
  * @property {number} [fundo] densidade do fundo, 4 a 60
  * @property {number} [brilho] brilho dos nomes, 0 a 100
  * @property {number} [orbitas] velocidade das órbitas, 0 a 200
@@ -72,8 +82,44 @@ export const DEF_ASSINATURA = Object.freeze([
   "sem deixar nada solto.",
 ]);
 
+/** @type {Readonly<AssinaturaGrande>} */
+export const DEF_ASSINATURA_GRANDE = Object.freeze({
+  pequeno1: "Se encontro um",
+  grande1: "problema,",
+  pequeno2: "desenvolvo a",
+  grande2: "solução.",
+  rodape: /** @type {[string, string]} */ ([
+    "De ponta a ponta,",
+    "sem deixar nada solto.",
+  ]),
+});
+
 /**
- * Linhas da frase de assinatura. String vira linhas de até 26 caracteres.
+ * Objeto de assinatura (e não string ou lista)?
+ * @param {unknown} a
+ * @returns {a is Partial<AssinaturaGrande>}
+ */
+function ehComposicao(a) {
+  return typeof a === "object" && a !== null && !Array.isArray(a);
+}
+
+/**
+ * Textos da composição em tamanhos mistos; `null` quando a frase é só de linhas pequenas.
+ * Campos ausentes no objeto vêm do padrão.
+ * @param {Opcoes} opts
+ * @returns {AssinaturaGrande | null}
+ */
+export function sigGrandeOf(opts) {
+  const a = opts.assinatura;
+  if (a === undefined) return { ...DEF_ASSINATURA_GRANDE };
+  if (!ehComposicao(a)) return null;
+  return { ...DEF_ASSINATURA_GRANDE, ...a };
+}
+
+/**
+ * Linhas da frase de assinatura no modo pequeno (e o caminho de volta da composição).
+ * Objeto vira quatro linhas: pequeno1 + grande1, pequeno2 + grande2 e o rodapé.
+ * String vira linhas de até 26 caracteres.
  * @param {Opcoes} opts
  * @returns {string[] | null}
  */
@@ -81,6 +127,14 @@ export function sigOf(opts) {
   const a = opts.assinatura;
   if (a === null || a === false) return null;
   if (a == null) return [...DEF_ASSINATURA];
+  if (ehComposicao(a)) {
+    const g = { ...DEF_ASSINATURA_GRANDE, ...a };
+    return [
+      g.pequeno1 + " " + g.grande1,
+      g.pequeno2 + " " + g.grande2,
+      ...g.rodape,
+    ];
+  }
   if (typeof a === "string") {
     /** @type {string[]} */
     const out = [];
@@ -176,5 +230,6 @@ export function buildCfg(opts) {
     cons,
     sunG: "(" + (opts.centro || "thinkmadu") + ")",
     sig: sigOf(opts),
+    sigGrande: sigGrandeOf(opts),
   };
 }

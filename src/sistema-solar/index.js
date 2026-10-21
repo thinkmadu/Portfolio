@@ -106,7 +106,13 @@ function mount(target, opts = {}) {
   );
   const filhos = [skyEl, menu];
   if (cfg.sig)
-    filhos.push(el("p", { class: "pf-assina-txt", text: cfg.sig.join(" ") }));
+    filhos.push(
+      el("p", {
+        class: "pf-assina-txt",
+        text: cfg.sig.join(" "),
+        attrs: opts.assinaturaIdioma ? { lang: opts.assinaturaIdioma } : {},
+      }),
+    );
   target.classList.add("pf-solar");
   target.replaceChildren(...filhos);
   skyEl.style.setProperty("--pf-fb", String(S.fundo / 100));
@@ -126,6 +132,8 @@ function mount(target, opts = {}) {
   let cwCache = {};
   /** @type {Record<string, Encaixe>} */
   let fitCache = {};
+  /** @type {Record<string, number>} */
+  let grandeCache = {};
   let alive = true;
   let rafId = 0;
   let ultimaChave = "";
@@ -154,6 +162,20 @@ function mount(target, opts = {}) {
     });
     for (const s of spans) s.remove();
     return cwCache[fs];
+  }
+
+  /**
+   * Largura de um texto nas palavras grandes da assinatura, a 100px, com o mesmo
+   * espaçamento de letra do CSS.
+   * @param {string} texto
+   */
+  function larguraGrande(texto) {
+    if (grandeCache[texto]) return grandeCache[texto];
+    const s = el("span", { class: "pf-ag-medida", text: texto });
+    skyEl.append(s);
+    const w = s.getBoundingClientRect().width;
+    s.remove();
+    return (grandeCache[texto] = w || texto.length * 55);
   }
 
   function place() {
@@ -277,6 +299,46 @@ function mount(target, opts = {}) {
   }
 
   /**
+   * Frase em tamanhos mistos: cada trecho num span, na ordem de leitura e com espaço entre
+   * eles, para o leitor de tela ler a frase inteira. Caixa e medidas vêm do layout.
+   * @param {import('./layout.js').Assinatura} sig
+   * @param {import('./layout.js').MedidasGrande} m
+   */
+  function assinaturaGrande(sig, m) {
+    const t = m.textos;
+    const px = (/** @type {number} */ v) => v.toFixed(2) + "px";
+    const p = el("p", { class: "pf-assina pf-assina-g" }, [
+      el("span", { class: "pf-ag-p", text: t.pequeno1 }),
+      " ",
+      el("span", { class: "pf-ag-g", text: t.grande1 }),
+      " ",
+      el("span", { class: "pf-ag-p pf-ag-recuo", text: t.pequeno2 }),
+      " ",
+      el("span", {
+        class: "pf-ag-g pf-ag-recuo pf-ag-acento",
+        text: t.grande2,
+      }),
+      " ",
+      el("span", { class: "pf-ag-rodape" }, [
+        el("span", { text: t.rodape[0] }),
+        " ",
+        el("span", { text: t.rodape[1] }),
+      ]),
+    ]);
+    if (opts.assinaturaIdioma) p.lang = opts.assinaturaIdioma;
+    const st = p.style;
+    st.left = px(sig.cx - sig.w / 2);
+    st.top = px(sig.cy - sig.h / 2);
+    st.width = px(sig.w);
+    st.height = px(sig.h);
+    st.setProperty("--pf-ag", px(m.s));
+    st.setProperty("--pf-ap", px(m.ap));
+    st.setProperty("--pf-ag-folga", px(m.folga));
+    st.setProperty("--pf-ap-respiro", px(m.respiro));
+    return p;
+  }
+
+  /**
    * Corpos e frase de assinatura.
    * @param {Layout} L
    */
@@ -371,12 +433,14 @@ function mount(target, opts = {}) {
           o,
           p.a,
         );
-    if (L.sig) {
+    if (L.sig && L.sig.grande) nos.push(assinaturaGrande(L.sig, L.sig.grande));
+    else if (L.sig) {
       const p = el("p", { class: "pf-assina", text: L.sig.lines.join("\n") });
       p.style.fontSize = miniPx + "px";
       p.style.left =
         (L.sig.cx + L.sig.w / 2 - 0.35 * L.sig.cwm).toFixed(1) + "px";
       p.style.top = L.sig.cy.toFixed(1) + "px";
+      if (opts.assinaturaIdioma) p.lang = opts.assinaturaIdioma;
       nos.push(p);
     }
     sys.replaceChildren(...nos);
@@ -392,7 +456,11 @@ function mount(target, opts = {}) {
     const cw = charWidth(fs);
     const key = fs + "x" + W + "x" + H;
     ultimaChave = key;
-    const F = fitCache[key] || (fitCache[key] = fit(cfg, fs, W, H, charWidth));
+    const F =
+      fitCache[key] ||
+      (fitCache[key] = fit(cfg, fs, W, H, charWidth, {
+        medirGrande: larguraGrande,
+      }));
     /** @type {Layout} */
     let L = F.L;
     // sem arranjo sem sobreposição (janela pequena demais): só o sol sobre o fundo,
@@ -586,17 +654,39 @@ function mount(target, opts = {}) {
 
   draw();
 
-  // com a fonte carregada, a largura do caractere pode mudar: mede de novo e só refaz se mudou
-  if (document.fonts && document.fonts.ready)
-    document.fonts.ready.then(() => {
-      if (!alive) return;
-      const antes = cwCache[S.fonte];
-      cwCache = {};
-      if (charWidth(S.fonte) !== antes) {
-        fitCache = {};
-        draw();
-      }
-    });
+  // com as fontes carregadas, as larguras podem mudar: mede de novo e só refaz se mudou
+  function conferirFontes() {
+    if (!alive) return;
+    const antes = cwCache[S.fonte];
+    const textos = cfg.sigGrande
+      ? [cfg.sigGrande.grande1, cfg.sigGrande.grande2]
+      : [];
+    const antesG = textos.map((t) => grandeCache[t]);
+    cwCache = {};
+    grandeCache = {};
+    const mudou =
+      charWidth(S.fonte) !== antes ||
+      textos.some((t, i) => larguraGrande(t) !== antesG[i]);
+    if (mudou) {
+      fitCache = {};
+      draw();
+    }
+  }
+  if (document.fonts && document.fonts.ready) {
+    /** @type {Promise<unknown>[]} */
+    const cargas = [document.fonts.ready];
+    // pede a fonte das palavras grandes explicitamente: o ready pode resolver antes de ela entrar na fila
+    if (cfg.sigGrande)
+      cargas.push(
+        document.fonts
+          .load(
+            '700 100px "Familjen Grotesk"',
+            cfg.sigGrande.grande1 + cfg.sigGrande.grande2,
+          )
+          .catch(() => []),
+      );
+    Promise.all(cargas).then(conferirFontes);
+  }
   ligarLaco();
 
   return {

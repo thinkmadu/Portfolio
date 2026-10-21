@@ -4,12 +4,13 @@ import { SistemaSolar } from "./sistema-solar/index.js";
 import { PADRAO } from "./sistema-solar/config.js";
 
 const CHAVE = "sol-v5";
-const ASSINATURA_EN = [
-  "If I find a problem,",
-  "I build the solution.",
-  "End to end,",
-  "no loose ends.",
-];
+const ASSINATURA_EN = {
+  pequeno1: "If I find a",
+  grande1: "problem,",
+  pequeno2: "I build the",
+  grande2: "solution.",
+  rodape: /** @type {[string, string]} */ (["End to end,", "no loose ends."]),
+};
 
 /** @type {import("./sistema-solar/config.js").Ajustes} */
 const S = { ...PADRAO };
@@ -60,6 +61,7 @@ function montar() {
   inst = SistemaSolar.mount(raiz, {
     ...S,
     assinatura: lang === "english" ? ASSINATURA_EN : undefined,
+    assinaturaIdioma: lang === "english" ? "en" : undefined,
     secundario: {
       centro: "ajustes",
       centroHref: "#ajustes",
