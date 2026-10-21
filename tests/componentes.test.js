@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { SistemaSolar } from "../src/sistema-solar/index.js";
 import { CartaoProjeto } from "../src/componentes/cartao-projeto.js";
 import { BlocoFechado } from "../src/componentes/bloco-fechado.js";
+import { opcoesDoSistema } from "../src/i18n/index.js";
 
 afterEach(() => document.body.replaceChildren());
 
@@ -69,6 +70,68 @@ describe("SistemaSolar.mount", () => {
     const ev2 = new MouseEvent("click", { bubbles: true, cancelable: true });
     gh.dispatchEvent(ev2);
     expect(ev2.defaultPrevented).toBe(false);
+    inst.destroy();
+  });
+
+  it("textos, ids e lang por opção: aoEscolher recebe o id, não o rótulo", () => {
+    const t = alvo();
+    const aoEscolher = vi.fn(() => undefined);
+    const inst = SistemaSolar.mount(t, {
+      ...opcoesDoSistema("en"),
+      aoEscolher,
+    });
+    const links = [...t.querySelectorAll(".pf-menu a")];
+    expect(links.map((a) => a.textContent)).toEqual([
+      "about me",
+      "github",
+      "linkedin",
+      "email",
+      "ai",
+      "data",
+      "tools",
+      "full-stack",
+      "testing",
+      "settings",
+      "português",
+      "english",
+    ]);
+    expect(t.querySelector(".pf-sys")?.getAttribute("aria-label")).toBe(
+      "Areas",
+    );
+    expect(t.querySelector(".pf-menu")?.getAttribute("aria-label")).toBe(
+      "Areas as text",
+    );
+    expect(t.querySelector('.pf-menu a[data-r="ajustes"]')?.textContent).toBe(
+      "settings",
+    );
+    const atual = t.querySelector('.pf-menu a[aria-current="true"]');
+    expect(atual?.getAttribute("data-r")).toBe("lang-en");
+    expect(atual?.getAttribute("lang")).toBe("en");
+    const ptLink = /** @type {HTMLAnchorElement} */ (
+      t.querySelector('.pf-menu a[data-r="lang-pt"]')
+    );
+    expect(ptLink.getAttribute("lang")).toBe("pt");
+    expect(ptLink.getAttribute("href")).toBe("?lang=pt");
+    expect(ptLink.hasAttribute("aria-current")).toBe(false);
+    const ev = new MouseEvent("click", { bubbles: true, cancelable: true });
+    ptLink.dispatchEvent(ev);
+    expect(aoEscolher).toHaveBeenCalledWith("lang-pt");
+    expect(ev.defaultPrevented).toBe(true);
+    expect(t.querySelector(".pf-assina-txt")?.textContent).toBe(
+      "If I find a problem, I build the solution. End to end, no loose ends.",
+    );
+    inst.destroy();
+  });
+
+  it("sem textos, os padrões em português", () => {
+    const t = alvo();
+    const inst = SistemaSolar.mount(t, {});
+    expect(t.querySelector(".pf-sys")?.getAttribute("aria-label")).toBe(
+      "Áreas",
+    );
+    expect(t.querySelector(".pf-menu")?.getAttribute("aria-label")).toBe(
+      "Áreas em texto",
+    );
     inst.destroy();
   });
 
