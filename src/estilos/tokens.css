@@ -1,0 +1,28 @@
+/* Tokens: toda cor do site sai daqui. Só tema escuro. */
+:root {
+  --fundo: #111012;
+  --superficie: #1d1b20;
+  --texto: #e8e6ec;
+  --texto-suave: #8c8993;
+  --acento: #a79dd0;
+  --foco: #a79dd0;
+  --linha: #e8e6ec40;
+  --fundo-topo: #1d1b20;
+  --fundo-base: #0c0b0e;
+  --halo: rgba(167, 157, 208, 0.22);
+  --brilho: rgba(167, 157, 208, 0.75);
+
+  --font-mono:
+    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-display: var(--font-mono);
+  --font-grande: "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --raio-sm: 4px;
+  --raio-md: 8px;
+
+  color-scheme: dark;
+}

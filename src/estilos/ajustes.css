@@ -1,0 +1,54 @@
+/* Painel de ajustes: ferramenta de teste, aberta ao clicar em (ajustes). */
+
+.pf-ajustes {
+  position: absolute;
+  left: max(var(--space-3), env(safe-area-inset-left, 0px));
+  top: max(var(--space-3), env(safe-area-inset-top, 0px));
+  z-index: 5;
+  width: min(340px, calc(100% - 32px));
+  background: var(--superficie);
+  border-radius: var(--raio-md);
+  padding: var(--space-3);
+  display: grid;
+  gap: 12px;
+  font-size: 13px;
+}
+.pf-ajustes[hidden] {
+  display: none;
+}
+.pf-ajustes label {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr) 36px;
+  align-items: center;
+  gap: var(--space-2);
+}
+.pf-ajustes output {
+  text-align: right;
+  color: var(--texto-suave);
+}
+.pf-ajustes input[type="range"] {
+  width: 100%;
+  accent-color: var(--acento);
+}
+.pf-ajustes button {
+  font: 500 13px var(--font-mono);
+  color: var(--texto);
+  background: transparent;
+  border: 1px solid var(--linha);
+  border-radius: 999px;
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  cursor: pointer;
+}
+.pf-ajustes button:hover {
+  color: var(--acento);
+}
+.pf-ajustes :focus-visible {
+  outline: 2px solid var(--foco);
+  outline-offset: 2px;
+}
+.pf-ajustes-leitura {
+  color: var(--texto-suave);
+  font-size: 12px;
+  margin: 0;
+}

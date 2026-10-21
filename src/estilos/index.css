@@ -1,0 +1,7 @@
+/* Ponto de entrada dos estilos. No build, o Vite junta tudo num arquivo só. */
+@import "./tokens.css";
+@import "./fontes.css";
+@import "./base.css";
+@import "./sistema-solar.css";
+@import "./componentes.css";
+@import "./ajustes.css";
