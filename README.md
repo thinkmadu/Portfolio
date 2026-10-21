@@ -60,6 +60,10 @@ dist/assets/index-BvkczjGN.js                                 22.09 kB │ gzip:
 ```text
 index.html                 estrutura e metadados, sem CSS nem JS embutidos
 src/main.js                página de abertura: idioma, ajustes salvos, painel sob demanda
+src/i18n/
+  pt.js, en.js             dicionários (mesmas chaves; o pt.js define o tipo)
+  idioma.js                escolha do idioma, localStorage e ?lang= na URL
+  index.js                 t(), textos do documento e rótulos do SistemaSolar por idioma
 src/sistema-solar/
   geometria.js             elipses inclinadas, caixas, teste de sobreposição
   layout.js                layout, staticConflict, pairConflict, pickPhases, fit e a
@@ -93,6 +97,29 @@ Valores de `npm run bench`, com a largura do caractere estimada em 0,6 da fonte 
 
 O teste `tests/layout.test.js` compara o resultado com uma referência gerada pelo código anterior à refatoração (commit `273064e`): treze tamanhos de tela e cinco configurações, pelo SHA-256 do layout inteiro.
 
+## Idiomas
+
+A página existe em português e em inglês, no mesmo endereço: `?lang=pt` ou `?lang=en`. O idioma é decidido antes de qualquer desenho, nesta ordem:
+
+1. `?lang=` na URL (link compartilhado, resultado de busca, menu em texto);
+2. a escolha salva (`localStorage`, chave `pf-lang`), gravada só quando alguém clica em `(português)` ou `(english)`;
+3. o primeiro idioma suportado em `navigator.languages` (`pt*` vira português, `en*` vira inglês);
+4. português.
+
+Trocar pela constelação ou pelo menu em texto grava a escolha, reescreve a URL com `history.replaceState` (sem recarregar), traduz `<html lang>`, título, description, canonical, `<h1>`, menu, rótulos e painel de ajustes, e remonta o sistema. Os nós `(português)` e `(english)` ficam iguais nas duas versões (cada língua pelo próprio nome), com `lang="pt"` ou `lang="en"` e `aria-current` no idioma ativo. O `index.html` fixo é a versão em português e traz `hreflang` para as duas; o canonical entra pelo JS, um por idioma.
+
+O componente recebe todo texto por opção (`contatos`, `areas`, `secundario`, `textos`, `assinatura`); cada item tem um `id` estável, que é o que `aoEscolher` recebe, para o rótulo poder mudar de língua.
+
+Para adicionar uma língua:
+
+1. Copie `src/i18n/en.js` para `src/i18n/<código>.js` e traduza os valores, mantendo as chaves. A anotação `@type` do arquivo faz `npm run typecheck` acusar chave faltando ou sobrando.
+2. Registre o código em `SUPORTADOS` (`src/i18n/idioma.js`), o dicionário em `DICIONARIOS` e o nome da língua nela mesma em `ENDONIMOS` (`src/i18n/index.js`). A constelação comporta até quatro nós.
+3. Acrescente a linha `hreflang` no `index.html`.
+4. Meça as palavras grandes da assinatura no navegador (largura a 100px, como em `tests/assinatura.test.js`) e acrescente a coluna do idioma em `tests/idiomas-layout.test.js`; `npm run bench` mostra fonte e tempo por tamanho.
+5. `npm test` confere chaves iguais, nenhuma string vazia e nenhum travessão.
+
+Em inglês, os 13 tamanhos de referência encaixam como em português. A única fonte de nome que muda é a de 1536x864 (20 contra 19), porque o rótulo mais largo da órbita de fora passa de `(ferramentas)` a `(full-stack)`. A fonte grande da frase fica cerca de 0,6% menor, porque `solution.` é mais larga que `solução.`.
+
 ## Acessibilidade
 
 - Menu em texto sempre no DOM: lido por leitor de tela, alcançável por teclado (aparece ao receber foco) e visível no modo compacto, com alvos de 44px.
@@ -115,7 +142,7 @@ O workflow `.github/workflows/pages.yml` roda lint, tipos, testes e build em tod
 
 ## O que não faz
 
-Não coleta dados nem usa analytics. Idioma e ajustes ficam no `localStorage` do navegador (chave `sol-v5`). O idioma `english` troca só a frase de assinatura por enquanto.
+Não coleta dados nem usa analytics. A escolha de idioma (chave `pf-lang`) e os ajustes do fundo (chave `sol-v5`) ficam no `localStorage` do navegador.
 
 ## Licença
 
