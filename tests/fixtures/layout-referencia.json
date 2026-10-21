@@ -1,0 +1,784 @@
+{
+ "origem": "index.html do commit 273064e (antes da refatoração)",
+ "larguraDoCaractere": "fs * 0.6",
+ "fonte": 22,
+ "casos": {
+  "padrao": [
+   {
+    "W": 1100,
+    "H": 640,
+    "ok": true,
+    "fs": 14,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "7910ccaa9ffb71134f3c0f40db93eaa594fba4d39db596d6e9aeb20d188daf30"
+   },
+   {
+    "W": 1200,
+    "H": 700,
+    "ok": true,
+    "fs": 15,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "7b4d766d7b74020d72b022eb0ff92c09ad800d8c512a27c303267a1c07d2a724"
+   },
+   {
+    "W": 1280,
+    "H": 720,
+    "ok": true,
+    "fs": 16,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "1908701f5f9bd3770435b5832e096161bf3bd53048633a3d961ec782fbeaa5dc"
+   },
+   {
+    "W": 1340,
+    "H": 690,
+    "ok": true,
+    "fs": 17,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "02a7aeeca9e5a9d4158c02fb7733a2e2eb2be093f36c75abaa13e1604cdd4cdf"
+   },
+   {
+    "W": 1440,
+    "H": 900,
+    "ok": true,
+    "fs": 18,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "e3a84205205f34412cc116a3af331807e5b5a7f297c1a7c2dd115ad7cd9ded20"
+   },
+   {
+    "W": 1536,
+    "H": 864,
+    "ok": true,
+    "fs": 19,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "e6f117d3151c5828161f7c421a6f93a4d5857baddb417135460f8fda11a7e781"
+   },
+   {
+    "W": 1920,
+    "H": 1080,
+    "ok": true,
+    "fs": 22,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "ed3b4ace4c5bf2b975fd1bd9fc4b48fc9550fa76d7f82a25ddda65edd6dc5fca"
+   },
+   {
+    "W": 766,
+    "H": 878,
+    "ok": true,
+    "fs": 14,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "c1c7c4cb2631aca6a64bc0603fe5f06f35c9d7fc22cf572b97d5a3f133e85b18"
+   },
+   {
+    "W": 1024,
+    "H": 768,
+    "ok": true,
+    "fs": 13,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "3e1ac2a0b82e00023acd1382ef354452cb4d0c4ca36f7c79550dda8a1b887140"
+   },
+   {
+    "W": 820,
+    "H": 1180,
+    "ok": true,
+    "fs": 15,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "f2b67ae768543c93ed98ca57701e93126e3b11ee8ae8c328a534683dbc989bbc"
+   },
+   {
+    "W": 900,
+    "H": 900,
+    "ok": true,
+    "fs": 17,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "5044027c2c2928cc1b567bba812c14008ab9fc87ebe942a54bf8e6c26c83a6b2"
+   },
+   {
+    "W": 600,
+    "H": 480,
+    "ok": false,
+    "fs": 10,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "fd96f5fdbf8c4a94feb8671a4d7bdaf762e1456c9fe0c3472a2ea7f97b5cc54e"
+   },
+   {
+    "W": 800,
+    "H": 367,
+    "ok": false,
+    "fs": 10,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "0195293bec4e94727ac52cf4084556e87a17c2570b81440cd3ce14314dcbc8a8"
+   }
+  ],
+  "ingles": [
+   {
+    "W": 1100,
+    "H": 640,
+    "ok": true,
+    "fs": 14,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "4e19417697f831ce12b26e91404e6ac1e3a3d4dd9f1de70d19af8cb3fdd7390d"
+   },
+   {
+    "W": 1200,
+    "H": 700,
+    "ok": true,
+    "fs": 15,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "912a44d4679bdf8cf3c645706d89064887b7f94870ac7b85e4334511360a01aa"
+   },
+   {
+    "W": 1280,
+    "H": 720,
+    "ok": true,
+    "fs": 16,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "383cb6e2e63564f3a6a427d1a779760d88d0bc2cb772349a4ea3a8956e71bdb3"
+   },
+   {
+    "W": 1340,
+    "H": 690,
+    "ok": true,
+    "fs": 17,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "695226a25a0cc3695e7f71b47f22f438cca964fa53c46704264a957d8e9a717e"
+   },
+   {
+    "W": 1440,
+    "H": 900,
+    "ok": true,
+    "fs": 18,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "4d0d52fb4ea725d72f10c63dae83731639f9f25c31d05b36fa0cedd7931434ee"
+   },
+   {
+    "W": 1536,
+    "H": 864,
+    "ok": true,
+    "fs": 19,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "20c2940d2ee00d66c6b97dbec9254df1a00764058adc6df78cc7f02505bd0b99"
+   },
+   {
+    "W": 1920,
+    "H": 1080,
+    "ok": true,
+    "fs": 22,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "b8d8559883c69018d095532043caf88b852169d7167701d5d29e73eb8f473b77"
+   },
+   {
+    "W": 766,
+    "H": 878,
+    "ok": true,
+    "fs": 14,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "05d87c3ba9fd47cd03d470e47906beee69e1e38f317581e6d9be8d09fb279a09"
+   },
+   {
+    "W": 1024,
+    "H": 768,
+    "ok": true,
+    "fs": 13,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "9aed1f2a7554fb795061f2573566f38c73bf6b908706e277b859da9f44a21420"
+   },
+   {
+    "W": 820,
+    "H": 1180,
+    "ok": true,
+    "fs": 15,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "266c11440ae2452e83763d657199b2a98ac6e9fe80306afc9e4da7e3104ed294"
+   },
+   {
+    "W": 900,
+    "H": 900,
+    "ok": true,
+    "fs": 17,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "ac0a67d16d7b802212368fd8ea633a8938fe636930e38d561cefafb9284b0408"
+   },
+   {
+    "W": 600,
+    "H": 480,
+    "ok": false,
+    "fs": 10,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "96d754bcaef4d77028163ecb861f8da557810e9f2013ec4d88003dea9985cce3"
+   },
+   {
+    "W": 800,
+    "H": 367,
+    "ok": false,
+    "fs": 10,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "679c79678b36e55289b6528864605be0eab21160f33e38cf28eccd48a7513b1a"
+   }
+  ],
+  "semConstelacao": [
+   {
+    "W": 1100,
+    "H": 640,
+    "ok": true,
+    "fs": 21,
+    "constelacao": false,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "6ecc13879d5ec55c4539f44c29b878e0c783900144399b9367a0e254c5764d35"
+   },
+   {
+    "W": 1200,
+    "H": 700,
+    "ok": true,
+    "fs": 22,
+    "constelacao": false,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "1115995784ccea8d95b852b3aaf53c473b435e566500a5937161ae80d00eb3e9"
+   },
+   {
+    "W": 1280,
+    "H": 720,
+    "ok": true,
+    "fs": 22,
+    "constelacao": false,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "f2d999aeee7b8b05d0b90af1772375f5cace77bd422c48f1b7c828b64958486d"
+   },
+   {
+    "W": 1340,
+    "H": 690,
+    "ok": true,
+    "fs": 22,
+    "constelacao": false,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "50e168188113f1870d7259e14c4bb16bce82052354805df31c27aed42b96e12d"
+   },
+   {
+    "W": 1440,
+    "H": 900,
+    "ok": true,
+    "fs": 22,
+    "constelacao": false,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "f78cc3bb15566358161a515438d9e17b4f1796f07d09405302bb007e8f18885c"
+   },
+   {
+    "W": 1536,
+    "H": 864,
+    "ok": true,
+    "fs": 22,
+    "constelacao": false,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "1d479e15f774d2e91ef6fdb0a0bacfeebad667c98c959546626df31fa46584a8"
+   },
+   {
+    "W": 1920,
+    "H": 1080,
+    "ok": true,
+    "fs": 22,
+    "constelacao": false,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "a964a49848d91c5773074e0a0afb0cb931101839777252d1617183fe110ef504"
+   },
+   {
+    "W": 766,
+    "H": 878,
+    "ok": true,
+    "fs": 14,
+    "constelacao": false,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "6bd0b9f59ae2b65190db78f1a1456e21182b734031cbcc38499953850a778ea3"
+   },
+   {
+    "W": 1024,
+    "H": 768,
+    "ok": true,
+    "fs": 19,
+    "constelacao": false,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "f876f59009cf5723d7dff9cd43b091d479a2a54a0ab8ec6a15f54d3d88e3b7f4"
+   },
+   {
+    "W": 820,
+    "H": 1180,
+    "ok": true,
+    "fs": 15,
+    "constelacao": false,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "8c106e2d9a21227d5094b54c40c9f4c8ffeebc00ecdb7e9aa643c785c5dace27"
+   },
+   {
+    "W": 900,
+    "H": 900,
+    "ok": true,
+    "fs": 17,
+    "constelacao": false,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "891470d4dfd31d5402c441bf93d9b8c3697505e4f55d97d50a53bc6ab6d96780"
+   },
+   {
+    "W": 600,
+    "H": 480,
+    "ok": false,
+    "fs": 10,
+    "constelacao": false,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "3e229a3ea85b215634695571279dfac0064e8e7da963dcfd704e60e53790b964"
+   },
+   {
+    "W": 800,
+    "H": 367,
+    "ok": false,
+    "fs": 10,
+    "constelacao": false,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "2e66a4810dbc41982d5d11c8c16afaebef8c9af2adc30ff2301a7dd71ff78134"
+   }
+  ],
+  "semAssinatura": [
+   {
+    "W": 1100,
+    "H": 640,
+    "ok": true,
+    "fs": 14,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "9a48bebcba0f485ff97ee07b8a2812f6c8befb6dbd3f75c0070524c1c35a7e76"
+   },
+   {
+    "W": 1200,
+    "H": 700,
+    "ok": true,
+    "fs": 15,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "4eea40a8d4bf59c56664f33820eea5185b22419f640922c394a96ad2d65ed6b4"
+   },
+   {
+    "W": 1280,
+    "H": 720,
+    "ok": true,
+    "fs": 16,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "be6a91f58afa8665c5338b95d84df3c3910a2c6388b5442163125873d284bb52"
+   },
+   {
+    "W": 1340,
+    "H": 690,
+    "ok": true,
+    "fs": 17,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "3ba129df80d7b3c8e5ac1e0aa678c5c78297b7385583ed8d4de9f1f575fca7fd"
+   },
+   {
+    "W": 1440,
+    "H": 900,
+    "ok": true,
+    "fs": 18,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "25f970634718d7cd7f8793fb973639ddef94a77d036576600dab35ce012d1732"
+   },
+   {
+    "W": 1536,
+    "H": 864,
+    "ok": true,
+    "fs": 19,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "8de5fcf79830df465963f86c73dca5cfc3772dce3cfd68e81a25a0f1654a13ba"
+   },
+   {
+    "W": 1920,
+    "H": 1080,
+    "ok": true,
+    "fs": 22,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "d613522feb0c8b1db1dacf064bd5d0604cf291527a9a9ba6045a62a66780a717"
+   },
+   {
+    "W": 766,
+    "H": 878,
+    "ok": true,
+    "fs": 14,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "55ac915abb23b19170d8dd16c07a9feaf8bbf56d5701b00f39041215082dc966"
+   },
+   {
+    "W": 1024,
+    "H": 768,
+    "ok": true,
+    "fs": 13,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "ce8b3a776cdcb752410c5179421b3c16474072514924d0cad747580a96e9c937"
+   },
+   {
+    "W": 820,
+    "H": 1180,
+    "ok": true,
+    "fs": 15,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "8481c1b876f79b808ec3bf5501446c344a29f580c6cebddf820cde85ca91763f"
+   },
+   {
+    "W": 900,
+    "H": 900,
+    "ok": true,
+    "fs": 17,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "ecbf2255ab0c75045083ee3e391a9ad8a7eb0b06d040a74a6c261b4ac9e682b2"
+   },
+   {
+    "W": 600,
+    "H": 480,
+    "ok": false,
+    "fs": 10,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "f6e29013f1fd107bd9cec5574933f2befd54cf956288fa046d7340011da5442a"
+   },
+   {
+    "W": 800,
+    "H": 367,
+    "ok": false,
+    "fs": 10,
+    "constelacao": true,
+    "fases": [
+     0,
+     0
+    ],
+    "sha256": "2d0707da1b30600006a835a605053c219fb55f1aa4e65ba8ece0a4bc7125b8bd"
+   }
+  ],
+  "semContatos": [
+   {
+    "W": 1100,
+    "H": 640,
+    "ok": true,
+    "fs": 21,
+    "constelacao": true,
+    "fases": [
+     0
+    ],
+    "sha256": "71c040f34ffe2d73c79cc089c93eea220207b44592748b73f790fe870a01db65"
+   },
+   {
+    "W": 1200,
+    "H": 700,
+    "ok": true,
+    "fs": 22,
+    "constelacao": true,
+    "fases": [
+     0
+    ],
+    "sha256": "d834a93debf63102dc450eabe86223b4cb051df14095b79074ac3f29b942c908"
+   },
+   {
+    "W": 1280,
+    "H": 720,
+    "ok": true,
+    "fs": 22,
+    "constelacao": true,
+    "fases": [
+     0
+    ],
+    "sha256": "d6e349b8fd385cd0625055c592a093775aefde95fcc1fbaab67e5eb252be63bf"
+   },
+   {
+    "W": 1340,
+    "H": 690,
+    "ok": true,
+    "fs": 22,
+    "constelacao": true,
+    "fases": [
+     0
+    ],
+    "sha256": "573643b244c9587784e403cebd0bdff5d38c45857f9060dd2faf4b54f6a0909e"
+   },
+   {
+    "W": 1440,
+    "H": 900,
+    "ok": true,
+    "fs": 22,
+    "constelacao": true,
+    "fases": [
+     0
+    ],
+    "sha256": "a7eb9accd3348417f4d042498f5acdfd86f23a7dbbe426959c19da68334a45ac"
+   },
+   {
+    "W": 1536,
+    "H": 864,
+    "ok": true,
+    "fs": 22,
+    "constelacao": true,
+    "fases": [
+     0
+    ],
+    "sha256": "950e068b327689f9da06947811571696a795ed697f502059cc3f812581741557"
+   },
+   {
+    "W": 1920,
+    "H": 1080,
+    "ok": true,
+    "fs": 22,
+    "constelacao": true,
+    "fases": [
+     0
+    ],
+    "sha256": "1fd1cf0d3af988a9b9811fe5ae3e2e3788e36a13ff9a9b4f7668e537b82123ba"
+   },
+   {
+    "W": 766,
+    "H": 878,
+    "ok": true,
+    "fs": 22,
+    "constelacao": true,
+    "fases": [
+     0
+    ],
+    "sha256": "c20b99a50aa41647ae1301e4321e7337567f81374506cba3c2ae152cbbd95205"
+   },
+   {
+    "W": 1024,
+    "H": 768,
+    "ok": true,
+    "fs": 19,
+    "constelacao": true,
+    "fases": [
+     0
+    ],
+    "sha256": "09e2062bb08ba654db91a8cf5350123324457247cf3ddc672a7284e5cc6f4f92"
+   },
+   {
+    "W": 820,
+    "H": 1180,
+    "ok": true,
+    "fs": 22,
+    "constelacao": true,
+    "fases": [
+     0
+    ],
+    "sha256": "e6d29b3b146dd2275d0aa857cf5acc06812654d23e5362841bb439286c9a0194"
+   },
+   {
+    "W": 900,
+    "H": 900,
+    "ok": true,
+    "fs": 20,
+    "constelacao": true,
+    "fases": [
+     0
+    ],
+    "sha256": "31cf0d741fec7a38268b7996ff87fb0622532298d3b9cb1ab4164f97fd67045b"
+   },
+   {
+    "W": 600,
+    "H": 480,
+    "ok": true,
+    "fs": 12,
+    "constelacao": true,
+    "fases": [
+     0
+    ],
+    "sha256": "fb51eb120d803f016fe23e699e30937edb896a505d915655f21127ac3dbdd83b"
+   },
+   {
+    "W": 800,
+    "H": 367,
+    "ok": true,
+    "fs": 15,
+    "constelacao": true,
+    "fases": [
+     0
+    ],
+    "sha256": "5254c2db11b5cd267eaee55bb0fb62ebb314b96fa931715a579ff80e41aada55"
+   }
+  ]
+ }
+}
