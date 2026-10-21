@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    :root { --fundo: #111012; --acento: #a79dd0; }
+    .fundo { fill: var(--fundo); }
+    .orbita { fill: none; stroke: var(--acento); stroke-width: 1.6; stroke-dasharray: 1.6 2.4; }
+    .corpo { fill: var(--acento); }
+  </style>
+  <rect class="fundo" width="32" height="32" rx="7" />
+  <ellipse class="orbita" cx="16" cy="16" rx="13" ry="5.5" transform="rotate(-28 16 16)" />
+  <circle class="corpo" cx="16" cy="16" r="4.2" />
+  <circle class="corpo" cx="27.2" cy="10" r="2" />
+</svg>

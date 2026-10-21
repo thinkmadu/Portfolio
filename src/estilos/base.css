@@ -1,0 +1,27 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: var(--font-mono);
+  overflow: hidden;
+}
+
+/* Fora da tela, mas lido por leitor de tela. */
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+#root {
+  --pf-solar-altura: 100vh;
+  --pf-solar-altura: 100dvh;
+}
+#root .pf-solar-sky {
+  border-radius: 0;
+}
