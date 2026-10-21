@@ -29,16 +29,16 @@ const NODE_POS = [
 ];
 
 /**
- * @typedef {{ t: string, a: number, rotulo: string, href: string, atual: boolean }} PlanetaCfg
+ * @typedef {{ t: string, a: number, rotulo: string, href: string, atual: boolean, id?: string, lang?: string }} PlanetaCfg
  * @typedef {{ T: number, inner: boolean, pl: PlanetaCfg[] }} OrbitaCfg
  * @typedef {{ sunM: string, nodes: PlanetaCfg[] }} ConstelacaoCfg
  * @typedef {import('./config.js').AssinaturaGrande} AssinaturaGrande
  * @typedef {{ big: OrbitaCfg[], cons: ConstelacaoCfg | null, sunG: string, sig: string[] | null, sigGrande?: AssinaturaGrande | null }} Cfg
  *
- * @typedef {{ t: string, a: number, rotulo: string, href: string, atual: boolean, w: number, h: number }} Planeta
+ * @typedef {{ t: string, a: number, rotulo: string, href: string, atual: boolean, id?: string, lang?: string, w: number, h: number }} Planeta
  * @typedef {{ off: number, cx: number, cy: number, rx: number, ry: number, T: number, pl: Planeta[] }} Orbita
  * @typedef {{ cx: number, cy: number, w: number, h: number }} Caixa
- * @typedef {Caixa & { t: string, rotulo: string, href: string, atual: boolean }} No
+ * @typedef {Caixa & { t: string, rotulo: string, href: string, atual: boolean, id?: string, lang?: string }} No
  * @typedef {{ cx: number, cy: number, rx: number, ry: number, nodes: No[], hub: Caixa }} Constelacao
  * @typedef {object} MedidasGrande medidas da composição em tamanhos mistos, em px
  * @property {AssinaturaGrande} textos
@@ -197,6 +197,8 @@ export function layout(cfg, fs, cw, W, H, scale, mscale, land) {
         rotulo: n.rotulo,
         href: n.href,
         atual: n.atual,
+        id: n.id,
+        lang: n.lang,
         cx: centro.cx + pos[k][0] * Math.max(0, centro.hw - b.w / 2),
         cy: centro.cy + pos[k][1] * Math.max(0, centro.hh),
         w: b.w,
@@ -242,6 +244,8 @@ export function layout(cfg, fs, cw, W, H, scale, mscale, land) {
         rotulo: p.rotulo,
         href: p.href,
         atual: p.atual,
+        id: p.id,
+        lang: p.lang,
         w: b.w,
         h: b.h,
       };

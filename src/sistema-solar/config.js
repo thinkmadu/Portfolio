@@ -1,8 +1,20 @@
 // Opções do componente e montagem da configuração que o layout consome.
 
 /**
- * @typedef {{ rotulo: string, href?: string, atual?: boolean }} Item
- * @typedef {{ centro?: string, centroHref?: string, nos?: Item[] }} Secundario
+ * @typedef {object} Item
+ * @property {string} rotulo texto na tela
+ * @property {string} [id] identificador estável entre idiomas, devolvido a `aoEscolher`
+ *   (sem ele, vai o rótulo)
+ * @property {string} [href]
+ * @property {boolean} [atual] item ativo (`aria-current`)
+ * @property {string} [lang] idioma do texto, quando difere da página
+ * @typedef {{ id?: string, centro?: string, centroHref?: string, nos?: Item[] }} Secundario
+ *
+ * @typedef {object} Textos textos fixos do componente, para traduzir
+ * @property {string} [sobre] primeiro item do menu em texto
+ * @property {string} [sobreAria] nome acessível do sol
+ * @property {string} [navSistema] nome da navegação desenhada
+ * @property {string} [navMenu] nome da navegação em texto
  *
  * @typedef {object} AssinaturaGrande frase em tamanhos mistos, na ordem de leitura
  * @property {string} pequeno1 linha pequena de cima
@@ -27,8 +39,9 @@
  * @property {number} [meteoros] frequência dos meteoros, 0 a 100
  * @property {number} [fonte] fonte máxima dos nomes, 10 a 30
  * @property {number} [seed] semente do fundo
- * @property {(rotulo: string) => boolean | void} [aoEscolher] recebe o rótulo do corpo ou item
- *   clicado; devolver `false` deixa o link seguir o href
+ * @property {Textos} [textos] textos fixos do componente (padrão em português)
+ * @property {(id: string) => boolean | void} [aoEscolher] recebe o `id` (ou, sem ele, o
+ *   rótulo) do corpo ou item clicado; devolver `false` deixa o link seguir o href
  */
 
 /** Ângulo inicial dos planetas da órbita de dentro e da de fora, em graus. */
@@ -74,6 +87,23 @@ export const DEF_SEC = {
     { rotulo: "english", href: "#en" },
   ],
 };
+
+/** @type {Readonly<Required<Textos>>} */
+export const DEF_TEXTOS = Object.freeze({
+  sobre: "sobre mim",
+  sobreAria: "Sobre mim",
+  navSistema: "Áreas",
+  navMenu: "Áreas em texto",
+});
+
+/**
+ * Textos fixos com os que faltarem vindos do padrão.
+ * @param {Opcoes} opts
+ * @returns {Required<Textos>}
+ */
+export function textosOf(opts) {
+  return { ...DEF_TEXTOS, ...opts.textos };
+}
 
 export const DEF_ASSINATURA = Object.freeze([
   "Se encontro um problema,",
@@ -192,6 +222,8 @@ function planet(x, ang) {
     href: x.href || "#",
     atual: !!x.atual,
     a: ang,
+    id: x.id,
+    lang: x.lang,
   };
 }
 

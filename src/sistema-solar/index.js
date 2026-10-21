@@ -14,6 +14,7 @@ import {
   contatosOf,
   nosOf,
   secOf,
+  textosOf,
 } from "./config.js";
 import { el } from "../util/dom.js";
 
@@ -48,6 +49,7 @@ function mount(target, opts = {}) {
   const cfg = buildCfg(opts);
   const sec = secOf(opts);
   const sobreHref = opts.centroHref || "#sobre";
+  const textos = textosOf(opts);
 
   // ---------- estrutura ----------
   /** @param {import('./config.js').Item} a */
@@ -57,19 +59,21 @@ function mount(target, opts = {}) {
         text: a.rotulo,
         attrs: {
           href: a.href || "#",
-          "data-r": a.rotulo,
+          "data-r": a.id ?? a.rotulo,
           ...(a.atual ? { "aria-current": "true" } : {}),
+          ...(a.lang ? { lang: a.lang } : {}),
         },
       }),
     ]);
   const itens = [
-    el("li", {}, [el("a", { text: "sobre mim", attrs: { href: sobreHref } })]),
+    el("li", {}, [el("a", { text: textos.sobre, attrs: { href: sobreHref } })]),
     ...contatosOf(opts).map(itemMenu),
     ...areasOf(opts).map(itemMenu),
   ];
   if (sec) {
     itens.push(
       itemMenu({
+        id: sec.id,
         rotulo: sec.centro || "ajustes",
         href: sec.centroHref || "#ajustes",
       }),
@@ -90,7 +94,10 @@ function mount(target, opts = {}) {
   });
   const trk = el("div", { class: "pf-trk", attrs: { "aria-hidden": "true" } });
   const fx = el("div", { class: "pf-fx", attrs: { "aria-hidden": "true" } });
-  const sys = el("nav", { class: "pf-sys", attrs: { "aria-label": "Áreas" } });
+  const sys = el("nav", {
+    class: "pf-sys",
+    attrs: { "aria-label": textos.navSistema },
+  });
   const skyEl = el("div", { class: "pf-solar-sky" }, [
     haloG,
     haloM,
@@ -101,7 +108,7 @@ function mount(target, opts = {}) {
   ]);
   const menu = el(
     "nav",
-    { class: "pf-menu", attrs: { "aria-label": "Áreas em texto" } },
+    { class: "pf-menu", attrs: { "aria-label": textos.navMenu } },
     [el("ul", {}, itens)],
   );
   const filhos = [skyEl, menu];
@@ -269,8 +276,9 @@ function mount(target, opts = {}) {
    * @param {string} p.classe
    * @param {string} p.href
    * @param {string} p.texto
-   * @param {string} [p.rotulo] devolvido a `aoEscolher`
+   * @param {string} [p.rotulo] devolvido a `aoEscolher` (o id do item, ou o rótulo)
    * @param {string} [p.ariaLabel]
+   * @param {string} [p.lang] idioma do texto
    * @param {boolean} [p.atual]
    * @param {string} [p.fonte]
    * @param {string} p.atraso
@@ -281,6 +289,7 @@ function mount(target, opts = {}) {
     texto,
     rotulo,
     ariaLabel,
+    lang,
     atual,
     fonte,
     atraso,
@@ -292,6 +301,7 @@ function mount(target, opts = {}) {
     });
     if (rotulo != null) a.dataset.r = rotulo;
     if (ariaLabel) a.setAttribute("aria-label", ariaLabel);
+    if (lang) a.lang = lang;
     if (atual) a.setAttribute("aria-current", "true");
     if (fonte) a.style.fontSize = fonte;
     a.style.animationDelay = atraso;
@@ -373,7 +383,7 @@ function mount(target, opts = {}) {
         classe: "pf-sun",
         href: sobreHref,
         texto: cfg.sunG,
-        ariaLabel: "Sobre mim",
+        ariaLabel: textos.sobreAria,
         atraso: "-1s",
       }),
       L.suns[0].cx,
@@ -388,7 +398,7 @@ function mount(target, opts = {}) {
           classe: "pf-minisun",
           href: (sec && sec.centroHref) || "#ajustes",
           texto: cfg.cons.sunM,
-          rotulo: centro,
+          rotulo: (sec && sec.id) ?? centro,
           ariaLabel: centro,
           fonte: (Number(miniPx) * 1.1).toFixed(2) + "px",
           atraso: "-2s",
@@ -404,7 +414,8 @@ function mount(target, opts = {}) {
             classe: "",
             href: n.href,
             texto: n.t,
-            rotulo: n.rotulo,
+            rotulo: n.id ?? n.rotulo,
+            lang: n.lang,
             atual: n.atual,
             fonte: miniPx + "px",
             atraso: (-(1 + k * 0.9)).toFixed(1) + "s",
@@ -424,7 +435,8 @@ function mount(target, opts = {}) {
             classe: "",
             href: p.href,
             texto: p.t,
-            rotulo: p.rotulo,
+            rotulo: p.id ?? p.rotulo,
+            lang: p.lang,
             atual: p.atual,
             atraso: (-(n2++ * 0.7)).toFixed(1) + "s",
           }),
@@ -615,7 +627,7 @@ function mount(target, opts = {}) {
   }
   if (mq) mq.addEventListener("change", aoMudarMovimento);
 
-  // clique num corpo ou no item do menu em texto: `aoEscolher` recebe o rótulo; se devolver
+  // clique num corpo ou no item do menu em texto: `aoEscolher` recebe o id (ou o rótulo); se devolver
   // `false`, o link segue o href normalmente
   /** @param {MouseEvent} e */
   function aoClicar(e) {
