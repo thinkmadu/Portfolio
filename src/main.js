@@ -1,39 +1,47 @@
-// Página de abertura: monta o SistemaSolar com o idioma e os ajustes guardados no navegador.
+// Página de abertura: decide o idioma antes de qualquer desenho e monta o SistemaSolar
+// com os rótulos desse idioma e os ajustes guardados no navegador.
 
 import { SistemaSolar } from "./sistema-solar/index.js";
 import { PADRAO } from "./sistema-solar/config.js";
+import { aplicarDocumento, opcoesDoSistema, t } from "./i18n/index.js";
+import {
+  CHAVE_ANTIGA,
+  idiomaInicial,
+  migrarAntigo,
+  normalizar,
+  salvar,
+  storageDe,
+  urlComIdioma,
+} from "./i18n/idioma.js";
 
-const CHAVE = "sol-v5";
-const ASSINATURA_EN = {
-  pequeno1: "If I find a",
-  grande1: "problem,",
-  pequeno2: "I build the",
-  grande2: "solution.",
-  rodape: /** @type {[string, string]} */ (["End to end,", "no loose ends."]),
-};
+/** @typedef {import("./i18n/idioma.js").Idioma} Idioma */
+
+const storage = storageDe(window);
+migrarAntigo(storage);
 
 /** @type {import("./sistema-solar/config.js").Ajustes} */
 const S = { ...PADRAO };
-let lang = "português";
 try {
-  const salvo = JSON.parse(localStorage.getItem(CHAVE) || "null");
-  if (salvo) {
+  const salvo = JSON.parse(storage?.getItem(CHAVE_ANTIGA) || "null");
+  if (salvo)
     for (const k of /** @type {(keyof typeof S)[]} */ (Object.keys(S)))
       if (typeof salvo[k] === "number") S[k] = salvo[k];
-    if (salvo.lang === "english" || salvo.lang === "português")
-      lang = salvo.lang;
-  }
 } catch {
   // sem localStorage (modo privado, bloqueio): segue com o padrão
 }
 
-function salvar() {
+/** Só os ajustes do fundo; o idioma tem chave própria e só é gravado por escolha explícita. */
+function salvarAjustes() {
   try {
-    localStorage.setItem(CHAVE, JSON.stringify({ lang, ...S }));
+    storage?.setItem(CHAVE_ANTIGA, JSON.stringify(S));
   } catch {
     // idem
   }
 }
+
+let idioma = idiomaInicial().idioma;
+/** @param {import("./i18n/index.js").Chave} chave @param {Record<string, string | number>} [vars] */
+const tr = (chave, vars) => t(idioma, chave, vars);
 
 const raiz = /** @type {HTMLElement} */ (document.getElementById("root"));
 /** @type {{ destroy(): void } | null} */
@@ -45,8 +53,9 @@ function abrirPainel() {
   painel ??= import("./ajustes/painel.js").then(({ criarPainel }) => {
     const p = criarPainel({
       ajustes: S,
+      t: tr,
       aoMudar: () => {
-        salvar();
+        salvarAjustes();
         montar();
       },
     });
@@ -56,31 +65,50 @@ function abrirPainel() {
   painel.then((p) => p.alternar());
 }
 
+/**
+ * Troca o idioma sem recarregar: grava a escolha, põe `?lang=` na URL, traduz o
+ * documento e o painel, remonta o sistema e devolve o foco ao idioma escolhido.
+ * @param {Idioma} novo
+ */
+function trocarIdioma(novo) {
+  const id = "lang-" + novo;
+  salvar(storage, novo);
+  try {
+    history.replaceState(history.state, "", urlComIdioma(location.href, novo));
+  } catch {
+    // URL que o navegador recusa trocar (file://, sandbox): segue sem atualizar
+  }
+  if (novo !== idioma) {
+    idioma = novo;
+    aplicarDocumento(document, idioma);
+    montar();
+    if (painel) painel.then((p) => p.traduzir(tr));
+  }
+  // a remontagem destrói o link que tinha o foco
+  const alvo = /** @type {HTMLElement | null} */ (
+    raiz.querySelector(`.pf-sys a[data-r="${id}"]`) ||
+      raiz.querySelector(`.pf-menu a[data-r="${id}"]`)
+  );
+  alvo?.focus({ preventScroll: true });
+}
+
 function montar() {
   if (inst) inst.destroy();
   inst = SistemaSolar.mount(raiz, {
     ...S,
-    assinatura: lang === "english" ? ASSINATURA_EN : undefined,
-    assinaturaIdioma: lang === "english" ? "en" : undefined,
-    secundario: {
-      centro: "ajustes",
-      centroHref: "#ajustes",
-      nos: [
-        { rotulo: "português", href: "#pt", atual: lang === "português" },
-        { rotulo: "english", href: "#en", atual: lang === "english" },
-      ],
-    },
+    ...opcoesDoSistema(idioma),
     // ajustes e idioma ficam na página; o resto segue o href do link
-    aoEscolher(r) {
-      if (r === "ajustes") abrirPainel();
-      else if (r === "português" || r === "english") {
-        lang = r;
-        salvar();
-        montar();
+    aoEscolher(id) {
+      if (id === "ajustes") abrirPainel();
+      else if (id.startsWith("lang-")) {
+        const novo = normalizar(id.slice(5));
+        if (!novo) return false;
+        trocarIdioma(novo);
       } else return false;
     },
   });
   if (painel) painel.then((p) => p.atualizar());
 }
 
+aplicarDocumento(document, idioma);
 montar();
