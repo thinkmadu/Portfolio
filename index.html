@@ -26,7 +26,22 @@
       content="Se encontro um problema, desenvolvo a solução. De ponta a ponta, sem deixar nada solto."
     />
     <meta property="og:url" content="https://thinkmadu.github.io/Portfolio/" />
-    <link rel="canonical" href="https://thinkmadu.github.io/Portfolio/" />
+    <!-- canonical entra pelo src/i18n (um por idioma); o HTML fixo é a versão em português -->
+    <link
+      rel="alternate"
+      hreflang="pt-BR"
+      href="https://thinkmadu.github.io/Portfolio/"
+    />
+    <link
+      rel="alternate"
+      hreflang="en"
+      href="https://thinkmadu.github.io/Portfolio/?lang=en"
+    />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href="https://thinkmadu.github.io/Portfolio/"
+    />
     <link rel="icon" href="src/imagens/favicon.svg" type="image/svg+xml" />
     <link
       rel="preload"
@@ -47,7 +62,7 @@
   </head>
   <body>
     <main>
-      <h1 class="visualmente-oculto">
+      <h1 class="visualmente-oculto" data-i18n="doc.h1">
         Sistema solar: thinkmadu no centro, com contatos e áreas em órbita
       </h1>
       <div id="root"></div>
