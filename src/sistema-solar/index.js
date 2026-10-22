@@ -145,6 +145,12 @@ function mount(target, opts = {}) {
   let rafId = 0;
   let ultimaChave = "";
 
+  /** Escala que algum ancestral aplica ao céu (o zoom do início); as medidas são em px do CSS. */
+  const escalaDoCeu = () => {
+    const w = skyEl.offsetWidth;
+    return w ? skyEl.getBoundingClientRect().width / w : 1;
+  };
+
   /**
    * Largura de um caractere em cada fonte. Mede a faixa inteira numa leitura só,
    * para forçar um único cálculo de layout em vez de um por fonte.
@@ -163,8 +169,9 @@ function mount(target, opts = {}) {
       return s;
     });
     skyEl.append(...spans);
+    const k = escalaDoCeu();
     fontes.forEach((f, i) => {
-      const w = spans[i].getBoundingClientRect().width / 100;
+      const w = spans[i].getBoundingClientRect().width / k / 100;
       cwCache[f] = w || f * 0.6;
     });
     for (const s of spans) s.remove();
@@ -180,7 +187,7 @@ function mount(target, opts = {}) {
     if (grandeCache[texto]) return grandeCache[texto];
     const s = el("span", { class: "pf-ag-medida", text: texto });
     skyEl.append(s);
-    const w = s.getBoundingClientRect().width;
+    const w = s.getBoundingClientRect().width / escalaDoCeu();
     s.remove();
     return (grandeCache[texto] = w || texto.length * 55);
   }
@@ -322,10 +329,10 @@ function mount(target, opts = {}) {
       " ",
       el("span", { class: "pf-ag-g", text: t.grande1 }),
       " ",
-      el("span", { class: "pf-ag-p pf-ag-recuo", text: t.pequeno2 }),
+      el("span", { class: "pf-ag-p", text: t.pequeno2 }),
       " ",
       el("span", {
-        class: "pf-ag-g pf-ag-recuo pf-ag-acento",
+        class: "pf-ag-g pf-ag-acento",
         text: t.grande2,
       }),
       " ",

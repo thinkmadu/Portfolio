@@ -190,8 +190,8 @@
   transform: none;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
+  align-items: flex-end;
+  text-align: right;
   white-space: normal;
   font-weight: 500;
 }
@@ -221,9 +221,6 @@
   visibility: hidden;
   font-size: 100px;
   line-height: 1;
-}
-.pf-ag-recuo {
-  margin-left: 38%;
 }
 .pf-ag-acento {
   color: var(--acento);
