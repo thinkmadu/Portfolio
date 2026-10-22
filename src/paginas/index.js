@@ -5,7 +5,9 @@
 /** @typedef {(raiz: HTMLElement) => Montada} Montar */
 
 /** @type {Record<string, () => Promise<{ montar: Montar }>>} */
-export const PAGINAS = {};
+export const PAGINAS = {
+  ferramentas: () => import("./ferramentas.js"),
+};
 
 /**
  * Id da página pedida pelo hash, ou null para a abertura.
