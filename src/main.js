@@ -2,7 +2,7 @@
 // com os rótulos desse idioma e os ajustes guardados no navegador.
 
 import { SistemaSolar } from "./sistema-solar/index.js";
-import { PADRAO } from "./sistema-solar/config.js";
+import { FAIXA, PADRAO } from "./sistema-solar/config.js";
 import { PAGINAS, paginaDoHash } from "./paginas/index.js";
 import { transicao } from "./transicao/index.js";
 import { centroDoCorpo, zoom } from "./transicao/zoom.js";
@@ -28,7 +28,9 @@ try {
   const salvo = JSON.parse(storage?.getItem(CHAVE_ANTIGA) || "null");
   if (salvo)
     for (const k of /** @type {(keyof typeof S)[]} */ (Object.keys(S)))
-      if (typeof salvo[k] === "number") S[k] = salvo[k];
+      // valor fora da faixa (ou não finito) travaria o desenho a cada carga: prende na faixa
+      if (Number.isFinite(salvo[k]))
+        S[k] = Math.min(FAIXA[k][1], Math.max(FAIXA[k][0], salvo[k]));
 } catch {
   // sem localStorage (modo privado, bloqueio): segue com o padrão
 }
@@ -161,7 +163,7 @@ async function mostrar() {
     } catch {
       // módulo que não carrega (sem rede): volta para a abertura em vez de deixar a tela vazia
       if (minha === versao) {
-        destino = aberta;
+        destino = undefined;
         location.hash = "#inicio";
       }
       return;
