@@ -30,3 +30,39 @@ describe.each(Object.keys(PAGINAS))("página %s", (id) => {
     raiz.remove();
   });
 });
+
+describe("página ia: fluxo de três telas", () => {
+  /** @param {Element} tela @param {string} key */
+  const tecla = (tela, key) =>
+    tela.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }));
+
+  it("abre um projeto, pula a transição, mostra o detalhe e volta à principal", async () => {
+    const { montar } = await PAGINAS.ia();
+    const raiz = document.createElement("div");
+    document.body.append(raiz);
+    const m = montar(raiz);
+    const tela = /** @type {Element} */ (raiz.querySelector(".pf-tela"));
+    const rotulos = () =>
+      [...raiz.querySelectorAll(".pf-t-zona")].map((z) =>
+        z.getAttribute("aria-label"),
+      );
+
+    expect(rotulos()).toContain("Abrir [projeto de IA 4]");
+    expect(raiz.querySelector('a[href="#inicio"]')).not.toBeNull();
+
+    tecla(tela, "3");
+    expect(rotulos()).toEqual([]);
+
+    tecla(tela, "x");
+    expect(rotulos()).toContain("Voltar para os projetos");
+    expect(raiz.querySelector('a[href="#inicio"]')).toBeNull();
+
+    tecla(tela, "v");
+    expect(raiz.querySelector('a[href="#inicio"]')).not.toBeNull();
+    for (const k of ["1", "2", "4", "Escape"]) tecla(tela, k);
+
+    m.destroy();
+    expect(raiz.childElementCount).toBe(0);
+    raiz.remove();
+  });
+});

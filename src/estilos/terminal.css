@@ -262,6 +262,19 @@
 }
 
 /* ia */
+.pf-ia-voo {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  font:
+    400 13px/16px "JetBrains Mono",
+    ui-monospace,
+    monospace;
+  font-variant-ligatures: none;
+  white-space: pre;
+  color: var(--tc2);
+}
 .pf-tema-ia {
   --tc0: #4f4c57;
   --tc1: #7fc8e0;
