@@ -1,0 +1,196 @@
+/* Telas em terminal (src/terminal): 766 px de largura, grade de 92 colunas por linhas de 16 px.
+   Cada página define a paleta das camadas (--tc0, --tc1...) na sua classe de tema. */
+
+.pf-palco {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--fundo);
+}
+.pf-escala {
+  position: relative;
+}
+.pf-tela {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 766px;
+  transform-origin: 0 0;
+  background: var(--fundo);
+  overflow: hidden;
+  font-family: var(--font-mono);
+}
+.pf-tela:focus-visible {
+  outline: 1px dashed var(--tc0);
+  outline-offset: -4px;
+}
+.pf-t-imagem {
+  position: absolute;
+  inset: 0;
+}
+.pf-t-svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+.pf-t-traco {
+  fill: none;
+  stroke-width: 1px;
+}
+.pf-t-forma {
+  stroke: none;
+}
+.pf-t-texto {
+  position: absolute;
+  left: 24px;
+  top: 20px;
+  margin: 0;
+  font:
+    400 13px/16px "JetBrains Mono",
+    ui-monospace,
+    monospace;
+  font-variant-ligatures: none;
+  white-space: pre;
+}
+.pf-t-texto.neg {
+  font-weight: 700;
+}
+.pf-t-texto.bri {
+  text-shadow: 0 0 6px var(--tbrilho);
+}
+.pf-t-linhas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.16) 0,
+    rgba(0, 0, 0, 0.16) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+.pf-t-zonas {
+  position: absolute;
+  inset: 0;
+}
+.pf-t-zona {
+  display: block;
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+}
+.pf-t-zona:hover {
+  background: var(--tzona);
+}
+.pf-t-zona:focus-visible {
+  outline: 2px solid var(--tc1);
+  outline-offset: 1px;
+}
+
+/* cor da camada k: texto, traço e forma */
+.c0 {
+  color: var(--tc0);
+  stroke: var(--tc0);
+  fill: var(--tc0);
+}
+.c1 {
+  color: var(--tc1);
+  stroke: var(--tc1);
+  fill: var(--tc1);
+}
+.c2 {
+  color: var(--tc2);
+  stroke: var(--tc2);
+  fill: var(--tc2);
+}
+.c3 {
+  color: var(--tc3);
+  stroke: var(--tc3);
+  fill: var(--tc3);
+}
+.c4 {
+  color: var(--tc4);
+  stroke: var(--tc4);
+  fill: var(--tc4);
+}
+.c5 {
+  color: var(--tc5);
+  stroke: var(--tc5);
+  fill: var(--tc5);
+}
+.c6 {
+  color: var(--tc6);
+  stroke: var(--tc6);
+  fill: var(--tc6);
+}
+.c7 {
+  color: var(--tc7);
+  stroke: var(--tc7);
+  fill: var(--tc7);
+}
+.c8 {
+  color: var(--tc8);
+  stroke: var(--tc8);
+  fill: var(--tc8);
+}
+.c9 {
+  color: var(--tc9);
+  stroke: var(--tc9);
+  fill: var(--tc9);
+}
+.c10 {
+  color: var(--tc10);
+  stroke: var(--tc10);
+  fill: var(--tc10);
+}
+.c11 {
+  color: var(--tc11);
+  stroke: var(--tc11);
+  fill: var(--tc11);
+}
+.c12 {
+  color: var(--tc12);
+  stroke: var(--tc12);
+  fill: var(--tc12);
+}
+.c13 {
+  color: var(--tc13);
+  stroke: var(--tc13);
+  fill: var(--tc13);
+}
+.c14 {
+  color: var(--tc14);
+  stroke: var(--tc14);
+  fill: var(--tc14);
+}
+.pf-t-traco[class*=" c"] {
+  fill: none;
+}
+.pf-t-forma[class*=" c"] {
+  stroke: none;
+}
+
+/* ferramentas: BBS de fósforo verde */
+.pf-tema-ferramentas {
+  --tc0: #3f5b3d;
+  --tc1: #8fd18a;
+  --tc2: #d3f5cf;
+  --tc3: #6f9a68;
+  --tc4: #f0b45a;
+  --tc5: #1e2e1d;
+  --tc6: #8fd18a;
+  --tc7: #b4eaa6;
+  --tc8: #7fc8e0;
+  --tc9: #263a25;
+  --tc10: #0c120c;
+  --tbrilho: rgba(143, 209, 138, 0.35);
+  --tzona: rgba(143, 209, 138, 0.16);
+}
