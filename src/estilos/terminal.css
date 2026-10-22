@@ -28,7 +28,8 @@
   top: 0;
   width: 766px;
   transform-origin: 0 0;
-  background: var(--fundo);
+  /* translúcida: o céu de caracteres da abertura aparece de leve por trás */
+  background: color-mix(in srgb, var(--fundo) 80%, transparent);
   overflow: hidden;
   font-family: var(--font-mono);
 }
