@@ -217,3 +217,24 @@
   --tbrilho: rgba(0, 0, 0, 0);
   --tzona: rgba(134, 217, 166, 0.14);
 }
+
+/* email */
+.pf-tema-email {
+  --tc0: #4f4c57;
+  --tc1: #f0b45a;
+  --tc2: #e8e6ec;
+  --tc3: #8c8993;
+  --tc4: #86d9a6;
+  --tc5: #1d1b20;
+  --tc6: #f0b45a;
+  --tc7: #7fa8d8;
+  --tc8: #e5716a;
+  --tc9: #bf904a;
+  --tc10: #926f3c;
+  --tc11: #664e2d;
+  --tc12: #3e3120;
+  --tc13: #f6dfb4;
+  --tc14: #8a4a46;
+  --tbrilho: rgba(0, 0, 0, 0);
+  --tzona: rgba(240, 180, 90, 0.14);
+}

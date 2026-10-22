@@ -8,6 +8,7 @@
 export const PAGINAS = {
   ferramentas: () => import("./ferramentas.js"),
   testes: () => import("./testes.js"),
+  email: () => import("./email.js"),
 };
 
 /**
