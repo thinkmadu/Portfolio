@@ -8,7 +8,7 @@ Site: https://thinkmadu.github.io/Portfolio/
 
 ## Situação
 
-Protótipo da página de abertura. Os links dos planetas ainda apontam para âncoras (`#github`, `#ia` e assim por diante) e as outras páginas não existem. `CartaoProjeto` e `BlocoFechado` estão prontos para as páginas de projeto, ainda sem uso.
+A abertura e cinco páginas em terminal estão no ar: sobre mim, IA, ferramentas, testes e e-mail, mais a transição entre elas. Os links dos planetas `(github)`, `(linkedin)`, `(dados)` e `(full-stack)` ainda apontam para âncoras, e a página de dados ainda não foi portada. As páginas em terminal estão só em português, e parte do conteúdo é provisório: as abas de sobre mim e de IA e os nomes das ferramentas e técnicas de testes ainda são marcadores entre colchetes. `CartaoProjeto` e `BlocoFechado` seguem prontos para as páginas de projeto, sem uso.
 
 ## Início rápido
 
@@ -71,6 +71,12 @@ src/sistema-solar/
   config.js                opções, padrões e montagem da configuração
   fundo.js                 campo de caracteres com semente
   index.js                 componente SistemaSolar (DOM, animação, destroy)
+src/terminal/
+  grade.js                 grade de 92 colunas em camadas: put, box, split, pintar, legenda
+  tela.js                  Cena e montarTela: camadas, zonas clicáveis, teclado, escala
+src/paginas/               índice por hash (#ferramentas) e uma cena por página em terminal
+  sobre.js, ia.js, ferramentas.js, testes.js, email.js
+src/transicao/index.js     campo de caracteres em onda entre uma página e outra
 src/ajustes/painel.js      painel de ajustes, carregado só ao clicar em (ajustes)
 src/componentes/           CartaoProjeto e BlocoFechado
 src/estilos/               tokens, fonte, base, componentes e painel
@@ -96,6 +102,14 @@ A frase de assinatura entra por último. Com o sistema já encaixado, `comAssina
 Valores de `npm run bench`, com a largura do caractere estimada em 0,6 da fonte e as larguras das palavras grandes medidas no Chrome; no navegador, 1340x690 deu 66,27px e 768x1024 deu 40px.
 
 O teste `tests/layout.test.js` compara o resultado com uma referência gerada pelo código anterior à refatoração (commit `273064e`): treze tamanhos de tela e cinco configurações, pelo SHA-256 do layout inteiro.
+
+## Páginas em terminal
+
+Cada página é uma cena sobre a grade de caracteres de `src/terminal`: 92 colunas de 7,8px por linhas de 16px, em camadas de cor. Letras saem como texto e caixas, blocos e setas saem como formas SVG, para a fonte não mudar o desenho. `montarTela` desenha a cena a 30 quadros por segundo (um quadro só com `prefers-reduced-motion`), cria uma zona clicável por botão ou link e encolhe a tela para caber na janela.
+
+As páginas abrem pelo hash da URL: `#sobre` (o sol), `#ia`, `#ferramentas`, `#testes` e `#email`, os mesmos destinos dos planetas. `v` ou `‹ voltar` leva à abertura (`#inicio`). Entre duas páginas, a transição roda antes; clique ou tecla pulam. Cada módulo de página carrega sob demanda.
+
+Para criar uma página: uma classe que estende `Cena` (`tick`, `teclar`, `quadro`) em `src/paginas/`, a paleta das camadas numa classe `pf-tema-*` em `src/estilos/terminal.css`, e uma linha em `src/paginas/index.js` e em `INFO` (`src/transicao/index.js`). As cenas foram portadas do quadro de design sem tipos (`// @ts-nocheck`); a tipagem fica para uma passada própria.
 
 ## Idiomas
 
