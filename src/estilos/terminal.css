@@ -19,6 +19,12 @@
   line-height: 1.17;
   --pf-fb: 0.11;
 }
+/* parado: cada estrela animada virava uma camada própria e o custo era constante (de 13% a 90%
+   de CPU na página de sobre); o céu fica igual, sem piscar */
+.pf-fundo-pagina .pf-tw {
+  animation: none;
+  opacity: 0.5;
+}
 .pf-escala {
   position: relative;
 }

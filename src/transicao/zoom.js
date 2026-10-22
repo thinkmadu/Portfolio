@@ -56,6 +56,7 @@ export function zoom({ inicio, paginas, centro, entrando }) {
 
   inicio.style.transformOrigin = `${O.x}px ${O.y}px`;
   inicio.style.willChange = "transform, opacity";
+  inicio.classList.add("pf-em-zoom");
   paginas.style.pointerEvents = "none";
   /** @type {KeyframeAnimationOptions} */
   const opcoes = { duration: DURACAO, easing: "linear", fill: "both" };
@@ -73,6 +74,7 @@ export function zoom({ inicio, paginas, centro, entrando }) {
       for (const a of animacoes) a.cancel();
       inicio.style.transformOrigin = "";
       inicio.style.willChange = "";
+      inicio.classList.remove("pf-em-zoom");
       paginas.style.pointerEvents = "";
     },
   };

@@ -314,3 +314,13 @@
   top: var(--space-3);
   z-index: 3;
 }
+
+/* durante o zoom da câmera o sombreado vira um borrão de mais de mil px: sem pulso nem brilho */
+.pf-em-zoom .pf-pl,
+.pf-em-zoom .pf-assina {
+  animation: none;
+  text-shadow: none;
+}
+.pf-em-zoom .pf-tw {
+  animation: none;
+}
