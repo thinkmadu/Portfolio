@@ -25,10 +25,13 @@ export const URL_PUBLICA = "https://thinkmadu.github.io/Portfolio/";
  */
 export function t(idioma, chave, vars) {
   const dic = DICIONARIOS[idioma] || pt;
-  const bruto = dic[chave] ?? pt[chave] ?? String(chave);
+  const bruto =
+    (Object.hasOwn(dic, chave) ? dic[chave] : undefined) ??
+    (Object.hasOwn(pt, chave) ? pt[chave] : undefined) ??
+    String(chave);
   if (!vars) return bruto;
   return bruto.replace(/\{(\w+)\}/g, (m, k) =>
-    k in vars ? String(vars[k]) : m,
+    Object.hasOwn(vars, k) ? String(vars[k]) : m,
   );
 }
 

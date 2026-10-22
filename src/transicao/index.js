@@ -306,10 +306,12 @@ function campo(A, B, de, para, dt, f) {
  * @returns {{ fim: Promise<void>, destroy(): void }}
  */
 export function transicao(raiz, de, para) {
-  const A = INFO[de];
-  const B = INFO[para];
-  if (!A || !B || de === para || movimentoReduzido())
+  const infoDe = Object.hasOwn(INFO, de) ? INFO[de] : undefined;
+  const infoPara = Object.hasOwn(INFO, para) ? INFO[para] : undefined;
+  if (!infoDe || !infoPara || de === para || movimentoReduzido())
     return { fim: Promise.resolve(), destroy() {} };
+  const A = infoDe;
+  const B = infoPara;
 
   const camadas = [0, 1, 2, 3].map((k) =>
     el("pre", {
