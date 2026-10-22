@@ -44,6 +44,9 @@
 .pf-t-forma {
   stroke: none;
 }
+.nitido .pf-t-forma {
+  shape-rendering: crispEdges;
+}
 .pf-t-texto {
   position: absolute;
   left: 24px;
@@ -194,4 +197,23 @@
   --tc10: #0c120c;
   --tbrilho: rgba(143, 209, 138, 0.35);
   --tzona: rgba(143, 209, 138, 0.16);
+}
+
+/* testes */
+.pf-tema-testes {
+  --tc0: #4f4c57;
+  --tc1: #86d9a6;
+  --tc2: #e8e6ec;
+  --tc3: #8c8993;
+  --tc4: #f0b45a;
+  --tc5: #1d1b20;
+  --tc6: #86d9a6;
+  --tc7: #7fc8e0;
+  --tc8: #e5716a;
+  --tc9: #6cad85;
+  --tc10: #558568;
+  --tc11: #3d5c4a;
+  --tc12: #283830;
+  --tbrilho: rgba(0, 0, 0, 0);
+  --tzona: rgba(134, 217, 166, 0.14);
 }

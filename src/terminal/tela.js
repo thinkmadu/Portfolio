@@ -21,6 +21,7 @@ import { LARGURA, MARGEM } from "./grade.js";
  * @property {number[]} [negrito] camadas em negrito
  * @property {number[]} [brilho] camadas com brilho de fósforo
  * @property {boolean} [linhas] linhas de varredura por cima
+ * @property {boolean} [nitido] formas de borda seca, para pixel art sem emendas
  * @property {number} [intervalo] ms entre quadros (padrão 33)
  * @property {string} aria descrição da página para leitor de tela
  * @property {string} descricao descrição da imagem
@@ -122,7 +123,7 @@ export function montarTela(raiz, cfg, cena) {
   const tela = el(
     "div",
     {
-      class: `pf-tela ${cfg.tema}`,
+      class: `pf-tela ${cfg.tema}${cfg.nitido ? " nitido" : ""}`,
       attrs: { tabindex: "0", "aria-label": cfg.aria },
       style: { height: cfg.altura + "px" },
     },
