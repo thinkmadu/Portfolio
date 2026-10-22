@@ -3,7 +3,7 @@
 // A cena decide o que cada quadro mostra; este arquivo só o põe na tela.
 
 import { el } from "../util/dom.js";
-import { LARGURA, MARGEM } from "./grade.js";
+import { CW, LARGURA, LH, MARGEM } from "./grade.js";
 import { PADRAO } from "../sistema-solar/config.js";
 import { campo } from "../sistema-solar/fundo.js";
 
@@ -219,19 +219,21 @@ export function montarTela(raiz, cfg, cena) {
       if (k[0] === "l") alvo.textContent = v;
       else alvo.setAttribute("d", v);
     }
+    // a estrutura (tipo, rótulo, destino) decide se os elementos são recriados; só a posição
+    // muda no quadro a quadro, e então os mesmos elementos são movidos (clique e foco não se perdem)
     const sig = JSON.stringify(
-      q.zonas.map((z) => [z.tipo, z.x, z.y, z.w, z.h, z.label, z.href, z.alvo]),
+      q.zonas.map((z) => [z.tipo, z.label, z.href, z.alvo]),
     );
+    const caixas = q.zonas.map((z) => ({
+      left: Math.round(MARGEM.x + z.x * CW) - 2 + "px",
+      top: MARGEM.y + z.y * LH + "px",
+      width: Math.round(z.w * CW) + 4 + "px",
+      height: (z.h ?? LH) + "px",
+    }));
     if (sig !== assinatura) {
       assinatura = sig;
       zonasEl.replaceChildren(
         ...q.zonas.map((z, i) => {
-          const pos = {
-            left: Math.round(MARGEM.x + z.x * 7.8) - 2 + "px",
-            top: MARGEM.y + z.y * 16 + "px",
-            width: Math.round(z.w * 7.8) + 4 + "px",
-            height: (z.h ?? 16) + "px",
-          };
           if (z.tipo === "a")
             return el("a", {
               class: "pf-t-zona",
@@ -241,25 +243,39 @@ export function montarTela(raiz, cfg, cena) {
                 rel: "noopener",
                 "aria-label": z.label,
               },
-              style: pos,
+              style: caixas[i],
             });
-          const b = el("button", {
+          return el("button", {
             class: "pf-t-zona",
             attrs: {
               type: "button",
               "aria-label": z.label,
               "data-z": String(i),
             },
-            style: pos,
+            style: caixas[i],
           });
-          return b;
         }),
       );
+      caixasAtuais = caixas;
+    } else {
+      q.zonas.forEach((_, i) => {
+        const e = /** @type {HTMLElement} */ (zonasEl.children[i]);
+        for (const k of /** @type {const} */ ([
+          "left",
+          "top",
+          "width",
+          "height",
+        ]))
+          if (caixas[i][k] !== caixasAtuais[i][k]) e.style[k] = caixas[i][k];
+      });
+      caixasAtuais = caixas;
     }
     zonasAtuais = q.zonas;
   }
   /** @type {Zona[]} */
   let zonasAtuais = [];
+  /** @type {Record<"left" | "top" | "width" | "height", string>[]} */
+  let caixasAtuais = [];
 
   zonasEl.addEventListener("click", (e) => {
     const b = /** @type {HTMLElement} */ (e.target).closest("button[data-z]");
