@@ -35,6 +35,7 @@ import {
   DICIONARIOS,
   aplicarDocumento,
   opcoesDoSistema,
+  t,
 } from "../src/i18n/index.js";
 import {
   CHAVE,
@@ -47,7 +48,11 @@ import {
   storageDe,
   urlComIdioma,
 } from "../src/i18n/idioma.js";
-import { el, esc } from "../src/util/dom.js";
+import { el, esc, hrefSeguro } from "../src/util/dom.js";
+import { transicao as transicaoDe } from "../src/transicao/index.js";
+
+// os testes da página de e-mail avançam segundos do relógio falso quadro a quadro
+vi.setConfig({ testTimeout: 30_000 });
 
 // fileURLToPath do Node: o URL global aqui é o do jsdom
 const raiz = fileURLToPath(new NodeURL("..", import.meta.url));
@@ -138,19 +143,22 @@ describe("CSP por meta no index.html", () => {
   });
 
   it("script, estilo, fonte, imagem e conexão só aceitam 'self'", () => {
-    expect(d["default-src"]).toEqual(["'self'"]);
-    for (const k of [
-      "script-src",
-      "style-src",
-      "font-src",
-      "img-src",
-      "connect-src",
-    ])
+    expect(d["default-src"]).toEqual(["'none'"]);
+    for (const k of ["script-src", "style-src", "font-src", "img-src"])
       expect(d[k], k).toEqual(["'self'"]);
   });
 
   it("object-src, base-uri e form-action são 'none'", () => {
-    for (const k of ["object-src", "base-uri", "form-action"])
+    for (const k of [
+      "object-src",
+      "base-uri",
+      "form-action",
+      "connect-src",
+      "frame-src",
+      "worker-src",
+      "manifest-src",
+      "media-src",
+    ])
       expect(d[k], k).toEqual(["'none'"]);
   });
 
@@ -481,6 +489,28 @@ describe("roteador: página inteira (src/main.js)", () => {
     expect(/** @type {any} */ (window).__xss).toBeUndefined();
   });
 
+  it("S-8: carga inicial em #pagina cujo chunk falha mostra a abertura", async () => {
+    vi.doMock("../src/paginas/index.js", async (original) => {
+      const m = /** @type {any} */ (await original());
+      return {
+        ...m,
+        PAGINAS: {
+          ...m.PAGINAS,
+          email: () => Promise.reject(new Error("off")),
+        },
+      };
+    });
+    try {
+      await abrir("/Portfolio/#email");
+      await esperar(50);
+      expect(location.hash).toBe("#inicio");
+      expect(document.querySelector(".pf-solar")).not.toBeNull();
+      expect(document.querySelectorAll(".pf-menu a").length).toBeGreaterThan(0);
+    } finally {
+      vi.doUnmock("../src/paginas/index.js");
+    }
+  });
+
   it("de uma página para um hash hostil, volta para a abertura", async () => {
     await abrir("/Portfolio/#email");
     await vi.waitFor(() =>
@@ -760,16 +790,40 @@ describe("página de e-mail", () => {
     for (const id of ids) expect(limpos).toHaveBeenCalledWith(id);
   });
 
-  // achados abertos (ver relatório)
-  it.todo(
-    "S-2: colar com CR/LF/controle no assunto e no nome não leva o caractere ao mailto",
-  );
-  it.todo(
-    "S-3: texto cortado no limite (ou apagado com Backspace) não deixa surrogate solto: encodeURIComponent não pode lançar",
-  );
-  it.todo(
-    "S-6: cola enorme é cortada antes de concatenar (hoje concatena e corta depois)",
-  );
+  it("S-2: CR e controles colados no assunto e no nome viram espaço; no corpo só sobra LF", () => {
+    const m = montar();
+    focarCampo(ASSUNTO);
+    colar("Oi\r\nCc: a@x\u0007");
+    focarCampo(MENSAGEM);
+    colar("linha1\r\nlinha2\rlinha3");
+    const u = new URL(/** @type {string} */ (enviarEPegarHref()));
+    const assunto = /** @type {string} */ (u.searchParams.get("subject"));
+    expect(assunto).not.toMatch(/\p{Cc}/u);
+    expect(assunto).toContain("Oi Cc: a@x");
+    expect(u.searchParams.get("body")).not.toContain("\r");
+    expect(u.searchParams.get("body")).toContain("linha1\nlinha2\nlinha3");
+    m.destroy();
+  });
+
+  it("S-3: cortar no limite ou apagar com Backspace não deixa surrogate solto", () => {
+    const m = montar();
+    focarCampo(MENSAGEM);
+    colar("a".repeat(599) + "\u{1F986}");
+    colar("\u{1F986}\u{1F986}"); // passa do limite: o corte é por ponto de código
+    expect(enviarEPegarHref()).not.toBeNull();
+    m.destroy();
+  });
+
+  it("S-3: Backspace depois de um emoji apaga o emoji inteiro", () => {
+    const m = montar();
+    focarCampo(MENSAGEM);
+    colar("oi \u{1F986}");
+    tecla("Backspace");
+    const u = new URL(/** @type {string} */ (enviarEPegarHref()));
+    expect(u.searchParams.get("body")).toContain("oi \n");
+    expect(u.searchParams.get("body")).not.toContain("\u{1F986}");
+    m.destroy();
+  });
 });
 
 // ---------------------------------------------------------------------------------------
@@ -896,8 +950,8 @@ describe("sumidouros em src/ (inventário fechado)", () => {
       txt.indexOf("enviando()"),
     );
     expect(corpo).toMatch(/"mailto:" \+\s*ENDERECO/);
-    expect(corpo).toMatch(/encodeURIComponent\(assunto\)/);
-    expect(corpo).toMatch(/encodeURIComponent\(corpo\)/);
+    expect(corpo).toMatch(/encodeURIComponent\(assunto\.toWellFormed\(\)\)/);
+    expect(corpo).toMatch(/encodeURIComponent\(corpo\.toWellFormed\(\)\)/);
   });
 
   it.each(["src/sistema-solar/index.js", "src/terminal/tela.js"])(
@@ -1079,10 +1133,68 @@ describe("links", () => {
     expect(h1.textContent).toBe(DICIONARIOS.en["doc.h1"]);
   });
 
-  // achados abertos (ver relatório)
-  it.todo(
-    "S-5: href de config ou dados (ia.js repo/demo, cartão de projeto) passa por allowlist de esquema (https:, mailto:, #) e _blank ganha noreferrer",
-  );
+  it("S-9: transicao e t() ignoram chaves herdadas do protótipo", async () => {
+    for (const chave of ["__proto__", "constructor", "toString"]) {
+      const tr = transicaoDe(document.createElement("div"), chave, "ia");
+      await tr.fim;
+      expect(t("pt", /** @type {any} */ (chave))).toBe(chave);
+      expect(t("pt", /** @type {any} */ ("sobre.x"), {})).toBeTypeOf("string");
+    }
+    expect(t("pt", /** @type {any} */ ("{constructor}"), { a: "x" })).toBe(
+      "{constructor}",
+    );
+  });
+
+  it("S-5: href passa por allowlist de esquema e a tela usa noreferrer", () => {
+    expect(hrefSeguro("https://github.com/x")).toBe("https://github.com/x");
+    expect(hrefSeguro("mailto:a@b.c")).toBe("mailto:a@b.c");
+    expect(hrefSeguro("#sobre")).toBe("#sobre");
+    expect(hrefSeguro("?lang=en")).toBe("?lang=en");
+    for (const ruim of [
+      "javascript:alert(1)",
+      "JaVaScRiPt:alert(1)",
+      "data:text/html,x",
+      "vbscript:x",
+      "http://x.y",
+      "blob:https://x.y/1",
+    ])
+      expect(hrefSeguro(ruim), ruim).toBe("#");
+    class Z extends Cena {
+      quadro() {
+        return {
+          camadas: {},
+          zonas: [
+            {
+              tipo: /** @type {const} */ ("a"),
+              x: 1,
+              y: 1,
+              w: 5,
+              label: "x",
+              href: "javascript:alert(1)",
+              alvo: "_blank",
+            },
+          ],
+        };
+      }
+    }
+    const caixa = document.createElement("div");
+    const m = montarTela(
+      caixa,
+      {
+        tema: "pf-tema-ia",
+        altura: 424,
+        camadas: 1,
+        ordemSvg: [],
+        aria: "x",
+        descricao: "x",
+      },
+      new Z(),
+    );
+    const a = caixa.querySelector("a.pf-t-zona");
+    expect(a?.getAttribute("href")).toBe("#");
+    expect(a?.getAttribute("rel")).toBe("noopener noreferrer");
+    m.destroy();
+  });
 });
 
 // ---------------------------------------------------------------------------------------
@@ -1269,10 +1381,23 @@ describe("ajustes lidos do localStorage (sol-v5) em src/main.js", () => {
     expect(so(montagens[0])).toEqual({ ...PADRAO });
   });
 
-  // achados abertos (ver relatório)
-  it.todo(
-    "S-1: números fora da faixa do painel (fonte 10..30, brilho 0..100, ...), NaN e Infinity são limitados ou ignorados ao ler sol-v5",
-  );
+  it("S-1: números fora da faixa são presos na faixa do painel", async () => {
+    await abrirCom('{"fonte":0.5,"brilho":1e5,"fundo":-9,"orbitas":1e9}');
+    expect(so(montagens[0])).toMatchObject({
+      fonte: 10,
+      brilho: 100,
+      fundo: 4,
+      orbitas: 200,
+    });
+  });
+
+  it("S-1: Infinity (1e999) é ignorado e vale o padrão", async () => {
+    await abrirCom('{"fonte":1e999,"seed":1e999}');
+    expect(so(montagens[0])).toMatchObject({
+      fonte: PADRAO.fonte,
+      seed: PADRAO.seed,
+    });
+  });
 });
 
 // ---------------------------------------------------------------------------------------
@@ -1519,11 +1644,9 @@ describe("cabeçalhos: o que a meta cobre e o que não cobre", () => {
     );
   });
 
-  // achados abertos (ver relatório)
-  it.todo(
-    'S-4: <meta name="referrer" content="no-referrer"> no index.html (vale por meta, ao contrário de X-Frame-Options e Permissions-Policy)',
-  );
-  it.todo(
-    "S-7: endurecer a CSP com frame-src, worker-src, manifest-src e media-src 'none' e connect-src 'none' (testado em Chromium sem violação)",
-  );
+  it("S-4: a política de referrer é no-referrer (vale por meta)", () => {
+    expect(ler("index.html")).toMatch(
+      /<meta\s+name="referrer"\s+content="no-referrer"\s*\/>/,
+    );
+  });
 });
