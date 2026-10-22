@@ -251,3 +251,16 @@
   --tbrilho: rgba(0, 0, 0, 0);
   --tzona: rgba(167, 157, 208, 0.16);
 }
+
+/* ia */
+.pf-tema-ia {
+  --tc0: #4f4c57;
+  --tc1: #7fc8e0;
+  --tc2: #e8e6ec;
+  --tc3: #8c8993;
+  --tc4: #f0b45a;
+  --tc5: #1d1b20;
+  --tc6: #7fc8e0;
+  --tbrilho: rgba(0, 0, 0, 0);
+  --tzona: rgba(127, 200, 224, 0.16);
+}
