@@ -209,13 +209,16 @@ export function montarTela(raiz, cfg, cena) {
   addEventListener("resize", ajustar);
 
   let assinatura = "";
+  /** Último valor escrito em cada camada: 75 a 99% das escritas de um quadro eram iguais. @type {Record<string, string>} */
+  const anterior = {};
   function desenhar() {
     const q = cena.quadro();
     cena.sujo = false;
     for (const k in q.camadas) {
       const v = q.camadas[k];
       const alvo = k[0] === "l" ? textos[k] : tracos[k];
-      if (!alvo) continue;
+      if (!alvo || anterior[k] === v) continue;
+      anterior[k] = v;
       if (k[0] === "l") alvo.textContent = v;
       else alvo.setAttribute("d", v);
     }
@@ -296,13 +299,19 @@ export function montarTela(raiz, cfg, cena) {
     ? 0
     : setInterval(() => {
         cena.tick();
-        desenhar();
+        // janela escondida: o relógio segue (a cena pode agir no tick), mas ninguém vê o quadro
+        if (!document.hidden) desenhar();
       }, cfg.intervalo ?? 33);
+  const aoVoltar = () => {
+    if (!document.hidden) desenhar();
+  };
+  document.addEventListener("visibilitychange", aoVoltar);
   tela.focus({ preventScroll: true });
 
   return {
     destroy() {
       clearInterval(timer);
+      document.removeEventListener("visibilitychange", aoVoltar);
       removeEventListener("resize", ajustar);
       soltarFundo();
       cena.desmontar();
