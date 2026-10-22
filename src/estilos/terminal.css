@@ -3,7 +3,8 @@
 
 .pf-palco {
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,9 +23,9 @@
   overflow: hidden;
   font-family: var(--font-mono);
 }
-.pf-tela:focus-visible {
-  outline: 1px dashed var(--tc0);
-  outline-offset: -4px;
+/* o foco fica na tela para o teclado; quem recebe o contorno são as zonas */
+.pf-tela:focus {
+  outline: none;
 }
 .pf-t-imagem {
   position: absolute;

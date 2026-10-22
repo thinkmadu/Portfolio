@@ -55,6 +55,11 @@ export class Cena {
 
 const NS = "http://www.w3.org/2000/svg";
 
+/** A pessoa pediu menos movimento? As cenas mostram o estado final. */
+export const movimentoReduzido = () =>
+  typeof matchMedia === "function" &&
+  matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 /**
  * Monta a tela em `raiz` e devolve `destroy`.
  * @param {HTMLElement} raiz
@@ -203,7 +208,7 @@ export function montarTela(raiz, cfg, cena) {
 
   cena.montar();
   desenhar();
-  const parado = matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const parado = movimentoReduzido();
   const timer = parado
     ? 0
     : setInterval(() => {
