@@ -347,9 +347,9 @@ class Email extends Cena {
       "mailto:" +
       ENDERECO +
       "?subject=" +
-      encodeURIComponent(assunto) +
+      encodeURIComponent(assunto.toWellFormed()) +
       "&body=" +
-      encodeURIComponent(corpo)
+      encodeURIComponent(corpo.toWellFormed())
     );
   }
   enviando() {
@@ -413,7 +413,7 @@ class Email extends Cena {
     const antes =
       (s.assunto || "") + " " + (s.msg || "") + " " + (s.nome || "");
     let v = fn(s[chave] || "");
-    if (v.length > lim) v = v.slice(0, lim);
+    if (v.length > lim) v = [...v].slice(0, lim).join("");
     const novo = {};
     novo[chave] = v;
     const depois =
@@ -465,7 +465,7 @@ class Email extends Cena {
     }
     if (e.key === "Backspace") {
       e.preventDefault();
-      this.edita((v) => v.slice(0, -1));
+      this.edita((v) => [...v].slice(0, -1).join(""));
       return;
     }
     if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
@@ -482,7 +482,9 @@ class Email extends Cena {
       this.edita(
         (v) =>
           v +
-          ((s.campo == null ? 2 : s.campo) === 2 ? t : t.replace(/\n/g, " ")),
+          ((s.campo == null ? 2 : s.campo) === 2
+            ? t.replace(/\r\n?/g, "\n")
+            : t.replace(/\p{Cc}+/gu, " ")),
       );
     }
   }

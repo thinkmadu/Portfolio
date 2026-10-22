@@ -8,7 +8,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--fundo);
+  background: linear-gradient(180deg, var(--fundo-topo), var(--fundo-base));
+}
+/* o mesmo céu de caracteres da abertura, atrás da tela */
+.pf-fundo-pagina {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  line-height: 1.17;
+  --pf-fb: 0.11;
+}
+/* só uma de cada três estrelas pisca: cada estrela animada em `opacity` vira uma camada própria,
+   e com todas elas a página de sobre foi de 13% para 90% de CPU (raster em software) */
+.pf-fundo-pagina .pf-tw:not(:nth-child(3n)) {
+  animation: none;
+  opacity: 0.3;
 }
 .pf-escala {
   position: relative;
@@ -19,7 +34,8 @@
   top: 0;
   width: 766px;
   transform-origin: 0 0;
-  background: var(--fundo);
+  /* translúcida: o céu de caracteres da abertura aparece de leve por trás */
+  background: color-mix(in srgb, var(--fundo) 80%, transparent);
   overflow: hidden;
   font-family: var(--font-mono);
 }
@@ -253,6 +269,19 @@
 }
 
 /* ia */
+.pf-ia-voo {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  font:
+    400 13px/16px "JetBrains Mono",
+    ui-monospace,
+    monospace;
+  font-variant-ligatures: none;
+  white-space: pre;
+  color: var(--tc2);
+}
 .pf-tema-ia {
   --tc0: #4f4c57;
   --tc1: #7fc8e0;

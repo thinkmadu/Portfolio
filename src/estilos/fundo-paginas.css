@@ -1,0 +1,16 @@
+/* Brilho do fundo de cada página, na cor da própria página (a mesma do início, em tokens.css). */
+.pf-palco.pf-tema-ferramentas {
+  --halo: rgba(143, 209, 138, 0.18);
+}
+.pf-palco.pf-tema-testes {
+  --halo: rgba(240, 180, 90, 0.16);
+}
+.pf-palco.pf-tema-email {
+  --halo: rgba(232, 160, 140, 0.18);
+}
+.pf-palco.pf-tema-sobre {
+  --halo: rgba(201, 167, 214, 0.2);
+}
+.pf-palco.pf-tema-ia {
+  --halo: rgba(127, 200, 224, 0.2);
+}

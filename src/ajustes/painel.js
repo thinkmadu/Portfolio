@@ -1,6 +1,7 @@
 // Painel de ajustes do fundo: ferramenta de teste da Madu, carregada só quando (ajustes) é clicado.
 
 import { el } from "../util/dom.js";
+import { FAIXA } from "../sistema-solar/config.js";
 
 /** @typedef {import('../sistema-solar/config.js').Ajustes} Ajustes */
 /** @typedef {import('../i18n/index.js').Chave} Chave */
@@ -8,11 +9,11 @@ import { el } from "../util/dom.js";
 
 /** @type {[keyof Ajustes, Chave, number, number, number][]} */
 const CONTROLES = [
-  ["fundo", "painel.fundo", 4, 60, 1],
-  ["brilho", "painel.brilho", 0, 100, 1],
-  ["orbitas", "painel.orbitas", 0, 200, 5],
-  ["meteoros", "painel.meteoros", 0, 100, 1],
-  ["fonte", "painel.fonte", 10, 30, 1],
+  ["fundo", "painel.fundo", ...FAIXA.fundo, 1],
+  ["brilho", "painel.brilho", ...FAIXA.brilho, 1],
+  ["orbitas", "painel.orbitas", ...FAIXA.orbitas, 5],
+  ["meteoros", "painel.meteoros", ...FAIXA.meteoros, 1],
+  ["fonte", "painel.fonte", ...FAIXA.fonte, 1],
 ];
 
 /**

@@ -109,6 +109,8 @@ Cada página é uma cena sobre a grade de caracteres de `src/terminal`: 92 colun
 
 As páginas abrem pelo hash da URL: `#sobre` (o sol), `#ia`, `#ferramentas`, `#testes` e `#email`, os mesmos destinos dos planetas. `v` ou `‹ voltar` leva à abertura (`#inicio`). Entre duas páginas, a transição roda antes; clique ou tecla pulam. Cada módulo de página carrega sob demanda.
 
+A página de IA (`src/paginas/ia.js`) é um fluxo de três telas numa só cena: a principal, com o robô-pato e os quatro projetos do GitHub (clique, foco ou teclas 1 a 4); a transição, em que o texto do projeto vira os nós de uma rede neural (qualquer tecla ou clique pula); e o detalhe, com a rede em quatro colunas (linguagem, ferramentas, conceitos, resultados) em que o ponteiro ou o foco num nó acende o caminho. `v` ou `Esc` volta uma tela, e na principal leva ao `#inicio`. Os nomes dos projetos e a rede do detalhe são placeholders no topo do arquivo (`PROJETOS`, `COLS3`); `repo` e `demo` de cada projeto viram links quando preenchidos. As letras em voo da transição andam em pixels, fora da grade, em elementos reaproveitados por cima da imagem.
+
 Para criar uma página: uma classe que estende `Cena` (`tick`, `teclar`, `quadro`) em `src/paginas/`, a paleta das camadas numa classe `pf-tema-*` em `src/estilos/terminal.css`, e uma linha em `src/paginas/index.js` e em `INFO` (`src/transicao/index.js`). As cenas foram portadas do quadro de design sem tipos (`// @ts-nocheck`); a tipagem fica para uma passada própria.
 
 ## Idiomas
@@ -144,6 +146,10 @@ Em inglês, os 13 tamanhos de referência encaixam como em português. A única 
 ## Publicação
 
 O workflow `.github/workflows/pages.yml` roda lint, tipos, testes e build em todo push e PR, e publica `dist/` no GitHub Pages a partir da `main`. Ele exige, em Settings > Pages, a origem "GitHub Actions".
+
+## Segurança e desempenho
+
+As regras, os orçamentos e as pendências estão em [docs/seguranca-e-desempenho.md](docs/seguranca-e-desempenho.md). Os testes de segurança ficam em `tests/seguranca.test.js`.
 
 ## Decisões
 

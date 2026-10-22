@@ -2,8 +2,10 @@
 // (30 quadros por segundo, ou um quadro só com movimento reduzido), das zonas clicáveis e do teclado.
 // A cena decide o que cada quadro mostra; este arquivo só o põe na tela.
 
-import { el } from "../util/dom.js";
-import { LARGURA, MARGEM } from "./grade.js";
+import { el, hrefSeguro } from "../util/dom.js";
+import { CW, LARGURA, LH, MARGEM } from "./grade.js";
+import { PADRAO } from "../sistema-solar/config.js";
+import { campo } from "../sistema-solar/fundo.js";
 
 /** @typedef {import("./grade.js").Camadas} Camadas */
 /**
@@ -55,6 +57,64 @@ export class Cena {
 }
 
 const NS = "http://www.w3.org/2000/svg";
+
+/**
+ * Fundo das páginas: o mesmo campo de caracteres da abertura (mesma semente e corpo de fonte),
+ * com o brilho no centro da tela, refeito quando a janela muda de tamanho.
+ * @param {HTMLElement} fundo
+ * @returns {() => void} remove o que foi ligado
+ */
+function fundoDePagina(fundo) {
+  const halo = el("div", {
+    class: "pf-halo",
+    attrs: { "aria-hidden": "true" },
+  });
+  const campoEl = el("pre", {
+    class: "pf-field",
+    attrs: { "aria-hidden": "true" },
+  });
+  fundo.append(halo, campoEl);
+  const fs = PADRAO.fonte;
+  campoEl.style.fontSize = fs + "px";
+  const cw = fs * 0.6;
+  const lh = fs * 1.17;
+  function desenhar() {
+    const W = innerWidth;
+    const H = innerHeight;
+    const Cv = Math.max(24, Math.floor(W / cw));
+    const Rv = Math.max(10, Math.floor(H / lh));
+    const { html, piscadas } = campo({
+      C: Cv + 2,
+      R: Rv + 2,
+      Cv,
+      seed: PADRAO.seed,
+      sois: [{ x: W / 2 / cw, y: H / 2 / lh }],
+    });
+    // só caracteres escapados e classes; atraso e duração das piscadas entram por CSSOM
+    campoEl.innerHTML = html;
+    campoEl.querySelectorAll(".pf-tw").forEach((e, i) => {
+      const st = /** @type {HTMLElement} */ (e).style;
+      st.animationDelay = piscadas[i].atraso;
+      st.animationDuration = piscadas[i].duracao;
+    });
+    const r = Math.hypot(W, H) * 0.42;
+    halo.style.left = W / 2 - r + "px";
+    halo.style.top = H / 2 - r + "px";
+    halo.style.width = halo.style.height = r * 2 + "px";
+  }
+  desenhar();
+  /** @type {ReturnType<typeof setTimeout> | undefined} */
+  let espera;
+  const aoRedimensionar = () => {
+    clearTimeout(espera);
+    espera = setTimeout(desenhar, 120);
+  };
+  addEventListener("resize", aoRedimensionar);
+  return () => {
+    clearTimeout(espera);
+    removeEventListener("resize", aoRedimensionar);
+  };
+}
 
 /** A pessoa pediu menos movimento? As cenas mostram o estado final. */
 export const movimentoReduzido = () =>
@@ -130,11 +190,17 @@ export function montarTela(raiz, cfg, cena) {
     [imagem, zonasEl],
   );
   const escala = el("div", { class: "pf-escala" }, [tela]);
-  const palco = el("div", { class: "pf-palco" }, [escala]);
+  const fundo = el("div", {
+    class: "pf-fundo-pagina",
+    attrs: { "aria-hidden": "true" },
+  });
+  const palco = el("div", { class: `pf-palco ${cfg.tema}` }, [fundo, escala]);
   raiz.replaceChildren(palco);
+  const soltarFundo = fundoDePagina(fundo);
 
   function ajustar() {
-    const k = Math.min(1, innerWidth / LARGURA, innerHeight / cfg.altura);
+    // preenche a janela inteira, sem passar da proporção da tela
+    const k = Math.min(innerWidth / LARGURA, innerHeight / cfg.altura);
     escala.style.width = LARGURA * k + "px";
     escala.style.height = cfg.altura * k + "px";
     tela.style.transform = `scale(${k})`;
@@ -143,57 +209,76 @@ export function montarTela(raiz, cfg, cena) {
   addEventListener("resize", ajustar);
 
   let assinatura = "";
+  /** Último valor escrito em cada camada: 75 a 99% das escritas de um quadro eram iguais. @type {Record<string, string>} */
+  const anterior = {};
   function desenhar() {
     const q = cena.quadro();
     cena.sujo = false;
     for (const k in q.camadas) {
       const v = q.camadas[k];
       const alvo = k[0] === "l" ? textos[k] : tracos[k];
-      if (!alvo) continue;
+      if (!alvo || anterior[k] === v) continue;
+      anterior[k] = v;
       if (k[0] === "l") alvo.textContent = v;
       else alvo.setAttribute("d", v);
     }
+    // a estrutura (tipo, rótulo, destino) decide se os elementos são recriados; só a posição
+    // muda no quadro a quadro, e então os mesmos elementos são movidos (clique e foco não se perdem)
     const sig = JSON.stringify(
-      q.zonas.map((z) => [z.tipo, z.x, z.y, z.w, z.h, z.label, z.href, z.alvo]),
+      q.zonas.map((z) => [z.tipo, z.label, z.href, z.alvo]),
     );
+    const caixas = q.zonas.map((z) => ({
+      left: Math.round(MARGEM.x + z.x * CW) - 2 + "px",
+      top: MARGEM.y + z.y * LH + "px",
+      width: Math.round(z.w * CW) + 4 + "px",
+      height: (z.h ?? LH) + "px",
+    }));
     if (sig !== assinatura) {
       assinatura = sig;
       zonasEl.replaceChildren(
         ...q.zonas.map((z, i) => {
-          const pos = {
-            left: Math.round(MARGEM.x + z.x * 7.8) - 2 + "px",
-            top: MARGEM.y + z.y * 16 + "px",
-            width: Math.round(z.w * 7.8) + 4 + "px",
-            height: (z.h ?? 16) + "px",
-          };
           if (z.tipo === "a")
             return el("a", {
               class: "pf-t-zona",
               attrs: {
-                href: z.href || "#",
+                href: hrefSeguro(z.href || "#"),
                 target: z.alvo || "_self",
-                rel: "noopener",
+                rel: "noopener noreferrer",
                 "aria-label": z.label,
               },
-              style: pos,
+              style: caixas[i],
             });
-          const b = el("button", {
+          return el("button", {
             class: "pf-t-zona",
             attrs: {
               type: "button",
               "aria-label": z.label,
               "data-z": String(i),
             },
-            style: pos,
+            style: caixas[i],
           });
-          return b;
         }),
       );
+      caixasAtuais = caixas;
+    } else {
+      q.zonas.forEach((_, i) => {
+        const e = /** @type {HTMLElement} */ (zonasEl.children[i]);
+        for (const k of /** @type {const} */ ([
+          "left",
+          "top",
+          "width",
+          "height",
+        ]))
+          if (caixas[i][k] !== caixasAtuais[i][k]) e.style[k] = caixas[i][k];
+      });
+      caixasAtuais = caixas;
     }
     zonasAtuais = q.zonas;
   }
   /** @type {Zona[]} */
   let zonasAtuais = [];
+  /** @type {Record<"left" | "top" | "width" | "height", string>[]} */
+  let caixasAtuais = [];
 
   zonasEl.addEventListener("click", (e) => {
     const b = /** @type {HTMLElement} */ (e.target).closest("button[data-z]");
@@ -214,14 +299,21 @@ export function montarTela(raiz, cfg, cena) {
     ? 0
     : setInterval(() => {
         cena.tick();
-        desenhar();
+        // janela escondida: o relógio segue (a cena pode agir no tick), mas ninguém vê o quadro
+        if (!document.hidden) desenhar();
       }, cfg.intervalo ?? 33);
+  const aoVoltar = () => {
+    if (!document.hidden) desenhar();
+  };
+  document.addEventListener("visibilitychange", aoVoltar);
   tela.focus({ preventScroll: true });
 
   return {
     destroy() {
       clearInterval(timer);
+      document.removeEventListener("visibilitychange", aoVoltar);
       removeEventListener("resize", ajustar);
+      soltarFundo();
       cena.desmontar();
       raiz.replaceChildren();
     },

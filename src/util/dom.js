@@ -30,3 +30,16 @@ export function esc(s) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 }
+
+/**
+ * Só deixa passar destino https:, mailto: ou relativo (hash, caminho); o resto vira "#".
+ * @param {string} href
+ */
+export function hrefSeguro(href) {
+  try {
+    const { protocol } = new URL(href, "https://x.invalid/");
+    return protocol === "https:" || protocol === "mailto:" ? href : "#";
+  } catch {
+    return "#";
+  }
+}

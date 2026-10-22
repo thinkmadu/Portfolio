@@ -85,6 +85,22 @@ const BLOCOS = /** @type {Record<string, [number, number]>} */ ({
   "█": [0, 16],
 });
 
+/** @type {Map<string, boolean>} */
+const ehForma = new Map();
+/**
+ * O caractere vira forma no SVG (traço, bloco ou círculo)? Os comuns só ficam no texto, e
+ * perguntar uma vez por caractere evita montar caminhos que seriam descartados.
+ * @param {string} c
+ */
+function viraForma(c) {
+  let v = ehForma.get(c);
+  if (v === undefined) {
+    v = c === "•" || c in BLOCOS || !!tracado(c, 0, 0);
+    ehForma.set(c, v);
+  }
+  return v;
+}
+
 /**
  * Traço do caractere dentro da célula em (X, Y), ou null se for texto comum.
  * @param {string} c
@@ -207,8 +223,8 @@ export function criarGrade({ linhas: H, camadas: NL }) {
         let row = "";
         for (let x = 0; x < W; x++) {
           const c = g[k][y][x];
-          if (c === " ") {
-            row += " ";
+          if (c === " " || !viraForma(c)) {
+            row += c;
             continue;
           }
           const X = x * CW;

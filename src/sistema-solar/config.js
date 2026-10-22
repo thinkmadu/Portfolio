@@ -53,6 +53,17 @@ const OUT_START = 130;
  */
 
 /** Configuração da Madu (decisão de 20/10/2026). @type {Readonly<Ajustes>} */
+/** Faixa válida de cada ajuste: vale para o painel e para o que vem do armazenamento do navegador. */
+/** @type {Readonly<Record<"fundo" | "brilho" | "orbitas" | "meteoros" | "fonte" | "seed", readonly [number, number]>>} */
+export const FAIXA = Object.freeze({
+  fundo: [4, 60],
+  brilho: [0, 100],
+  orbitas: [0, 200],
+  meteoros: [0, 100],
+  fonte: [10, 30],
+  seed: [0, 1e6],
+});
+
 export const PADRAO = Object.freeze({
   fundo: 11,
   brilho: 49,
