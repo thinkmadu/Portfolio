@@ -238,3 +238,16 @@
   --tbrilho: rgba(0, 0, 0, 0);
   --tzona: rgba(240, 180, 90, 0.14);
 }
+
+/* sobre */
+.pf-tema-sobre {
+  --tc0: #4f4c57;
+  --tc1: #a79dd0;
+  --tc2: #e8e6ec;
+  --tc3: #8c8993;
+  --tc4: #f0b45a;
+  --tc5: #1d1b20;
+  --tc6: #a79dd0;
+  --tbrilho: rgba(0, 0, 0, 0);
+  --tzona: rgba(167, 157, 208, 0.16);
+}

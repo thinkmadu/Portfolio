@@ -6,6 +6,7 @@
 
 /** @type {Record<string, () => Promise<{ montar: Montar }>>} */
 export const PAGINAS = {
+  sobre: () => import("./sobre.js"),
   ferramentas: () => import("./ferramentas.js"),
   testes: () => import("./testes.js"),
   email: () => import("./email.js"),
