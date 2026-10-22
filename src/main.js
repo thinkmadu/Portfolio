@@ -116,6 +116,8 @@ function montar() {
 /** Id da página em terminal aberta agora, ou null na abertura. @type {string | null} */
 let aberta = null;
 let versao = 0;
+/** Último destino pedido; difere de `aberta` enquanto a página carrega ou a transição roda. @type {string | null | undefined} */
+let destino;
 let primeira = true;
 /** Camada onde as páginas em terminal são montadas, por cima da abertura. */
 const camadaPaginas = /** @type {HTMLElement} */ (
@@ -145,11 +147,26 @@ function assentar() {
  */
 async function mostrar() {
   const id = paginaDoHash(location.hash);
+  // pedir de novo o mesmo destino (hash repetido, placeholder) não interrompe o que está em curso
+  if (id === destino) return;
+  destino = id;
   const minha = ++versao;
-  if (id === aberta && (id ? pagina : inst)) return;
   assentar();
   const de = aberta;
-  const modulo = id ? await PAGINAS[id]() : null;
+  /** @type {Awaited<ReturnType<(typeof PAGINAS)[keyof typeof PAGINAS]>> | null} */
+  let modulo = null;
+  if (id) {
+    try {
+      modulo = await PAGINAS[id]();
+    } catch {
+      // módulo que não carrega (sem rede): volta para a abertura em vez de deixar a tela vazia
+      if (minha === versao) {
+        destino = aberta;
+        location.hash = "#inicio";
+      }
+      return;
+    }
+  }
   if (minha !== versao) return;
 
   const animar = !primeira;
@@ -216,7 +233,7 @@ raiz.addEventListener("pointerover", (e) => {
   const id = a
     ? paginaDoHash(new URL(a.getAttribute("href") || "", "http://x/").hash)
     : null;
-  if (id) PAGINAS[id]();
+  if (id) PAGINAS[id]().catch(() => {});
 });
 
 aplicarDocumento(document, idioma);
