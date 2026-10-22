@@ -4,6 +4,8 @@
 
 import { el } from "../util/dom.js";
 import { LARGURA, MARGEM } from "./grade.js";
+import { PADRAO } from "../sistema-solar/config.js";
+import { campo } from "../sistema-solar/fundo.js";
 
 /** @typedef {import("./grade.js").Camadas} Camadas */
 /**
@@ -55,6 +57,64 @@ export class Cena {
 }
 
 const NS = "http://www.w3.org/2000/svg";
+
+/**
+ * Fundo das páginas: o mesmo campo de caracteres da abertura (mesma semente e corpo de fonte),
+ * com o brilho no centro da tela, refeito quando a janela muda de tamanho.
+ * @param {HTMLElement} fundo
+ * @returns {() => void} remove o que foi ligado
+ */
+function fundoDePagina(fundo) {
+  const halo = el("div", {
+    class: "pf-halo",
+    attrs: { "aria-hidden": "true" },
+  });
+  const campoEl = el("pre", {
+    class: "pf-field",
+    attrs: { "aria-hidden": "true" },
+  });
+  fundo.append(halo, campoEl);
+  const fs = PADRAO.fonte;
+  campoEl.style.fontSize = fs + "px";
+  const cw = fs * 0.6;
+  const lh = fs * 1.17;
+  function desenhar() {
+    const W = innerWidth;
+    const H = innerHeight;
+    const Cv = Math.max(24, Math.floor(W / cw));
+    const Rv = Math.max(10, Math.floor(H / lh));
+    const { html, piscadas } = campo({
+      C: Cv + 2,
+      R: Rv + 2,
+      Cv,
+      seed: PADRAO.seed,
+      sois: [{ x: W / 2 / cw, y: H / 2 / lh }],
+    });
+    // só caracteres escapados e classes; atraso e duração das piscadas entram por CSSOM
+    campoEl.innerHTML = html;
+    campoEl.querySelectorAll(".pf-tw").forEach((e, i) => {
+      const st = /** @type {HTMLElement} */ (e).style;
+      st.animationDelay = piscadas[i].atraso;
+      st.animationDuration = piscadas[i].duracao;
+    });
+    const r = Math.hypot(W, H) * 0.42;
+    halo.style.left = W / 2 - r + "px";
+    halo.style.top = H / 2 - r + "px";
+    halo.style.width = halo.style.height = r * 2 + "px";
+  }
+  desenhar();
+  /** @type {ReturnType<typeof setTimeout> | undefined} */
+  let espera;
+  const aoRedimensionar = () => {
+    clearTimeout(espera);
+    espera = setTimeout(desenhar, 120);
+  };
+  addEventListener("resize", aoRedimensionar);
+  return () => {
+    clearTimeout(espera);
+    removeEventListener("resize", aoRedimensionar);
+  };
+}
 
 /** A pessoa pediu menos movimento? As cenas mostram o estado final. */
 export const movimentoReduzido = () =>
@@ -130,11 +190,17 @@ export function montarTela(raiz, cfg, cena) {
     [imagem, zonasEl],
   );
   const escala = el("div", { class: "pf-escala" }, [tela]);
-  const palco = el("div", { class: "pf-palco" }, [escala]);
+  const fundo = el("div", {
+    class: "pf-fundo-pagina",
+    attrs: { "aria-hidden": "true" },
+  });
+  const palco = el("div", { class: `pf-palco ${cfg.tema}` }, [fundo, escala]);
   raiz.replaceChildren(palco);
+  const soltarFundo = fundoDePagina(fundo);
 
   function ajustar() {
-    const k = Math.min(1, innerWidth / LARGURA, innerHeight / cfg.altura);
+    // preenche a janela inteira, sem passar da proporção da tela
+    const k = Math.min(innerWidth / LARGURA, innerHeight / cfg.altura);
     escala.style.width = LARGURA * k + "px";
     escala.style.height = cfg.altura * k + "px";
     tela.style.transform = `scale(${k})`;
@@ -222,6 +288,7 @@ export function montarTela(raiz, cfg, cena) {
     destroy() {
       clearInterval(timer);
       removeEventListener("resize", ajustar);
+      soltarFundo();
       cena.desmontar();
       raiz.replaceChildren();
     },
