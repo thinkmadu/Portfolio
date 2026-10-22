@@ -147,6 +147,10 @@ Em inglês, os 13 tamanhos de referência encaixam como em português. A única 
 
 O workflow `.github/workflows/pages.yml` roda lint, tipos, testes e build em todo push e PR, e publica `dist/` no GitHub Pages a partir da `main`. Ele exige, em Settings > Pages, a origem "GitHub Actions".
 
+## Segurança e desempenho
+
+As regras, os orçamentos e as pendências estão em [docs/seguranca-e-desempenho.md](docs/seguranca-e-desempenho.md). Os testes de segurança ficam em `tests/seguranca.test.js`.
+
 ## Decisões
 
 - **Sem dependência em tempo de execução.** O site é JavaScript puro; Vite, ESLint, Prettier, Vitest, jsdom e TypeScript são só de desenvolvimento.
