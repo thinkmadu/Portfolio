@@ -1,0 +1,98 @@
+/* Transição entre páginas (src/transicao): campo de caracteres em onda com degradê de cor. */
+
+.pf-tr-palco {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--fundo);
+  cursor: pointer;
+}
+.pf-tr-cena {
+  position: relative;
+  width: 766px;
+  height: 460px;
+  max-width: 100vw;
+  overflow: hidden;
+  font-family: var(--font-mono);
+}
+.pf-tr-imagem {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 766px;
+  height: 460px;
+  -webkit-mask-image: radial-gradient(
+    ellipse 62% 70% at 50% 47%,
+    black 45%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 62% 70% at 50% 47%,
+    black 45%,
+    transparent 100%
+  );
+}
+.pf-tr-campo {
+  position: absolute;
+  left: 24px;
+  top: 44px;
+  margin: 0;
+  font:
+    400 13px/16px "JetBrains Mono",
+    ui-monospace,
+    monospace;
+  font-variant-ligatures: none;
+  white-space: pre;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.pf-tr-l0 {
+  opacity: 0.3;
+}
+.pf-tr-l1 {
+  opacity: 0.55;
+}
+.pf-tr-l2 {
+  opacity: 0.9;
+}
+.pf-tr-l3 {
+  opacity: 0.75;
+  font-weight: 700;
+}
+.pf-tr-titulo,
+.pf-tr-legenda {
+  position: absolute;
+  left: 0;
+  width: 766px;
+  text-align: center;
+  white-space: pre;
+  font-variant-ligatures: none;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.pf-tr-titulo {
+  top: 180px;
+  height: 44px;
+  font: 700 36px/44px var(--font-mono);
+  filter: drop-shadow(0 0 10px var(--fundo)) drop-shadow(0 0 4px var(--fundo));
+}
+.pf-tr-legenda {
+  top: 230px;
+  height: 22px;
+  font: 400 14px/22px var(--font-mono);
+  filter: drop-shadow(0 0 8px var(--fundo));
+}
+.pf-tr-aviso {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}

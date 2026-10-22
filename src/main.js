@@ -3,6 +3,8 @@
 
 import { SistemaSolar } from "./sistema-solar/index.js";
 import { PADRAO } from "./sistema-solar/config.js";
+import { PAGINAS, paginaDoHash } from "./paginas/index.js";
+import { transicao } from "./transicao/index.js";
 import { aplicarDocumento, opcoesDoSistema, t } from "./i18n/index.js";
 import {
   CHAVE_ANTIGA,
@@ -110,5 +112,48 @@ function montar() {
   if (painel) painel.then((p) => p.atualizar());
 }
 
+/** Id da página em terminal aberta agora, ou null na abertura. @type {string | null} */
+let aberta = null;
+let versao = 0;
+let primeira = true;
+/** @type {{ destroy(): void } | null} */
+let emTransicao = null;
+
+/**
+ * Abre a página do hash: a abertura (sistema solar) ou uma das páginas em terminal.
+ * Entre duas páginas, o campo de caracteres da transição roda antes (clique ou tecla pula).
+ */
+async function mostrar() {
+  const id = paginaDoHash(location.hash);
+  if (id === aberta && (id || inst)) return;
+  const de = aberta ?? "inicio";
+  aberta = id;
+  const minha = ++versao;
+  emTransicao?.destroy();
+  emTransicao = null;
+  if (inst) inst.destroy();
+  inst = null;
+  // o módulo da página carrega enquanto a transição roda
+  const carregando = id ? PAGINAS[id]() : null;
+  if (!primeira) {
+    const tr = transicao(raiz, de, id ?? "inicio");
+    emTransicao = tr;
+    await tr.fim;
+    if (minha !== versao) return;
+    tr.destroy();
+    emTransicao = null;
+  }
+  primeira = false;
+  if (!id) {
+    montar();
+    return;
+  }
+  const { montar: montarPagina } =
+    await /** @type {NonNullable<typeof carregando>} */ (carregando);
+  if (minha !== versao) return;
+  inst = montarPagina(raiz);
+}
+
 aplicarDocumento(document, idioma);
-montar();
+addEventListener("hashchange", mostrar);
+mostrar();
