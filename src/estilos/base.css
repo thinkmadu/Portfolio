@@ -25,3 +25,13 @@ body {
 #root .pf-solar-sky {
   border-radius: 0;
 }
+
+/* Camada das páginas em terminal: por cima da abertura, que fica por baixo durante o zoom. */
+#paginas {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+}
+#paginas:empty {
+  display: none;
+}

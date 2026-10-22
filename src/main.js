@@ -5,6 +5,7 @@ import { SistemaSolar } from "./sistema-solar/index.js";
 import { PADRAO } from "./sistema-solar/config.js";
 import { PAGINAS, paginaDoHash } from "./paginas/index.js";
 import { transicao } from "./transicao/index.js";
+import { centroDoCorpo, zoom } from "./transicao/zoom.js";
 import { aplicarDocumento, opcoesDoSistema, t } from "./i18n/index.js";
 import {
   CHAVE_ANTIGA,
@@ -116,43 +117,107 @@ function montar() {
 let aberta = null;
 let versao = 0;
 let primeira = true;
+/** Camada onde as páginas em terminal são montadas, por cima da abertura. */
+const camadaPaginas = /** @type {HTMLElement} */ (
+  document.getElementById("paginas")
+);
 /** @type {{ destroy(): void } | null} */
+let pagina = null;
+/** @type {{ fim: Promise<void>, concluir(): void } | null} */
 let emTransicao = null;
 
+/** Fecha a transição em curso: sobra só o que `aberta` aponta. */
+function assentar() {
+  emTransicao?.concluir();
+  emTransicao = null;
+  if (aberta === null) {
+    pagina?.destroy();
+    pagina = null;
+  } else {
+    inst?.destroy();
+    inst = null;
+  }
+}
+
 /**
- * Abre a página do hash: a abertura (sistema solar) ou uma das páginas em terminal.
- * Entre duas páginas, o campo de caracteres da transição roda antes (clique ou tecla pula).
+ * Abre a página do hash. Da abertura para uma página, a câmera mergulha no planeta e a tela
+ * cresce de dentro dele; na volta é o inverso. Entre duas páginas roda o campo de caracteres.
  */
 async function mostrar() {
   const id = paginaDoHash(location.hash);
-  if (id === aberta && (id || inst)) return;
-  const de = aberta ?? "inicio";
-  aberta = id;
   const minha = ++versao;
-  emTransicao?.destroy();
-  emTransicao = null;
-  if (inst) inst.destroy();
-  inst = null;
-  // o módulo da página carrega enquanto a transição roda
-  const carregando = id ? PAGINAS[id]() : null;
-  if (!primeira) {
-    const tr = transicao(raiz, de, id ?? "inicio");
-    emTransicao = tr;
+  if (id === aberta && (id ? pagina : inst)) return;
+  assentar();
+  const de = aberta;
+  const modulo = id ? await PAGINAS[id]() : null;
+  if (minha !== versao) return;
+
+  const animar = !primeira;
+  primeira = false;
+  aberta = id;
+
+  if (de === null && id && modulo) {
+    // abertura -> página: mergulha no planeta
+    const centro = centroDoCorpo(raiz, id);
+    pagina = modulo.montar(camadaPaginas);
+    if (animar) {
+      emTransicao = zoom({
+        inicio: raiz,
+        paginas: camadaPaginas,
+        centro,
+        entrando: true,
+      });
+      await emTransicao.fim;
+      if (minha !== versao) return;
+      emTransicao.concluir();
+      emTransicao = null;
+    }
+    inst?.destroy();
+    inst = null;
+  } else if (de !== null && !id) {
+    // página -> abertura: sai do planeta
+    montar();
+    if (animar) {
+      const centro = centroDoCorpo(raiz, de);
+      emTransicao = zoom({
+        inicio: raiz,
+        paginas: camadaPaginas,
+        centro,
+        entrando: false,
+      });
+      await emTransicao.fim;
+      if (minha !== versao) return;
+      emTransicao.concluir();
+      emTransicao = null;
+    }
+    pagina?.destroy();
+    pagina = null;
+  } else if (de !== null && id && modulo) {
+    // página -> página: campo de caracteres
+    pagina?.destroy();
+    pagina = null;
+    const tr = transicao(camadaPaginas, de, id);
+    emTransicao = { fim: tr.fim, concluir: () => tr.destroy() };
     await tr.fim;
     if (minha !== versao) return;
     tr.destroy();
     emTransicao = null;
-  }
-  primeira = false;
-  if (!id) {
+    pagina = modulo.montar(camadaPaginas);
+  } else if (id && modulo) {
+    pagina = modulo.montar(camadaPaginas);
+  } else {
     montar();
-    return;
   }
-  const { montar: montarPagina } =
-    await /** @type {NonNullable<typeof carregando>} */ (carregando);
-  if (minha !== versao) return;
-  inst = montarPagina(raiz);
 }
+
+// perto do clique, o módulo da página já está carregado quando o zoom começa
+raiz.addEventListener("pointerover", (e) => {
+  const a = e.target instanceof Element ? e.target.closest("a[href]") : null;
+  const id = a
+    ? paginaDoHash(new URL(a.getAttribute("href") || "", "http://x/").hash)
+    : null;
+  if (id) PAGINAS[id]();
+});
 
 aplicarDocumento(document, idioma);
 addEventListener("hashchange", mostrar);
