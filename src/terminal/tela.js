@@ -2,7 +2,7 @@
 // (30 quadros por segundo, ou um quadro só com movimento reduzido), das zonas clicáveis e do teclado.
 // A cena decide o que cada quadro mostra; este arquivo só o põe na tela.
 
-import { el } from "../util/dom.js";
+import { el, hrefSeguro } from "../util/dom.js";
 import { CW, LARGURA, LH, MARGEM } from "./grade.js";
 import { PADRAO } from "../sistema-solar/config.js";
 import { campo } from "../sistema-solar/fundo.js";
@@ -238,9 +238,9 @@ export function montarTela(raiz, cfg, cena) {
             return el("a", {
               class: "pf-t-zona",
               attrs: {
-                href: z.href || "#",
+                href: hrefSeguro(z.href || "#"),
                 target: z.alvo || "_self",
-                rel: "noopener",
+                rel: "noopener noreferrer",
                 "aria-label": z.label,
               },
               style: caixas[i],
