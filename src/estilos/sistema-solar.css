@@ -185,7 +185,7 @@
     0 0 14px var(--fundo);
 }
 /* frase em tamanhos mistos: caixa e medidas em px vêm do layout (--pf-ag, --pf-ap,
-   --pf-ag-folga, --pf-ap-respiro); a altura somada aqui é a mesma que o layout reservou */
+   --pf-ag-descida, --pf-ag-folga, --pf-ap-respiro); a altura somada aqui é a mesma que o layout reservou */
 .pf-assina-g {
   transform: none;
   display: flex;
@@ -221,6 +221,9 @@
   visibility: hidden;
   font-size: 100px;
   line-height: 1;
+}
+.pf-ag-g:not(.pf-ag-acento) {
+  margin-bottom: var(--pf-ag-descida);
 }
 .pf-ag-acento {
   color: var(--acento);

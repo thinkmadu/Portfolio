@@ -350,6 +350,7 @@ function mount(target, opts = {}) {
     st.height = px(sig.h);
     st.setProperty("--pf-ag", px(m.s));
     st.setProperty("--pf-ap", px(m.ap));
+    st.setProperty("--pf-ag-descida", px(m.descida));
     st.setProperty("--pf-ag-folga", px(m.folga));
     st.setProperty("--pf-ap-respiro", px(m.respiro));
     return p;
