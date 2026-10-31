@@ -21,16 +21,97 @@ const PASSO_PIXEL = 140;
 const PASSO_TRANSICAO = 28;
 const DURACAO_TRANSICAO = 190;
 
-// Projetos do GitHub. Os textos são placeholders; `repo` e `demo` viram links quando preenchidos.
-const PROJETOS = [1, 2, 3, 4].map((n) => ({
-  nome: `[projeto de IA ${n}]`,
-  faz: "[o que faz, em 1 linha]",
-  descricao: "[o que faz, em uma linha]",
-  linguagem: "[linguagem]",
-  data: "[data]",
-  repo: null,
-  demo: null,
-}));
+// Projetos ainda não publicados: com isto ligado, os cartões mostram o aviso, não abrem e as
+// teclas 1 a 4 ficam paradas. Desligar quando os projetos de TEXTOS tiverem os textos reais.
+const EM_CONSTRUCAO = true;
+
+// Textos por idioma. Os projetos do GitHub são placeholders; `repo` e `demo` viram links
+// quando preenchidos (ver `mundo`).
+export const TEXTOS = {
+  pt: {
+    zonaVoltar: "Voltar para o início",
+    voltar: "oltar",
+    titulo: "(ia)",
+    legenda: "navegação:",
+    telaPrincipal: "tela principal",
+    transicao: "transição",
+    detalhe: "detalhe do projeto",
+    emConstrucao: "em construção",
+    voltaEmBreve: "volta em breve",
+    falaConstrucao: "ainda montando os projetos.",
+    falaEscolhido: "olha esse!",
+    falaEscolha: "qual vai ser?",
+    projeto: {
+      nome: (/** @type {number} */ n) => `[projeto de IA ${n}]`,
+      faz: "[o que faz, em 1 linha]",
+      descricao: "[o que faz, em uma linha]",
+      linguagem: "[linguagem]",
+      data: "[data]",
+    },
+    zonaAbrir: (/** @type {string} */ nome) => `Abrir ${nome}`,
+    etapa: "etapa:",
+    etapas: ["texto", "nós", "rede", "ativação", "projeto"],
+    colunas: [
+      { t: "linguagem", n: ["[linguagem 1]", "[linguagem 2]"] },
+      {
+        t: "ferramentas",
+        n: ["[ferramenta 1]", "[ferramenta 2]", "[ferramenta 3]"],
+      },
+      { t: "conceitos", n: ["[conceito 1]", "[conceito 2]", "[conceito 3]"] },
+      { t: "resultados", n: ["[métrica 1]", "[métrica 2]"] },
+    ],
+    zonaVoltarProjetos: "Voltar para os projetos",
+    repositorio: "(repositório)",
+    demo: "(demo)",
+    zonaLink: (/** @type {string} */ rotulo, /** @type {string} */ nome) =>
+      `${rotulo} de ${nome}`,
+    explicacao: "[explicação em uma linha]",
+    dica: "mouse num nó destaca o caminho",
+    aria: "Página de IA. Teclas 1 a 4 abrem um projeto, v volta",
+    descricao:
+      "O robô-pato fica no centro com quatro projetos do GitHub ao redor. Ao escolher um, o texto do projeto vira os nós de uma rede neural, e o detalhe mostra a rede em quatro colunas: linguagem, ferramentas, conceitos e resultados",
+  },
+  en: {
+    zonaVoltar: "Back to home",
+    voltar: " back",
+    titulo: "(ai)",
+    legenda: "keys:",
+    telaPrincipal: "main screen",
+    transicao: "transition",
+    detalhe: "project detail",
+    emConstrucao: "under construction",
+    voltaEmBreve: "coming soon",
+    falaConstrucao: "still building the projects.",
+    falaEscolhido: "check this one out!",
+    falaEscolha: "which one will it be?",
+    projeto: {
+      nome: (/** @type {number} */ n) => `[AI project ${n}]`,
+      faz: "[what it does, 1 line]",
+      descricao: "[what it does, in one line]",
+      linguagem: "[language]",
+      data: "[date]",
+    },
+    zonaAbrir: (/** @type {string} */ nome) => `Open ${nome}`,
+    etapa: "step:",
+    etapas: ["text", "nodes", "network", "activation", "project"],
+    colunas: [
+      { t: "language", n: ["[language 1]", "[language 2]"] },
+      { t: "tools", n: ["[tool 1]", "[tool 2]", "[tool 3]"] },
+      { t: "concepts", n: ["[concept 1]", "[concept 2]", "[concept 3]"] },
+      { t: "results", n: ["[metric 1]", "[metric 2]"] },
+    ],
+    zonaVoltarProjetos: "Back to the projects",
+    repositorio: "(repository)",
+    demo: "(demo)",
+    zonaLink: (/** @type {string} */ rotulo, /** @type {string} */ nome) =>
+      `${rotulo} of ${nome}`,
+    explicacao: "[one-line explanation]",
+    dica: "hover a node to highlight the path",
+    aria: "AI page. Keys 1 to 4 open a project, v goes back",
+    descricao:
+      "The duck robot sits in the center with four GitHub projects around it. Picking one turns the project text into the nodes of a neural network, and the detail shows the network in four columns: language, tools, concepts and results",
+  },
+};
 
 // ---------- o robô-pato (frente) ----------
 const grade = (w, h) => Array.from({ length: h }, () => Array(w).fill(-1));
@@ -132,12 +213,12 @@ function pixFrente(expr, f, olhar, asaE, asaD) {
 }
 
 // ---------- peças comuns às três telas ----------
-function cabecalho(g, rotulo, trilha) {
+function cabecalho(T, g, rotulo, trilha) {
   put(g, 1, 2, 0, "‹");
   put(g, 6, 4, 0, "v");
-  put(g, 1, 5, 0, "oltar");
+  put(g, 1, 5, 0, T.voltar);
   put(g, 0, 12, 0, "│");
-  put(g, 2, 14, 0, "(ia)");
+  put(g, 2, 14, 0, T.titulo);
   if (trilha) {
     put(g, 0, 19, 0, "›");
     put(g, 2, 21, 0, trilha);
@@ -167,9 +248,10 @@ const CARDS = [
   { x: 63, y: 3, lado: 1 },
   { x: 63, y: 12, lado: 1 },
 ];
-function telaPrincipal(f, alvo, alvoF, zonas, mapa, aoEscolher) {
+function telaPrincipal(M, f, alvo, alvoF, zonas, mapa, aoEscolher) {
+  const { T, projetos } = M;
   const g = mk();
-  cabecalho(g, "tela principal");
+  cabecalho(T, g, T.telaPrincipal);
   const sel = alvo;
   const expr =
     sel != null ? "curioso" : Math.floor(f / 14) % 2 ? "pensando" : "normal";
@@ -180,13 +262,25 @@ function telaPrincipal(f, alvo, alvoF, zonas, mapa, aoEscolher) {
   const asaD = c && c.lado > 0 ? up : null;
   pintar(g, pixFrente(expr, f, olhar, asaE, asaD), 30, 3);
   CARDS.forEach((cd, i) => {
-    const p = PROJETOS[i];
+    const p = projetos[i];
     const on = i === sel;
     const lc = on ? 1 : 0;
     box(g, lc, cd.x, cd.y, 26, 5);
     put(g, lc, cd.x + 2, cd.y, "┤");
     put(g, 6, cd.x + 3, cd.y, String(i + 1));
     put(g, lc, cd.x + 4, cd.y, "├");
+    if (EM_CONSTRUCAO) {
+      put(g, 4, cd.x + 2, cd.y + 1, T.emConstrucao);
+      put(g, 3, cd.x + 2, cd.y + 2, T.voltaEmBreve);
+      ligar(
+        g,
+        cd.y + 2,
+        cd.lado < 0 ? cd.x + 26 : cd.x - 1,
+        cd.lado < 0 ? 1 : -1,
+        false,
+      );
+      return;
+    }
     put(g, on ? 2 : 3, cd.x + 2, cd.y + 1, p.nome);
     put(g, 3, cd.x + 2, cd.y + 2, p.faz);
     put(g, 1, cd.x + 2, cd.y + 3, "•");
@@ -205,13 +299,24 @@ function telaPrincipal(f, alvo, alvoF, zonas, mapa, aoEscolher) {
       y: cd.y,
       w: 26,
       h: 80,
-      label: `Abrir ${p.nome}`,
+      label: T.zonaAbrir(p.nome),
       pick: () => aoEscolher(i),
     });
   });
-  const fala = sel != null ? "olha esse!" : "qual vai ser?";
+  const fala = EM_CONSTRUCAO
+    ? T.falaConstrucao
+    : sel != null
+      ? T.falaEscolhido
+      : T.falaEscolha;
   put(g, 3, Math.round(46 - fala.length / 2), 19, fala);
-  legenda(g, 3, 22, ["1", "2", "3", "4", "v"]);
+  legenda(
+    g,
+    3,
+    22,
+    EM_CONSTRUCAO ? ["v"] : ["1", "2", "3", "4", "v"],
+    null,
+    T.legenda,
+  );
   return split(g);
 }
 
@@ -242,15 +347,14 @@ function letrasDe(p) {
   });
   return out;
 }
-const LETRAS = PROJETOS.map(letrasDe);
-const ETAPAS = ["texto", "nós", "rede", "ativação", "projeto"];
 
 /** Devolve as camadas e as letras em voo (posição livre, em px, desenhadas à parte). */
-function telaTransicao(t, proj) {
-  const letrasProj = LETRAS[proj];
+function telaTransicao(M, t, proj) {
+  const { T } = M;
+  const letrasProj = M.letras[proj];
   const g = mk();
   const ex = [];
-  cabecalho(g, "transição");
+  cabecalho(T, g, T.transicao);
   const etapa = t < 40 ? 0 : t < 75 ? 1 : t < 100 ? 2 : t < 145 ? 3 : 4;
   const nn = NOS.length;
   if (t < 40) {
@@ -325,53 +429,29 @@ function telaTransicao(t, proj) {
       r: (lit ? 5.8 : 4.8) * pop * fade,
     });
   });
-  put(g, 3, 3, 22, "etapa:");
-  let cx = 10;
-  ETAPAS.forEach((s, i) => {
+  put(g, 3, 3, 22, T.etapa);
+  let cx = 4 + T.etapa.length;
+  T.etapas.forEach((s, i) => {
     if (i > 0) {
       put(g, 3, cx, 22, "•");
       cx += 2;
     }
     put(g, i === etapa ? 6 : 3, cx, 22, s);
-    cx += s.length + (i < ETAPAS.length - 1 ? 1 : 0);
+    cx += s.length + (i < T.etapas.length - 1 ? 1 : 0);
   });
   return { camadas: split(g, ex), ls };
 }
 
 // ---------- 3. detalhe do projeto ----------
 // A rede do detalhe é a mesma para os quatro projetos por enquanto (placeholders).
+// Geometria das colunas: o x e a linha de cada nó; os nomes vêm do idioma.
 const COLS3 = [
-  { x: 3, t: "linguagem", n: ["[linguagem 1]", "[linguagem 2]"], r: [9, 13] },
-  {
-    x: 20,
-    t: "ferramentas",
-    n: ["[ferramenta 1]", "[ferramenta 2]", "[ferramenta 3]"],
-    r: [8, 11, 14],
-  },
-  {
-    x: 37,
-    t: "conceitos",
-    n: ["[conceito 1]", "[conceito 2]", "[conceito 3]"],
-    r: [8, 11, 14],
-  },
-  { x: 53, t: "resultados", n: ["[métrica 1]", "[métrica 2]"], r: [9, 13] },
+  { x: 3, r: [9, 13] },
+  { x: 20, r: [8, 11, 14] },
+  { x: 37, r: [8, 11, 14] },
+  { x: 53, r: [9, 13] },
 ];
-const NOS3 = [];
-COLS3.forEach((c, ci) =>
-  c.n.forEach((nome, i) =>
-    NOS3.push({
-      c: ci,
-      i,
-      id: ci + "-" + i,
-      nome,
-      x: c.x,
-      y: c.r[i],
-      fim: c.x + 2 + nome.length,
-    }),
-  ),
-);
-const por = (ci, i) => NOS3.find((n) => n.c === ci && n.i === i);
-const ARE3 = [
+const LIGACOES3 = [
   [0, 0, 1, 0],
   [0, 0, 1, 1],
   [0, 1, 1, 1],
@@ -385,14 +465,49 @@ const ARE3 = [
   [2, 1, 3, 0],
   [2, 1, 3, 1],
   [2, 2, 3, 1],
-].map((a) => ({ a: por(a[0], a[1]), b: por(a[2], a[3]) }));
+];
+/**
+ * Tudo o que depende do texto do idioma: os projetos, as letras em voo de cada um e os nós
+ * e arestas da rede do detalhe.
+ */
+function mundo(T) {
+  const projetos = [1, 2, 3, 4].map((n) => ({
+    nome: T.projeto.nome(n),
+    faz: T.projeto.faz,
+    descricao: T.projeto.descricao,
+    linguagem: T.projeto.linguagem,
+    data: T.projeto.data,
+    repo: null,
+    demo: null,
+  }));
+  const nos = [];
+  COLS3.forEach((c, ci) =>
+    T.colunas[ci].n.forEach((nome, i) =>
+      nos.push({
+        c: ci,
+        i,
+        id: ci + "-" + i,
+        nome,
+        x: c.x,
+        y: c.r[i],
+        fim: c.x + 2 + nome.length,
+      }),
+    ),
+  );
+  const por = (ci, i) => nos.find((n) => n.c === ci && n.i === i);
+  const are = LIGACOES3.map((a) => ({
+    a: por(a[0], a[1]),
+    b: por(a[2], a[3]),
+  }));
+  return { T, projetos, letras: projetos.map(letrasDe), nos, are };
+}
 /** Todos os nós ligados ao nó `no`, nos dois sentidos da rede. */
-function alcance(no) {
+function alcance(no, are) {
   const set = new Set([no.id]);
   let mudou = true;
   while (mudou) {
     mudou = false;
-    ARE3.forEach((e) => {
+    are.forEach((e) => {
       if (e.a.c < no.c && set.has(e.b.id) && !set.has(e.a.id)) {
         set.add(e.a.id);
         mudou = true;
@@ -405,23 +520,24 @@ function alcance(no) {
   }
   return set;
 }
-function telaDetalhe(f, proj, alvo, zonas, mapa, aoVoltar) {
-  const p = PROJETOS[proj];
+function telaDetalhe(M, f, proj, alvo, zonas, mapa, aoVoltar) {
+  const { T, nos, are } = M;
+  const p = M.projetos[proj];
   const g = mk();
   const ex = [];
-  cabecalho(g, "detalhe do projeto", p.nome);
+  cabecalho(T, g, T.detalhe, p.nome);
   zonas.push({
     tipo: "b",
     x: 2,
     y: 0,
     w: 8,
-    label: "Voltar para os projetos",
+    label: T.zonaVoltarProjetos,
     pick: aoVoltar,
   });
   put(g, 2, 3, 3, p.descricao);
   [
-    [3, "(repositório)", p.repo],
-    [18, "(demo)", p.demo],
+    [3, T.repositorio, p.repo],
+    [18, T.demo, p.demo],
   ].forEach(([x, rotulo, url]) => {
     put(g, 1, x, 4, rotulo);
     if (url)
@@ -432,13 +548,13 @@ function telaDetalhe(f, proj, alvo, zonas, mapa, aoVoltar) {
         w: rotulo.length,
         href: url,
         alvo: "_blank",
-        label: `${rotulo} de ${p.nome}`,
+        label: T.zonaLink(rotulo, p.nome),
       });
   });
-  COLS3.forEach((c) => put(g, 3, c.x, 6, c.t));
-  const hov = NOS3[alvo ?? Math.floor(f / 40) % NOS3.length];
-  const luz = alcance(hov);
-  ARE3.forEach((e) => {
+  COLS3.forEach((c, ci) => put(g, 3, c.x, 6, T.colunas[ci].t));
+  const hov = nos[alvo ?? Math.floor(f / 40) % nos.length];
+  const luz = alcance(hov, are);
+  are.forEach((e) => {
     const on = luz.has(e.a.id) && luz.has(e.b.id);
     ex.push({
       t: "s",
@@ -449,7 +565,7 @@ function telaDetalhe(f, proj, alvo, zonas, mapa, aoVoltar) {
       y2: py(e.b.y),
     });
   });
-  NOS3.forEach((n, i) => {
+  nos.forEach((n, i) => {
     const on = luz.has(n.id);
     const atual = n.id === hov.id;
     ex.push({
@@ -472,7 +588,7 @@ function telaDetalhe(f, proj, alvo, zonas, mapa, aoVoltar) {
   });
   put(g, 2, 3, 17, hov.nome);
   put(g, 0, 3, 18, "╚═");
-  put(g, 3, 6, 18, "[explicação em uma linha]");
+  put(g, 3, 6, 18, T.explicacao);
   // só a metade de cima do robô aparece, espiando do canto
   pintar(
     g,
@@ -483,14 +599,16 @@ function telaDetalhe(f, proj, alvo, zonas, mapa, aoVoltar) {
     63,
     11,
   );
-  legenda(g, 3, 22, ["v"]);
-  put(g, 3, 24, 22, "mouse num nó destaca o caminho");
+  legenda(g, 3, 22, ["v"], null, T.legenda);
+  put(g, 3, 24, 22, T.dica);
   return split(g, ex);
 }
 
 class IA extends Cena {
-  constructor() {
+  /** @param {ReturnType<typeof mundo>} M */
+  constructor(M) {
     super();
+    this.M = M;
     this.mapa = [];
     /** Chamadas ligadas por `montar` (o fim do arquivo): letras em voo e foco do teclado. */
     this.aoVoo = null;
@@ -551,7 +669,7 @@ class IA extends Cena {
       return;
     }
     if (tela === "transicao") this.pular();
-    else if (tela === "principal" && /^[1-4]$/.test(k))
+    else if (tela === "principal" && !EM_CONSTRUCAO && /^[1-4]$/.test(k))
       this.abrir(Number(k) - 1);
   }
   quadro() {
@@ -568,17 +686,17 @@ class IA extends Cena {
         w: 8,
         href: "#inicio",
         alvo: "_self",
-        label: "Voltar para o início",
+        label: this.M.T.zonaVoltar,
       });
-      camadas = telaPrincipal(f, alvo, alvoF, zonas, this.mapa, (i) =>
+      camadas = telaPrincipal(this.M, f, alvo, alvoF, zonas, this.mapa, (i) =>
         this.abrir(i),
       );
     } else if (tela === "transicao") {
-      const r = telaTransicao(t, proj);
+      const r = telaTransicao(this.M, t, proj);
       camadas = r.camadas;
       this.aoVoo?.(r.ls);
     } else {
-      camadas = telaDetalhe(f, proj, alvo, zonas, this.mapa, () =>
+      camadas = telaDetalhe(this.M, f, proj, alvo, zonas, this.mapa, () =>
         this.voltar(),
       );
     }
@@ -597,9 +715,6 @@ const CONFIG = {
   linhas: false,
   intervalo: 33,
   nitido: true,
-  aria: "Página de IA. Teclas 1 a 4 abrem um projeto, v volta",
-  descricao:
-    "O robô-pato fica no centro com quatro projetos do GitHub ao redor. Ao escolher um, o texto do projeto vira os nós de uma rede neural, e o detalhe mostra a rede em quatro colunas: linguagem, ferramentas, conceitos e resultados",
 };
 
 /**
@@ -630,10 +745,18 @@ function criarVoo(imagem) {
   };
 }
 
-/** @param {HTMLElement} raiz */
-export function montar(raiz) {
-  const cena = new IA();
-  const tela = montarTela(raiz, CONFIG, cena);
+/**
+ * @param {HTMLElement} raiz
+ * @param {import("../i18n/idioma.js").Idioma} [idioma]
+ */
+export function montar(raiz, idioma = "pt") {
+  const T = Object.hasOwn(TEXTOS, idioma) ? TEXTOS[idioma] : TEXTOS.pt;
+  const cena = new IA(mundo(T));
+  const tela = montarTela(
+    raiz,
+    { ...CONFIG, aria: T.aria, descricao: T.descricao },
+    cena,
+  );
   const pf = /** @type {HTMLElement} */ (raiz.querySelector(".pf-tela"));
   const zonas = /** @type {HTMLElement} */ (raiz.querySelector(".pf-t-zonas"));
   cena.aoVoo = criarVoo(

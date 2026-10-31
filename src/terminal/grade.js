@@ -270,13 +270,15 @@ export function criarGrade({ linhas: H, camadas: NL }) {
 
   /**
    * Legenda `navegação: 1 • 2 • v`, com teclas em negrito (camada 6) e, opcionalmente, um
-   * par extra `rótulo: tecla`. Camada 3 é o texto secundário.
+   * par extra `rótulo: tecla`. Camada 3 é o texto secundário. `rotulo` troca o "navegação:"
+   * (a língua da página).
    * @param {Grade} g @param {number} x @param {number} y
    * @param {string[]} teclas @param {[string, string] | null} [extra]
+   * @param {string} [rotulo]
    */
-  function legenda(g, x, y, teclas, extra = null) {
-    put(g, 3, x, y, "navegação:");
-    let cx = x + 11;
+  function legenda(g, x, y, teclas, extra = null, rotulo = "navegação:") {
+    put(g, 3, x, y, rotulo);
+    let cx = x + rotulo.length + 1;
     teclas.forEach((k, i) => {
       if (i > 0) {
         put(g, 3, cx, y, "•");

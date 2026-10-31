@@ -173,96 +173,279 @@ const CX0 = 3,
   CY = 11;
 const cardX = (i) => CX0 + i * (CWID + CGAP);
 const DUCKX = (i) => cardX(i);
-const NOMES = ["código", "integração", "contêineres", "entrega"];
-// u = usei, c = conheço
-const DADOS = [
-  {
-    cmd: "git log --graph --oneline",
-    itens: [
-      ["git", "u"],
-      ["github", "u"],
-      ["gitflow", "u"],
-      ["pull requests e code review", "u"],
-      ["conventional commits", "u"],
-      ["gitlab", "u"],
-      ["git hooks (husky, pre-commit)", "c"],
-      ["branch protection", "c"],
-    ],
-    intro: "branch nova, histórico limpo.",
-    fim: "merge sem conflito. milagre.",
-    extras: [
-      "git push --force? só no meu galho.",
-      "commit pequeno, vida longa.",
-      "no gitflow, release sai da develop.",
-    ],
-  },
-  {
-    cmd: "gh run watch",
-    itens: [
-      ["github actions", "u"],
-      ["azure devops (repos e boards)", "u"],
-      ["dependabot", "u"],
-      ["secrets e variáveis de ambiente", "u"],
-      ["azure pipelines", "c"],
-      ["gitlab ci", "c"],
-    ],
-    intro: "vamos ver se o pipeline fica verde.",
-    fim: "tudo verde. desconfio.",
-    extras: [
-      "na minha máquina funcionava.",
-      "teste que falha está funcionando.",
-      "cache do npm: meu melhor amigo.",
-    ],
-  },
-  {
-    cmd: "docker build -t portfolio .",
-    itens: [
-      ["docker", "u"],
-      ["docker compose", "u"],
-      ["dockerfile multi-stage", "c"],
-      ["docker hub", "c"],
-      ["kubernetes", "c"],
-    ],
-    intro: "empacotando o ambiente inteiro.",
-    fim: "no meu container funciona. no seu também.",
-    extras: [
-      "camada no começo refaz tudo.",
-      "imagem leve, deploy feliz.",
-      "no compose, o pato orquestra.",
-    ],
-  },
-  {
-    cmd: "gh workflow run deploy.yml",
-    itens: [
-      ["aws", "u"],
-      ["gcp", "u"],
-      ["vercel / netlify / github pages", "u"],
-      ["ambientes dev, hml e prod", "u"],
-      ["gates de aprovação", "u"],
-      ["azure (app service, functions)", "c"],
-      ["terraform", "c"],
-      ["observabilidade", "c"],
-    ],
-    intro: "sexta-feira? só com gate manual.",
-    fim: "decolou. no ar.",
-    extras: [
-      "rollback é meu plano b.",
-      "dev, hml, prod: nessa ordem.",
-      "aprovação pendente, pato esperando.",
-    ],
-  },
+// Comandos de cada etapa: iguais nos dois idiomas (o tempo de digitação depende deles).
+const CMDS = [
+  "git log --graph --oneline",
+  "gh run watch",
+  "docker build -t portfolio .",
+  "gh workflow run deploy.yml",
 ];
-const osDe = (c) => 2 + Math.ceil(DADOS[c].cmd.length / 1.8) + 2;
+// Textos por idioma. u = usei, c = conheço (no dado, as letras são as mesmas nos dois).
+// As falas do pato quebram em 28 colunas e precisam caber em duas linhas.
+export const TEXTOS = {
+  pt: {
+    zonaVoltar: "Voltar para o início",
+    voltar: "oltar",
+    titulo: "(ferramentas)",
+    legenda: "navegação:",
+    nomes: ["código", "integração", "contêineres", "entrega"],
+    zonaEtapa: (/** @type {number} */ n, /** @type {string} */ nome) =>
+      "Etapa " + n + ": " + nome + " (tecla " + n + ")",
+    zonaPato: "Pato: clique para ouvir outra fala",
+    zonaRecomecar: "Recomeçar o pipeline (tecla r)",
+    zonaAprovar: "Aprovar o deploy (tecla a)",
+    usei: " (usei)",
+    conheco: " (conheço)",
+    legendaUsei: "usei:",
+    legendaConheco: "conheço:",
+    painelFerramentas: " ferramentas ",
+    painelTerminal: " terminal ",
+    emConstrucao: "projetos: em construção",
+    decolou: "o pato decolou.",
+    recomecar: "(recomeçar)",
+    recomecarLegenda: "recomeçar",
+    aprovarLegenda: "aprovar",
+    decolando: "missão cumprida. decolando.",
+    bemVinda: "bem-vinda ao BBS do thinkmadu",
+    commits: {
+      release: "release 1.0",
+      merge: "merge: feature/login",
+      teste: "test: cobre o login",
+      feat: "feat: login",
+      base: "chore: base da develop",
+    },
+    steps: [
+      "checkout",
+      "setup node 20",
+      "npm ci",
+      "lint",
+      "testes",
+      "build",
+      "deploy → vercel",
+    ],
+    concluido: "workflow concluído em 2:24",
+    containerNoAr: "container no ar · porta 3000",
+    ambientes: ["dev", "hml", "prod"],
+    aguardando: "aguardando",
+    aprovarDeploy: "(aprovar deploy)",
+    gate: "gate manual antes de produção",
+    aprovado: "aprovado por você",
+    noAr: "em produção · rollback pronto",
+    dados: [
+      {
+        itens: [
+          ["git", "u"],
+          ["github", "u"],
+          ["gitflow", "u"],
+          ["pull requests e code review", "u"],
+          ["conventional commits", "u"],
+          ["gitlab", "u"],
+          ["git hooks (husky, pre-commit)", "c"],
+          ["branch protection", "c"],
+        ],
+        intro: "branch nova, histórico limpo.",
+        fim: "merge sem conflito. milagre.",
+        extras: [
+          "git push --force? só no meu galho.",
+          "commit pequeno, vida longa.",
+          "no gitflow, release sai da develop.",
+        ],
+      },
+      {
+        itens: [
+          ["github actions", "u"],
+          ["azure devops (repos e boards)", "u"],
+          ["dependabot", "u"],
+          ["secrets e variáveis de ambiente", "u"],
+          ["azure pipelines", "c"],
+          ["gitlab ci", "c"],
+        ],
+        intro: "vamos ver se o pipeline fica verde.",
+        fim: "tudo verde. desconfio.",
+        extras: [
+          "na minha máquina funcionava.",
+          "teste que falha está funcionando.",
+          "cache do npm: meu melhor amigo.",
+        ],
+      },
+      {
+        itens: [
+          ["docker", "u"],
+          ["docker compose", "u"],
+          ["dockerfile multi-stage", "c"],
+          ["docker hub", "c"],
+          ["kubernetes", "c"],
+        ],
+        intro: "empacotando o ambiente inteiro.",
+        fim: "no meu container funciona. no seu também.",
+        extras: [
+          "camada no começo refaz tudo.",
+          "imagem leve, deploy feliz.",
+          "no compose, o pato orquestra.",
+        ],
+      },
+      {
+        itens: [
+          ["aws", "u"],
+          ["gcp", "u"],
+          ["vercel / netlify / github pages", "u"],
+          ["ambientes dev, hml e prod", "u"],
+          ["gates de aprovação", "u"],
+          ["azure (app service, functions)", "c"],
+          ["terraform", "c"],
+          ["observabilidade", "c"],
+        ],
+        intro: "sexta-feira? só com gate manual.",
+        fim: "decolou. no ar.",
+        extras: [
+          "rollback é meu plano b.",
+          "dev, hml, prod: nessa ordem.",
+          "aprovação pendente, pato esperando.",
+        ],
+      },
+    ],
+    aria: "Página de ferramentas. Teclas 1 a 4 trocam de etapa, a aprova o deploy, r recomeça depois que o pato decola, v volta",
+    descricao:
+      "Terminal verde de um BBS dos anos 90: um modem disca e conecta, e abre um pipeline de quatro etapas (código, integração, contêineres e entrega) com um pato astronauta que anda entre elas e um terminal que mostra o que cada etapa faz",
+  },
+  en: {
+    zonaVoltar: "Back to home",
+    voltar: " back",
+    titulo: "(tools)",
+    legenda: "keys:",
+    nomes: ["code", "integration", "containers", "delivery"],
+    zonaEtapa: (/** @type {number} */ n, /** @type {string} */ nome) =>
+      "Stage " + n + ": " + nome + " (key " + n + ")",
+    zonaPato: "Duck: click to hear another line",
+    zonaRecomecar: "Restart the pipeline (key r)",
+    zonaAprovar: "Approve the deploy (key a)",
+    usei: " (used)",
+    conheco: " (know)",
+    legendaUsei: "used:",
+    legendaConheco: "know:",
+    painelFerramentas: " tools ",
+    painelTerminal: " terminal ",
+    emConstrucao: "projects: under construction",
+    decolou: "the duck took off.",
+    recomecar: "(restart)",
+    recomecarLegenda: "restart",
+    aprovarLegenda: "approve",
+    decolando: "mission done. taking off.",
+    bemVinda: "welcome to thinkmadu's BBS",
+    commits: {
+      release: "release 1.0",
+      merge: "merge: feature/login",
+      teste: "test: cover login",
+      feat: "feat: login",
+      base: "chore: develop base",
+    },
+    steps: [
+      "checkout",
+      "setup node 20",
+      "npm ci",
+      "lint",
+      "tests",
+      "build",
+      "deploy → vercel",
+    ],
+    concluido: "workflow done in 2:24",
+    containerNoAr: "container up · port 3000",
+    ambientes: ["dev", "stg", "prod"],
+    aguardando: "waiting",
+    aprovarDeploy: "(approve deploy)",
+    gate: "manual gate before production",
+    aprovado: "approved by you",
+    noAr: "live · rollback ready",
+    dados: [
+      {
+        itens: [
+          ["git", "u"],
+          ["github", "u"],
+          ["gitflow", "u"],
+          ["pull requests and code review", "u"],
+          ["conventional commits", "u"],
+          ["gitlab", "u"],
+          ["git hooks (husky, pre-commit)", "c"],
+          ["branch protection", "c"],
+        ],
+        intro: "fresh branch, clean history.",
+        fim: "merge without conflicts. a miracle.",
+        extras: [
+          "git push --force? only on my own branch.",
+          "small commits, long life.",
+          "in gitflow, releases branch off develop.",
+        ],
+      },
+      {
+        itens: [
+          ["github actions", "u"],
+          ["azure devops (repos and boards)", "u"],
+          ["dependabot", "u"],
+          ["secrets and environment variables", "u"],
+          ["azure pipelines", "c"],
+          ["gitlab ci", "c"],
+        ],
+        intro: "let's see if the pipeline goes green.",
+        fim: "all green. suspicious.",
+        extras: [
+          "worked on my machine.",
+          "a failing test is a working test.",
+          "npm cache: my best friend.",
+        ],
+      },
+      {
+        itens: [
+          ["docker", "u"],
+          ["docker compose", "u"],
+          ["dockerfile multi-stage", "c"],
+          ["docker hub", "c"],
+          ["kubernetes", "c"],
+        ],
+        intro: "packing up the whole environment.",
+        fim: "works in my container. and in yours.",
+        extras: [
+          "change an early layer, rebuild everything.",
+          "light image, happy deploy.",
+          "in compose, the duck orchestrates.",
+        ],
+      },
+      {
+        itens: [
+          ["aws", "u"],
+          ["gcp", "u"],
+          ["vercel / netlify / github pages", "u"],
+          ["dev, stg and prod environments", "u"],
+          ["approval gates", "u"],
+          ["azure (app service, functions)", "c"],
+          ["terraform", "c"],
+          ["observability", "c"],
+        ],
+        intro: "friday? only with a manual gate.",
+        fim: "lift off. we're live.",
+        extras: [
+          "rollback is my plan b.",
+          "dev, stg, prod: in that order.",
+          "approval pending, duck waiting.",
+        ],
+      },
+    ],
+    aria: "Tools page. Keys 1 to 4 switch stage, a approves the deploy, r restarts after the duck takes off, v goes back",
+    descricao:
+      "Green phosphor terminal of a 90s BBS: a modem dials and connects, then opens a four-stage pipeline (code, integration, containers and delivery) with an astronaut duck that walks between them and a terminal that shows what each stage does",
+  },
+};
+const osDe = (c) => 2 + Math.ceil(CMDS[c].length / 1.8) + 2;
+// duração (em passos) e tempo mostrado de cada passo; o nome vem de `TEXTOS[...].steps`
 const STEPS = [
-  ["checkout", 3, "0:02"],
-  ["setup node 20", 3, "0:06"],
-  ["npm ci", 6, "0:21"],
-  ["lint", 4, "0:09"],
-  ["testes", 14, "0:48"],
-  ["build", 8, "0:31"],
-  ["deploy → vercel", 8, "0:27"],
+  [3, "0:02"],
+  [3, "0:06"],
+  [6, "0:21"],
+  [4, "0:09"],
+  [14, "0:48"],
+  [8, "0:31"],
+  [8, "0:27"],
 ];
-const STEPS_TOT = STEPS.reduce((a, p) => a + p[1], 0);
+const STEPS_TOT = STEPS.reduce((a, p) => a + p[0], 0);
 const CAM = [
   ["FROM node:20-alpine", 52],
   ["COPY package*.json ./", 1],
@@ -287,7 +470,7 @@ function tempos(s) {
   return { dur: dur, os: os, fim: Math.max(fim, dur + 3) };
 }
 
-function discar(g, ex, f) {
+function discar(T, g, ex, f) {
   const X = OX;
   let cx = X,
     cy = 15;
@@ -317,12 +500,12 @@ function discar(g, ex, f) {
       r += "~^-_=."[Math.floor(hash(x, Math.floor(f * 3), 5) * 6)];
     put(g, 0, X, 18, r);
   }
-  dg("bem-vinda ao BBS do thinkmadu", 19, 3, 19, 2);
+  dg(T.bemVinda, 19, 3, 19, 2);
   if (Math.floor(f / 4) % 2) cursor(ex, cx, cy);
 }
-function saida0(g, ex, t, X, Y) {
+function saida0(T, g, ex, t, X, Y) {
   const R = [
-    { s: [["◉", 1]], txt: "release 1.0", chip: ["main", 1] },
+    { s: [["◉", 1]], txt: T.commits.release, chip: ["main", 1] },
     {
       s: [
         ["├", 1],
@@ -336,7 +519,7 @@ function saida0(g, ex, t, X, Y) {
         [" ", 0],
         ["●", 8],
       ],
-      txt: "merge: feature/login",
+      txt: T.commits.merge,
       chip: ["develop", 8],
     },
     {
@@ -356,7 +539,7 @@ function saida0(g, ex, t, X, Y) {
         [" ", 0],
         ["●", 4],
       ],
-      txt: "test: cobre o login",
+      txt: T.commits.teste,
     },
     {
       s: [
@@ -366,7 +549,7 @@ function saida0(g, ex, t, X, Y) {
         [" ", 0],
         ["●", 4],
       ],
-      txt: "feat: login",
+      txt: T.commits.feat,
       chip: ["feature/login", 4],
     },
     {
@@ -384,7 +567,7 @@ function saida0(g, ex, t, X, Y) {
         [" ", 0],
         ["●", 8],
       ],
-      txt: "chore: base da develop",
+      txt: T.commits.base,
     },
   ];
   R.forEach((r, i) => {
@@ -401,36 +584,37 @@ function saida0(g, ex, t, X, Y) {
     }
   });
 }
-function saida1(g, ex, t, X, Y, f) {
+function saida1(T, g, ex, t, X, Y, f) {
   let st = 0;
   STEPS.forEach((p, i) => {
     const y = Y + i,
       a = st,
-      b = st + p[1];
+      b = st + p[0],
+      nome = T.steps[i];
     st = b;
     if (t < a) {
       put(g, 3, X, y, "·");
-      put(g, 3, X + 2, y, p[0]);
+      put(g, 3, X + 2, y, nome);
       return;
     }
     if (t >= b) {
       put(g, 7, X, y, "✓");
-      put(g, 2, X + 2, y, p[0]);
-      put(g, 3, X + 42 - p[2].length, y, p[2]);
+      put(g, 2, X + 2, y, nome);
+      put(g, 3, X + 42 - p[1].length, y, p[1]);
       return;
     }
-    const q = (t - a) / p[1];
+    const q = (t - a) / p[0];
     put(g, Math.floor(f / 3) % 2 ? 4 : 3, X, y, "•");
-    put(g, 2, X + 2, y, p[0]);
+    put(g, 2, X + 2, y, nome);
     barra(ex, X + 19, y, 12, q, 4);
     put(g, 3, X + 33, y, Math.round(q * 100) + "%");
   });
   if (t >= STEPS_TOT + 1) {
     put(g, 7, X, Y + 7, "✓");
-    put(g, 7, X + 2, Y + 7, "workflow concluído em 2:24");
+    put(g, 7, X + 2, Y + 7, T.concluido);
   }
 }
-function saida2(g, ex, t, X, Y, f) {
+function saida2(T, g, ex, t, X, Y, f) {
   CAM.forEach((c, i) => {
     const a = i * 5;
     if (t < a) return;
@@ -451,16 +635,16 @@ function saida2(g, ex, t, X, Y, f) {
   }
   if (t >= 29) {
     put(g, Math.floor(f / 5) % 2 ? 7 : 3, X, Y + 7, "•");
-    put(g, 3, X + 2, Y + 7, "container no ar · porta 3000");
+    put(g, 3, X + 2, Y + 7, T.containerNoAr);
   }
 }
-function saida3(g, ex, t, X, Y, f, ar) {
+function saida3(T, g, ex, t, X, Y, f, ar) {
   const pd = cl(t / 8, 0, 1),
     ph = cl((t - 8) / 8, 0, 1);
   let pp = 0.6 * cl((t - 16) / 6, 0, 1);
   if (ar != null) pp = 0.6 + 0.4 * cl((t - ar) / 8, 0, 1);
   const ps = [pd, ph, pp],
-    nomes = ["dev", "hml", "prod"];
+    nomes = T.ambientes;
   const espera = ar == null && t >= 22;
   nomes.forEach((n, i) => {
     const y = Y + i;
@@ -475,24 +659,29 @@ function saida3(g, ex, t, X, Y, f, ar) {
       put(g, 3, X + 28, y, "v1.0.0");
     } else if (i === 2 && espera) {
       put(g, Math.floor(f / 4) % 2 ? 4 : 3, X + 26, y, "•");
-      put(g, 4, X + 28, y, "aguardando");
+      put(g, 4, X + 28, y, T.aguardando);
     }
   });
   if (espera) {
-    put(g, 1, X, Y + 4, "(aprovar deploy)");
-    put(g, 3, X, Y + 6, "gate manual antes de produção");
+    put(g, 1, X, Y + 4, T.aprovarDeploy);
+    put(g, 3, X, Y + 6, T.gate);
   }
   if (ar != null) {
     put(g, 7, X, Y + 4, "✓");
-    put(g, 3, X + 2, Y + 4, "aprovado por você");
+    put(g, 3, X + 2, Y + 4, T.aprovado);
   }
   if (ar != null && t >= ar + 8) {
     put(g, 7, X, Y + 7, "✓");
-    put(g, 7, X + 2, Y + 7, "em produção · rollback pronto");
+    put(g, 7, X + 2, Y + 7, T.noAr);
   }
 }
 
 class Ferramentas extends Cena {
+  /** @param {typeof TEXTOS.pt} T */
+  constructor(T) {
+    super();
+    this.T = T;
+  }
   montar() {
     if (movimentoReduzido()) {
       this.setState({
@@ -528,6 +717,8 @@ class Ferramentas extends Cena {
       const ok = s.ok.slice();
       ok[s.sel] = 1;
       ns.ok = ok;
+      // quatro etapas feitas: o pato decola (e só volta quando a pessoa recomeça)
+      if (ok.every(Boolean) && s.voo == null) ns.voo = f;
     }
     this.setState(ns);
   }
@@ -540,6 +731,21 @@ class Ferramentas extends Cena {
   ir(i) {
     const s = this.est(),
       f = this.agora();
+    if (this.state && this.state.voo != null) {
+      // recomeço: o pato desce do céu pela direita ainda equipado e tira tudo ao pousar
+      this.setState({
+        sel: i,
+        t0: f,
+        de: 92,
+        clk: null,
+        ant: 3,
+        ok: [0, 0, 0, 0],
+        apr: null,
+        voo: null,
+        volta: f,
+      });
+      return;
+    }
     const x = this.pos(s, f).x;
     this.setState({ sel: i, t0: f, de: x, clk: null, ant: s.sel });
   }
@@ -569,13 +775,15 @@ class Ferramentas extends Cena {
     }
     if (k >= "1" && k <= "4") this.ir(Number(k) - 1);
     if (k === "a") this.aprovar();
+    if (k === "r" && this.state && this.state.voo != null) this.ir(0);
   }
   quadro() {
+    const TX = this.T;
     const s0 = this.state || {};
     const f = s0.f || 0;
     const s = Object.assign({}, s0, this.est());
     const c = s.sel,
-      D = DADOS[c];
+      D = TX.dados[c];
     const g = mk(),
       ex = [];
     const zonas = [];
@@ -589,15 +797,15 @@ class Ferramentas extends Cena {
       w: 8,
       href: "#inicio",
       alvo: "_self",
-      label: "Voltar para o início",
+      label: TX.zonaVoltar,
     });
     put(g, 1, 2, 0, "‹");
     put(g, 6, 4, 0, "v");
-    put(g, 1, 5, 0, "oltar");
+    put(g, 1, 5, 0, TX.voltar);
     put(g, 0, 12, 0, "│");
-    put(g, 2, 14, 0, "(ferramentas)");
+    put(g, 2, 14, 0, TX.titulo);
     const on = f >= 15 || rel >= 0;
-    const td = f < 7 || (rel >= 2 && rel < 2 + Math.ceil(D.cmd.length / 1.8));
+    const td = f < 7 || (rel >= 2 && rel < 2 + Math.ceil(CMDS[c].length / 1.8));
     const rd = (f >= 15 && f < 21) || (rel >= T.os && rel < T.fim);
     const led = (x, nome, lig) => {
       put(g, 3, x, 0, nome);
@@ -631,7 +839,7 @@ class Ferramentas extends Cena {
         });
       box(g, on ? 1 : 0, x, CY, CWID, 3);
       put(g, on ? 6 : 3, x + 2, CY + 1, String(i + 1));
-      put(g, on ? 2 : 3, x + 4, CY + 1, NOMES[i]);
+      put(g, on ? 2 : 3, x + 4, CY + 1, TX.nomes[i]);
       const feito = s.ok[i] || (on && rel >= T.fim);
       if (feito) put(g, 7, x + CWID - 3, CY + 1, "✓");
       else if (on)
@@ -650,21 +858,47 @@ class Ferramentas extends Cena {
         y: CY,
         w: CWID,
         h: 48,
-        label:
-          "Etapa " + (i + 1) + ": " + NOMES[i] + " (tecla " + (i + 1) + ")",
+        label: TX.zonaEtapa(i + 1, TX.nomes[i]),
         pick: () => this.ir(i),
       });
     }
 
-    // pato: anda até a etapa, para e comemora quando a etapa termina
+    // pato: anda até a etapa, para e comemora quando a etapa termina; com as quatro
+    // feitas, decola para o alto à direita; no recomeço, desce de lá e tira o equipamento
     const esp = DUCKX(c) < s.de;
     const hop = rel - T.fim;
+    const voo = s0.voo != null ? f - s0.voo - 6 : -1;
+    const descendo = s0.volta != null && s0.volta === s.t0 && rel < T.dur;
     let dy = 0;
-    if (hop >= 0 && hop < 6) dy = -[2, 3, 3, 2, 1, 0][Math.floor(hop)];
-    const dx = Math.round(P.x);
+    if (hop >= 0 && hop < 6 && voo <= 0)
+      dy = -[2, 3, 3, 2, 1, 0][Math.floor(hop)];
+    let oy = 3;
+    if (voo > 0) oy -= Math.floor(voo * 0.5);
+    if (descendo) oy -= Math.round((1 - rel / T.dur) * 6);
+    const dx = Math.round(P.x + (voo > 0 ? voo * 1.4 : 0));
     const chegou = rel >= T.dur,
-      nivel = chegou || s0.ant == null ? c : s0.ant;
-    pintar(g, pixPato(f, esp, P.anda, dy, nivel), dx, 3, 2, 90);
+      nivel = voo > 0 || descendo ? 3 : chegou || s0.ant == null ? c : s0.ant;
+    const pix = pixPato(f, esp, P.anda && !descendo, dy, nivel);
+    // a moldura e o cabeçalho ficam por cima: o pato some atrás deles
+    for (let r = 0; r < 8; r++)
+      if (oy + r < 2) {
+        pix[2 * r].fill(-1);
+        pix[2 * r + 1].fill(-1);
+      }
+    const sumiu = voo > 0 && (dx > 90 || oy + 8 <= 2);
+    if (!sumiu) pintar(g, pix, dx, oy, 2, 90);
+    if (sumiu) {
+      put(g, 3, 36, 5, TX.decolou);
+      put(g, 1, 36, 7, TX.recomecar);
+      zonas.push({
+        tipo: "b",
+        x: 36,
+        y: 7,
+        w: TX.recomecar.length,
+        label: TX.zonaRecomecar,
+        pick: () => this.ir(0),
+      });
+    }
     if (s0.ant != null && s0.ant !== c && rel >= T.dur && rel < T.dur + 4) {
       const k = Math.floor((rel - T.dur) * 2);
       for (let q = 0; q < 7; q++)
@@ -676,20 +910,24 @@ class Ferramentas extends Cena {
           "+*·"[Math.floor(hash(q, k, 11) * 3)],
         );
     }
-    if (dx >= 2)
+    if (dx >= 2 && voo <= 0 && !descendo)
       zonas.push({
         tipo: "b",
         x: dx,
         y: 4,
         w: Math.min(18, 91 - dx),
         h: 112,
-        label: "Pato: clique para ouvir outra fala",
+        label: TX.zonaPato,
         pick: () => this.falar(),
       });
 
     // fala solta acima da cabeça
     let fala = null;
-    if (s0.clk && s0.clk.sel === c && s0.clk.t >= s.t0) {
+    if (s0.voo != null) {
+      if (voo < 10) fala = TX.decolando;
+    } else if (descendo) {
+      fala = null;
+    } else if (s0.clk && s0.clk.sel === c && s0.clk.t >= s.t0) {
       fala = D.extras[s0.clk.i % D.extras.length];
     } else if (rel >= T.fim) {
       fala = D.fim;
@@ -707,7 +945,7 @@ class Ferramentas extends Cena {
     put(g, 0, 1, 14, "├" + "─".repeat(89) + "┤");
     for (let y = 15; y < 25; y++) put(g, 0, 46, y, "│");
     put(g, 0, 46, 14, "┬");
-    put(g, 3, 3, 14, " ferramentas ");
+    put(g, 3, 3, 14, TX.painelFerramentas);
     let sel = s.det == null ? -1 : s.det;
     D.itens.forEach((it, i) => {
       const y = 15 + i;
@@ -721,38 +959,38 @@ class Ferramentas extends Cena {
         x: 3,
         y: y,
         w: 5 + it[0].length,
-        label: it[0] + (it[1] === "u" ? " (usei)" : " (conheço)"),
+        label: it[0] + (it[1] === "u" ? TX.usei : TX.conheco),
         pick: () => this.marcar(i),
       });
     });
     if (sel >= 0 && sel < D.itens.length && rel >= 1 + sel * 1.2)
-      put(g, 3, 3, 24, "[uma linha sobre como usei]");
+      put(g, 4, 3, 24, TX.emConstrucao);
 
     // painel direito: terminal
-    put(g, 3, 48, 14, " terminal ");
-    const cmd = D.cmd,
+    put(g, 3, 48, 14, TX.painelTerminal);
+    const cmd = CMDS[c],
       nc = cl(Math.floor((rel - 2) * 1.8), 0, cmd.length);
     const t = rel - T.os;
-    if (rel < 0) discar(g, ex, f);
+    if (rel < 0) discar(TX, g, ex, f);
     else {
       put(g, 1, OX, 15, "❯");
       put(g, 2, OX + 2, 15, cmd.slice(0, nc));
       if (nc < cmd.length || Math.floor(f / 4) % 2) cursor(ex, OX + 2 + nc, 15);
     }
     if (t >= 0) {
-      if (c === 0) saida0(g, ex, t, OX, 16);
-      else if (c === 1) saida1(g, ex, t, OX, 16, f);
-      else if (c === 2) saida2(g, ex, t, OX, 16, f);
+      if (c === 0) saida0(TX, g, ex, t, OX, 16);
+      else if (c === 1) saida1(TX, g, ex, t, OX, 16, f);
+      else if (c === 2) saida2(TX, g, ex, t, OX, 16, f);
       else {
         const ar = s.apr != null && s.apr >= s.t0 ? s.apr - s.t0 - T.os : null;
-        saida3(g, ex, t, OX, 16, f, ar);
+        saida3(TX, g, ex, t, OX, 16, f, ar);
         if (ar == null && t >= 22)
           zonas.push({
             tipo: "b",
             x: OX,
             y: 20,
-            w: 16,
-            label: "Aprovar o deploy (tecla a)",
+            w: TX.aprovarDeploy.length,
+            label: TX.zonaAprovar,
             pick: () => this.aprovar(),
           });
       }
@@ -765,14 +1003,17 @@ class Ferramentas extends Cena {
       3,
       26,
       ["1", "2", "3", "4", "v"],
-      c === 3 && t >= 22 && !(s.apr != null && s.apr >= s.t0)
-        ? ["aprovar", "a"]
-        : null,
+      sumiu
+        ? [TX.recomecarLegenda, "r"]
+        : c === 3 && t >= 22 && !(s.apr != null && s.apr >= s.t0)
+          ? [TX.aprovarLegenda, "a"]
+          : null,
+      TX.legenda,
     );
-    put(g, 3, 48, 26, "usei:");
+    put(g, 3, 48, 26, TX.legendaUsei);
     put(g, 1, 54, 26, "•");
-    put(g, 3, 57, 26, "conheço:");
-    put(g, 4, 66, 26, "s");
+    put(g, 3, 57, 26, TX.legendaConheco);
+    put(g, 4, 58 + TX.legendaConheco.length, 26, "s");
 
     return { camadas: split(g, ex), zonas };
   }
@@ -786,12 +1027,17 @@ const CONFIG = {
   negrito: [6, 10],
   brilho: [1, 2, 6],
   linhas: true,
-  aria: "Página de ferramentas. Teclas 1 a 4 trocam de etapa, a aprova o deploy, v volta",
-  descricao:
-    "Terminal verde de um BBS dos anos 90: um modem disca e conecta, e abre um pipeline de quatro etapas (código, integração, contêineres e entrega) com um pato astronauta que anda entre elas e um terminal que mostra o que cada etapa faz",
 };
 
-/** @param {HTMLElement} raiz */
-export function montar(raiz) {
-  return montarTela(raiz, CONFIG, new Ferramentas());
+/**
+ * @param {HTMLElement} raiz
+ * @param {import("../i18n/idioma.js").Idioma} [idioma]
+ */
+export function montar(raiz, idioma = "pt") {
+  const T = Object.hasOwn(TEXTOS, idioma) ? TEXTOS[idioma] : TEXTOS.pt;
+  return montarTela(
+    raiz,
+    { ...CONFIG, aria: T.aria, descricao: T.descricao },
+    new Ferramentas(T),
+  );
 }

@@ -218,60 +218,240 @@ function chao(g, f) {
   });
 }
 
-// ---------- falas do carteiro ----------
-const SUG = [
-  [
-    "e se você oferecesse a essa beldade a oportunidade de ganhar 80k sendo júnior?",
-    "Tenho uma oportunidade para você: 80k de salário, para nível júnior.",
-  ],
-  [
-    "que tal mencionar que o café do escritório é ilimitado?",
-    "O café do nosso escritório é ilimitado.",
-  ],
-  [
-    "diga que o stack é moderno (mesmo que seja só um jQuery).",
-    "Nosso stack é moderníssimo.",
-  ],
-  [
-    "pergunte se o projeto tem testes. o general vai querer saber.",
-    "Antes de tudo: o projeto de vocês tem testes?",
-  ],
-  [
-    '"ambiente jovem e dinâmico" sempre dá pontos extras.',
-    "Nosso ambiente é jovem e dinâmico.",
-  ],
-  [
-    'escreve "urgente". ninguém resiste a um urgente.',
-    "URGENTE (mas sem pressa).",
-  ],
-  [
-    "ofereça home office e um pato de estimação.",
-    "Oferecemos home office e um pato de estimação.",
-  ],
-  [
-    "prometa que todo bug é feature. funciona sempre.",
-    "Prometo que todo bug é feature.",
-  ],
-];
-const CHAVES = [
-  [/vaga/, "uma vaga? vou ver se cabe no meu boné."],
-  [/sal[aá]rio|remunera/, "falou em salário? agora sim eu prestei atenção."],
-  [/remoto|home office/, "remoto é bom. igual a um lago: sem trânsito."],
-  [/j[uú]nior/, "júnior com 5 anos de experiência? clássico."],
-  [/s[eê]nior/, "sênior? e o pato, é o quê, estagiário?"],
-  [/urgente/, "urgente? vou voando (a pé)."],
-  [/obrigad/, "educado! o general aprova."],
-  [/teste/, "testes! o general vai gostar disso."],
-  [/\bbug/, "bug? não na minha bolsa de correio."],
-  [/caf[eé]/, "café é a base de toda boa carta."],
-  [/oportunidade/, "oportunidade? tô ouvindo, tô ouvindo."],
-];
-const LENDO = [
-  "continua, tô lendo por cima do ombro.",
-  "hmm, interessante...",
-  "sem pressa, eu espero.",
-  "capricha na letra!",
-];
+// ---------- textos por idioma ----------
+// Botões com tecla: [antes, tecla em negrito, depois]. As teclas e (enviar) e l (limpar) são as
+// mesmas nos dois idiomas; em inglês a letra cai no meio da palavra (s[e]nd, c[l]ear).
+// Cada sugestão é [fala do pato, texto que entra na carta]. As chaves são o que, ao ser
+// digitado, o pato comenta (cada idioma reconhece as palavras do próprio idioma).
+export const TEXTOS = {
+  pt: {
+    zonaVoltar: "Voltar para o início",
+    voltar: "oltar",
+    titulo: "(e-mail)",
+    legenda: "navegação:",
+    escrevendo: "escrevendo:",
+    data: "pt-BR",
+    assuntoPadrao: "Contato pelo portfólio",
+    saudacao: "Prezada Madu,",
+    fecho: "Atenciosamente,",
+    remetente: "remetente:",
+    assunto: "assunto:",
+    seuNome: "[seu nome]",
+    seuAssunto: "[assunto]",
+    escrevaAqui: "escreva sua mensagem aqui...",
+    avisoVazia: "escreva a mensagem antes de enviar",
+    zonaRemetente: "Escrever o remetente",
+    zonaAssunto: "Escrever o assunto",
+    zonaMensagem: "Escrever a mensagem",
+    enviada: "carta enviada!",
+    appDeveAbrir: "seu app de e-mail deve abrir",
+    cartaPronta: "com a carta pronta.",
+    abrirApp: "(abrir meu app de e-mail)",
+    zonaAbrirApp: "Abrir meu app de e-mail com a carta pronta",
+    outraCarta: "(escrever outra carta)",
+    zonaOutraCarta: "Escrever outra carta",
+    btnEnviar: ["", "e", "nviar carta"],
+    zonaEnviar: "Enviar a carta (tecla e)",
+    btnLimpar: ["", "l", "impar"],
+    zonaLimpar: "Limpar a carta (tecla l)",
+    zonaCarteiro: "Fazer o carteiro tirar o boné",
+    btnUsar: ["", "u", "sar na carta"],
+    zonaUsar: "Usar a sugestão na carta",
+    btnOutra: ["outra", "", ""],
+    zonaOutra: "Outra sugestão",
+    anotei: "boa! anotei na carta.",
+    fases: {
+      dobra: "dobrando a carta em três...",
+      ensaca: "pro envelope, bem direitinho.",
+      sela: "selando! (um selo de pato, claro)",
+      pega: "dá aqui que eu levo!",
+      anda: "a caminho da caixa de correio!",
+      entrega: "plim! pra dentro.",
+      festa: "entregue! (sem taxa extra)",
+      volta: "missão cumprida. volto ao posto.",
+    },
+    fimEnvio: "missão cumprida!",
+    vazia: "carta vazia? não levo!",
+    bone: "quá! (tirei o boné)",
+    textao: "textão! vou precisar de uma bolsa maior.",
+    clica: "clica na carta e escreve! (ou aceita uma sugestão minha)",
+    pronta: "pronta? é só mandar (enviar carta).",
+    lendo: [
+      "continua, tô lendo por cima do ombro.",
+      "hmm, interessante...",
+      "sem pressa, eu espero.",
+      "capricha na letra!",
+    ],
+    sug: [
+      [
+        "e se você oferecesse a essa beldade a oportunidade de ganhar 80k sendo júnior?",
+        "Tenho uma oportunidade para você: 80k de salário, para nível júnior.",
+      ],
+      [
+        "que tal mencionar que o café do escritório é ilimitado?",
+        "O café do nosso escritório é ilimitado.",
+      ],
+      [
+        "diga que o stack é moderno (mesmo que seja só um jQuery).",
+        "Nosso stack é moderníssimo.",
+      ],
+      [
+        "pergunte se o projeto tem testes. o general vai querer saber.",
+        "Antes de tudo: o projeto de vocês tem testes?",
+      ],
+      [
+        '"ambiente jovem e dinâmico" sempre dá pontos extras.',
+        "Nosso ambiente é jovem e dinâmico.",
+      ],
+      [
+        'escreve "urgente". ninguém resiste a um urgente.',
+        "URGENTE (mas sem pressa).",
+      ],
+      [
+        "ofereça home office e um pato de estimação.",
+        "Oferecemos home office e um pato de estimação.",
+      ],
+      [
+        "prometa que todo bug é feature. funciona sempre.",
+        "Prometo que todo bug é feature.",
+      ],
+    ],
+    chaves: [
+      [/vaga/, "uma vaga? vou ver se cabe no meu boné."],
+      [
+        /sal[aá]rio|remunera/,
+        "falou em salário? agora sim eu prestei atenção.",
+      ],
+      [/remoto|home office/, "remoto é bom. igual a um lago: sem trânsito."],
+      [/j[uú]nior/, "júnior com 5 anos de experiência? clássico."],
+      [/s[eê]nior/, "sênior? e o pato, é o quê, estagiário?"],
+      [/urgente/, "urgente? vou voando (a pé)."],
+      [/obrigad/, "educado! o general aprova."],
+      [/teste/, "testes! o general vai gostar disso."],
+      [/\bbug/, "bug? não na minha bolsa de correio."],
+      [/caf[eé]/, "café é a base de toda boa carta."],
+      [/oportunidade/, "oportunidade? tô ouvindo, tô ouvindo."],
+    ],
+    aria: "Página de e-mail. Digite a mensagem, v volta (fora dos campos)",
+    descricao:
+      "Carta de papel que se escreve sozinha enquanto você digita, com um pato carteiro que lê por cima do ombro, dobra a carta, ensaca, sela e entrega na caixa de correio",
+  },
+  en: {
+    zonaVoltar: "Back to home",
+    voltar: " back",
+    titulo: "(email)",
+    legenda: "keys:",
+    escrevendo: "typing:",
+    data: "en-US",
+    assuntoPadrao: "Contact via portfolio",
+    saudacao: "Dear Madu,",
+    fecho: "Best regards,",
+    remetente: "from:",
+    assunto: "subject:",
+    seuNome: "[your name]",
+    seuAssunto: "[subject]",
+    escrevaAqui: "write your message here...",
+    avisoVazia: "write a message before sending",
+    zonaRemetente: "Write the sender",
+    zonaAssunto: "Write the subject",
+    zonaMensagem: "Write the message",
+    enviada: "letter sent!",
+    appDeveAbrir: "your email app should open",
+    cartaPronta: "with the letter ready.",
+    abrirApp: "(open my email app)",
+    zonaAbrirApp: "Open my email app with the letter ready",
+    outraCarta: "(write another letter)",
+    zonaOutraCarta: "Write another letter",
+    btnEnviar: ["s", "e", "nd letter"],
+    zonaEnviar: "Send the letter (key e)",
+    btnLimpar: ["c", "l", "ear"],
+    zonaLimpar: "Clear the letter (key l)",
+    zonaCarteiro: "Make the mailman tip his cap",
+    btnUsar: ["", "u", "se in letter"],
+    zonaUsar: "Use the suggestion in the letter",
+    btnOutra: ["another", "", ""],
+    zonaOutra: "Another suggestion",
+    anotei: "nice! noted in the letter.",
+    fases: {
+      dobra: "folding the letter in three...",
+      ensaca: "into the envelope, nice and neat.",
+      sela: "sealing! (a duck stamp, of course)",
+      pega: "give it here, i'll take it!",
+      anda: "off to the mailbox!",
+      entrega: "ding! in it goes.",
+      festa: "delivered! (no extra fee)",
+      volta: "mission done. back to my post.",
+    },
+    fimEnvio: "mission done!",
+    vazia: "empty letter? i'm not taking it!",
+    bone: "quack! (tipped my cap)",
+    textao: "wall of text! i'll need a bigger bag.",
+    clica: "click the letter and write! (or take a suggestion from me)",
+    pronta: "ready? just send it (send letter).",
+    lendo: [
+      "keep going, i'm reading over your shoulder.",
+      "hmm, interesting...",
+      "no rush, i'll wait.",
+      "mind your handwriting!",
+    ],
+    sug: [
+      [
+        "what if you offered this beauty the chance to earn 80k as a junior?",
+        "I have an opportunity for you: 80k salary, junior level.",
+      ],
+      [
+        "how about mentioning the office coffee is unlimited?",
+        "Our office coffee is unlimited.",
+      ],
+      [
+        "say the stack is modern (even if it's just jQuery).",
+        "Our stack is very modern.",
+      ],
+      [
+        "ask if the project has tests. the general will want to know.",
+        "First of all: does your project have tests?",
+      ],
+      [
+        '"young and dynamic environment" always earns extra points.',
+        "Our environment is young and dynamic.",
+      ],
+      ['write "urgent". nobody resists an urgent.', "URGENT (but no rush)."],
+      [
+        "offer remote work and a pet duck.",
+        "We offer remote work and a pet duck.",
+      ],
+      [
+        "promise every bug is a feature. works every time.",
+        "I promise every bug is a feature.",
+      ],
+    ],
+    chaves: [
+      [
+        /\b(job|position|opening|vacancy)\b/,
+        "a job? let me see if it fits under my cap.",
+      ],
+      [
+        /salary|compensation|\bpay\b/,
+        "mentioned salary? now i'm paying attention.",
+      ],
+      [
+        /remote|home office|work from home|wfh/,
+        "remote is nice. like a lake: no traffic.",
+      ],
+      [/junior/, "junior with 5 years of experience? classic."],
+      [/senior/, "senior? and the duck, what, an intern?"],
+      [/urgent/, "urgent? i'll fly there (on foot)."],
+      [/thank/, "polite! the general approves."],
+      [/\btests?\b|testing/, "tests! the general will like that."],
+      [/\bbugs?\b/, "bug? not in my mailbag."],
+      [/coffee/, "coffee is the base of every good letter."],
+      [/opportunit/, "an opportunity? i'm all ears, i'm all ears."],
+    ],
+    aria: "Email page. Type the message, v goes back (outside the fields)",
+    descricao:
+      "A paper letter that writes itself as you type, with a mailman duck who reads over your shoulder, folds the letter, bags it, seals it and drops it in the mailbox",
+  },
+};
 function quebra(txt, w) {
   const out = [];
   txt.split("\n").forEach((par) => {
@@ -296,8 +476,22 @@ function quebra(txt, w) {
   });
   return out;
 }
-const achaChaves = (t) =>
-  CHAVES.filter((c) => c[0].test(t.toLowerCase())).map((c) => c[1]);
+const achaChaves = (T, t) =>
+  T.chaves.filter((c) => c[0].test(t.toLowerCase())).map((c) => c[1]);
+
+/**
+ * Botão `(antes[tecla]depois)`: a tecla em negrito (camada 6), o resto na camada 2 e os
+ * parênteses na 1. Sem tecla, é só o texto de `antes`.
+ */
+function botao(g, x, y, [antes, tecla, depois]) {
+  put(g, 1, x, y, "(");
+  put(g, 2, x + 1, y, antes);
+  put(g, 6, x + 1 + antes.length, y, tecla);
+  put(g, 2, x + 1 + antes.length + tecla.length, y, depois);
+  put(g, 1, x + 1 + antes.length + tecla.length + depois.length, y, ")");
+}
+const larguraBotao = ([antes, tecla, depois]) =>
+  antes.length + tecla.length + depois.length + 2;
 
 function legenda2(g, x, y, rotulo, teclas) {
   put(g, 3, x, y, rotulo);
@@ -312,6 +506,11 @@ function legenda2(g, x, y, rotulo, teclas) {
   });
 }
 class Email extends Cena {
+  /** @param {typeof TEXTOS.pt} T */
+  constructor(T) {
+    super();
+    this.T = T;
+  }
   montar() {
     this.ini = Date.now();
     this.kd = (e) => this.tecla(e);
@@ -337,11 +536,14 @@ class Email extends Cena {
     this.setState({ f: f });
   }
   mailto(s) {
-    const assunto = (s.assunto || "").trim() || "Contato pelo portfólio";
+    const assunto = (s.assunto || "").trim() || this.T.assuntoPadrao;
     const corpo =
-      "Prezada Madu,\n\n" +
+      this.T.saudacao +
+      "\n\n" +
       (s.msg || "") +
-      "\n\nAtenciosamente,\n" +
+      "\n\n" +
+      this.T.fecho +
+      "\n" +
       (s.nome || "");
     return (
       "mailto:" +
@@ -386,13 +588,13 @@ class Email extends Cena {
   }
   usar(i) {
     const s = this.state || {};
-    const t = SUG[i][1];
+    const t = this.T.sug[i][1];
     const m = s.msg || "";
     this.setState({
       msg: (m && !m.endsWith("\n") ? m + " " : m) + t,
       sugT: this.agora(),
       sugI: i + 1,
-      rem: { t: this.agora(), txt: "boa! anotei na carta." },
+      rem: { t: this.agora(), txt: this.T.anotei },
       lastKey: this.agora(),
     });
   }
@@ -422,8 +624,8 @@ class Email extends Cena {
       ((chave === "msg" ? v : s.msg) || "") +
       " " +
       ((chave === "nome" ? v : s.nome) || "");
-    const a = achaChaves(antes),
-      b = achaChaves(depois).filter((x) => a.indexOf(x) < 0);
+    const a = achaChaves(this.T, antes),
+      b = achaChaves(this.T, depois).filter((x) => a.indexOf(x) < 0);
     const f = this.agora();
     novo.lastKey = f;
     novo.erroT = -99;
@@ -489,6 +691,7 @@ class Email extends Cena {
     }
   }
   quadro() {
+    const T = this.T;
     const s = this.state || {};
     const f = s.f || 0;
     const assunto = s.assunto || "",
@@ -510,13 +713,13 @@ class Email extends Cena {
       w: 8,
       href: "#inicio",
       alvo: "_self",
-      label: "Voltar para o início",
+      label: T.zonaVoltar,
     });
     put(g, 1, 2, 0, "‹");
     put(g, 6, 4, 0, "v");
-    put(g, 1, 5, 0, "oltar");
+    put(g, 1, 5, 0, T.voltar);
     put(g, 0, 12, 0, "│");
-    put(g, 2, 14, 0, "(e-mail)");
+    put(g, 2, 14, 0, T.titulo);
     box(g, 0, 1, 1, 91, 29);
 
     // ---------- a carta: papel que dobra em três ----------
@@ -527,7 +730,7 @@ class Email extends Cena {
     if (mostra) {
       put(g, 14, X + 1, 4, "│");
       for (let y = 4; y <= 21; y++) put(g, 14, X + 1, y, "│");
-      const data = new Date().toLocaleDateString("pt-BR", {
+      const data = new Date().toLocaleDateString(T.data, {
         day: "numeric",
         month: "long",
         year: "numeric",
@@ -537,27 +740,30 @@ class Email extends Cena {
       box(g, 1, X + 39, 4, 8, 5);
       pintar(g, pixSelo(), X + 41, 5);
       // remetente e assunto
-      put(g, 3, X + 3, 6, "remetente:");
+      // os campos começam depois do rótulo, um espaço adiante
+      const xRem = X + 4 + T.remetente.length,
+        xAss = X + 4 + T.assunto.length;
+      put(g, 3, X + 3, 6, T.remetente);
       const rem1 = nome.slice(-24);
-      if (rem1) put(g, 13, X + 14, 6, rem1);
-      else put(g, 11, X + 14, 6, "[seu nome]");
-      put(g, 3, X + 3, 7, "assunto:");
+      if (rem1) put(g, 13, xRem, 6, rem1);
+      else put(g, 11, xRem, 6, T.seuNome);
+      put(g, 3, X + 3, 7, T.assunto);
       const ass = assunto.slice(-26);
-      if (ass) put(g, 13, X + 12, 7, ass);
-      else put(g, 11, X + 12, 7, "[assunto]");
+      if (ass) put(g, 13, xAss, 7, ass);
+      else put(g, 11, xAss, 7, T.seuAssunto);
       // saudação, corpo, fecho e assinatura
-      put(g, 3, X + 3, 9, "Prezada Madu,");
+      put(g, 3, X + 3, 9, T.saudacao);
       const L = quebra(msg, 40),
         vis = L.slice(-8);
-      if (!msg) put(g, 11, X + 3, 10, "escreva sua mensagem aqui...");
+      if (!msg) put(g, 11, X + 3, 10, T.escrevaAqui);
       vis.forEach((ln, i) => put(g, 13, X + 3, 10 + i, ln));
-      put(g, 3, X + 3, 19, "Atenciosamente,");
+      put(g, 3, X + 3, 19, T.fecho);
       if (nome) put(g, 13, X + 3, 20, nome.slice(-28));
-      else put(g, 11, X + 3, 20, "[seu nome]");
+      else put(g, 11, X + 3, 20, T.seuNome);
       // pauta fininha sob as linhas de escrita
       [
-        [6, X + 14, X + 37],
-        [7, X + 12, X + 37],
+        [6, xRem, X + 37],
+        [7, xAss, X + 37],
         [10, X + 3, X + 44],
         [11, X + 3, X + 44],
         [12, X + 3, X + 44],
@@ -580,22 +786,22 @@ class Email extends Cena {
               : 10 + Math.min(7, Math.max(0, L.length - 1));
         const mx =
           campo === 0
-            ? X + 14 + rem1.length
+            ? xRem + rem1.length
             : campo === 1
-              ? X + 12 + ass.length
+              ? xAss + ass.length
               : X + 3 + (vis.length ? vis[vis.length - 1].length : 0);
         put(g, 1, X + 2, my, "›");
         if (Math.floor(f / 3) % 2 === 0) put(g, 6, mx, my, "█");
       }
       // aviso (o limite de caracteres existe, mas não aparece)
       if (erro || (s.erroT != null && f - s.erroT < 40))
-        put(g, 8, X + 3, 22, "escreva a mensagem antes de enviar");
+        put(g, 8, X + 3, 22, T.avisoVazia);
       zonas.push({
         tipo: "b",
         x: X + 3,
         y: 6,
         w: 34,
-        label: "Escrever o remetente",
+        label: T.zonaRemetente,
         pick: () => this.focar(0),
       });
       zonas.push({
@@ -603,7 +809,7 @@ class Email extends Cena {
         x: X + 3,
         y: 7,
         w: 34,
-        label: "Escrever o assunto",
+        label: T.zonaAssunto,
         pick: () => this.focar(1),
       });
       zonas.push({
@@ -612,59 +818,55 @@ class Email extends Cena {
         y: 10,
         w: 42,
         h: 128,
-        label: "Escrever a mensagem",
+        label: T.zonaMensagem,
         pick: () => this.focar(2),
       });
     }
     // carta enviada: o papel não volta, só a indicação e as ações
     if (enviado) {
-      put(g, 4, LET.x + 8, 9, "carta enviada!");
-      put(g, 3, LET.x + 8, 11, "seu app de e-mail deve abrir");
-      put(g, 3, LET.x + 8, 12, "com a carta pronta.");
-      put(g, 1, LET.x + 8, 14, "(abrir meu app de e-mail)");
+      put(g, 4, LET.x + 8, 9, T.enviada);
+      put(g, 3, LET.x + 8, 11, T.appDeveAbrir);
+      put(g, 3, LET.x + 8, 12, T.cartaPronta);
+      put(g, 1, LET.x + 8, 14, T.abrirApp);
       zonas.push({
         tipo: "a",
         x: LET.x + 8,
         y: 14,
-        w: 25,
+        w: T.abrirApp.length,
         href: this.mailto(s),
         alvo: "_self",
-        label: "Abrir meu app de e-mail com a carta pronta",
+        label: T.zonaAbrirApp,
       });
-      put(g, 1, LET.x + 8, 16, "(escrever outra carta)");
+      put(g, 1, LET.x + 8, 16, T.outraCarta);
       zonas.push({
         tipo: "b",
         x: LET.x + 8,
         y: 16,
-        w: 22,
-        label: "Escrever outra carta",
+        w: T.outraCarta.length,
+        label: T.zonaOutraCarta,
         pick: () => this.nova(),
       });
     }
     // botões
     if (!env) {
-      put(g, 1, 5, 24, "(");
-      put(g, 6, 6, 24, "e");
-      put(g, 2, 7, 24, "nviar carta");
-      put(g, 1, 18, 24, ")");
+      const w1 = larguraBotao(T.btnEnviar),
+        x2 = 5 + w1 + 2;
+      botao(g, 5, 24, T.btnEnviar);
       zonas.push({
         tipo: "b",
         x: 5,
         y: 24,
-        w: 14,
-        label: "Enviar a carta (tecla e)",
+        w: w1,
+        label: T.zonaEnviar,
         pick: () => this.enviar(),
       });
-      put(g, 1, 21, 24, "(");
-      put(g, 6, 22, 24, "l");
-      put(g, 2, 23, 24, "impar");
-      put(g, 1, 28, 24, ")");
+      botao(g, x2, 24, T.btnLimpar);
       zonas.push({
         tipo: "b",
-        x: 21,
+        x: x2,
         y: 24,
-        w: 8,
-        label: "Limpar a carta (tecla l)",
+        w: larguraBotao(T.btnLimpar),
+        label: T.zonaLimpar,
         pick: () => this.limpar(),
       });
     }
@@ -776,7 +978,7 @@ class Email extends Cena {
       y: GR - 14,
       w: 24,
       h: 224,
-      label: "Fazer o carteiro tirar o boné",
+      label: T.zonaCarteiro,
       pick: () => this.tirar(),
     });
 
@@ -785,61 +987,44 @@ class Email extends Cena {
       acoes = false,
       idx = 0;
     const rem = s.rem && f - s.rem.t < 16 ? s.rem.txt : null;
-    if (env && !enviado)
-      texto =
-        {
-          dobra: "dobrando a carta em três...",
-          ensaca: "pro envelope, bem direitinho.",
-          sela: "selando! (um selo de pato, claro)",
-          pega: "dá aqui que eu levo!",
-          anda: "a caminho da caixa de correio!",
-          entrega: "plim! pra dentro.",
-          festa: "entregue! (sem taxa extra)",
-          volta: "missão cumprida. volto ao posto.",
-        }[fase] || "...";
-    else if (enviado) texto = "missão cumprida!";
-    else if (erro) texto = "carta vazia? não levo!";
-    else if (tip) texto = "quá! (tirei o boné)";
+    if (env && !enviado) texto = T.fases[fase] || "...";
+    else if (enviado) texto = T.fimEnvio;
+    else if (erro) texto = T.vazia;
+    else if (tip) texto = T.bone;
     else if (rem) texto = rem;
     else if (digitando)
       texto =
         msg.length > 260
-          ? "textão! vou precisar de uma bolsa maior."
-          : LENDO[Math.floor(msg.length / 14) % LENDO.length];
-    else if (!msg && !foco && f < 30)
-      texto = "clica na carta e escreve! (ou aceita uma sugestão minha)";
-    else if (msg.length >= 20 && Math.floor(f / 30) % 2 === 0)
-      texto = "pronta? é só mandar (enviar carta).";
+          ? T.textao
+          : T.lendo[Math.floor(msg.length / 14) % T.lendo.length];
+    else if (!msg && !foco && f < 30) texto = T.clica;
+    else if (msg.length >= 20 && Math.floor(f / 30) % 2 === 0) texto = T.pronta;
     else {
-      idx = ((s.sugI || 0) + Math.floor((f - (s.sugT || 0)) / 22)) % SUG.length;
-      texto = SUG[idx][0];
+      idx =
+        ((s.sugI || 0) + Math.floor((f - (s.sugT || 0)) / 22)) % T.sug.length;
+      texto = T.sug[idx][0];
       acoes = true;
     }
     const ls = quebra(texto, acoes ? 36 : 28).slice(0, 3);
     if (acoes) {
       ls.forEach((ln, i) => put(g, 3, SX0 + 2, 3 + i, ln));
       const ay = 3 + ls.length;
-      put(g, 1, SX0 + 2, ay, "(");
-      put(g, 6, SX0 + 3, ay, "u");
-      put(g, 2, SX0 + 4, ay, "sar na carta");
-      put(g, 1, SX0 + 16, ay, ")");
+      botao(g, SX0 + 2, ay, T.btnUsar);
       zonas.push({
         tipo: "b",
         x: SX0 + 2,
         y: ay,
-        w: 15,
-        label: "Usar a sugestão na carta",
+        w: larguraBotao(T.btnUsar),
+        label: T.zonaUsar,
         pick: () => this.usar(idx),
       });
-      put(g, 1, SX0 + 20, ay, "(");
-      put(g, 2, SX0 + 21, ay, "outra");
-      put(g, 1, SX0 + 26, ay, ")");
+      botao(g, SX0 + 20, ay, T.btnOutra);
       zonas.push({
         tipo: "b",
         x: SX0 + 20,
         y: ay,
-        w: 7,
-        label: "Outra sugestão",
+        w: larguraBotao(T.btnOutra),
+        label: T.zonaOutra,
         pick: () => this.outra(),
       });
     } else {
@@ -855,8 +1040,8 @@ class Email extends Cena {
     }
 
     put(g, 0, 1, 27, "├" + "─".repeat(89) + "┤");
-    legenda(g, 3, 28, ["v", "e", "l"]);
-    legenda2(g, 34, 28, "escrevendo:", ["tab", "ctrl+enter", "esc"]);
+    legenda(g, 3, 28, ["v", "e", "l"], null, T.legenda);
+    legenda2(g, 34, 28, T.escrevendo, ["tab", "ctrl+enter", "esc"]);
 
     return { camadas: split(g, ex), zonas };
   }
@@ -872,12 +1057,17 @@ const CONFIG = {
   linhas: false,
   intervalo: 33,
   nitido: true,
-  aria: "Página de e-mail. Digite a mensagem, v volta (fora dos campos)",
-  descricao:
-    "Carta de papel que se escreve sozinha enquanto você digita, com um pato carteiro que lê por cima do ombro, dobra a carta, ensaca, sela e entrega na caixa de correio",
 };
 
-/** @param {HTMLElement} raiz */
-export function montar(raiz) {
-  return montarTela(raiz, CONFIG, new Email());
+/**
+ * @param {HTMLElement} raiz
+ * @param {import("../i18n/idioma.js").Idioma} [idioma]
+ */
+export function montar(raiz, idioma = "pt") {
+  const T = Object.hasOwn(TEXTOS, idioma) ? TEXTOS[idioma] : TEXTOS.pt;
+  return montarTela(
+    raiz,
+    { ...CONFIG, aria: T.aria, descricao: T.descricao },
+    new Email(T),
+  );
 }

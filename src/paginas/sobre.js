@@ -23,111 +23,213 @@ function clr(g, x, y, w, h) {
 // Caracteres de caixa e de bloco são desenhados como formas na grade (sem depender da fonte);
 // só as letras continuam como texto.
 // camadas: 0 moldura suave, 1 acento, 2 texto principal, 3 texto secundário, 4 âmbar, 5 escuro
-const TABS = ["perfil", "skills", "formação", "certificados"];
-const AREAS = ["todos", "ia", "dados", "ferramentas", "full-stack", "testes"];
-// provisório: trocar pelos certificados reais e pelos caminhos dos PDFs
-const CERTS = [
-  { n: "[certificado 1]", a: "ia", href: "#certificado-1" },
-  { n: "[certificado 2]", a: "dados", href: "#certificado-2" },
-  { n: "[certificado 3]", a: "ia", href: "#certificado-3" },
-  { n: "[certificado 4]", a: "full-stack", href: "#certificado-4" },
-  { n: "[certificado 5]", a: "testes", href: "#certificado-5" },
-  { n: "[certificado 6]", a: "ferramentas", href: "#certificado-6" },
-];
-const FALA = {
-  perfil: "oi! me chamo (quá)",
-  skills: "olha quanta coisa!",
-  formação: "estudando sempre!",
-  certificados: "colecionando!",
+// Textos por idioma. Os ids (`perfil`, `todos`, `ia`...) são internos e iguais nos dois; só o
+// que a pessoa lê muda. A tecla de cada aba é a primeira letra do rótulo (vai em negrito).
+// Em inglês, "education" pede `e` no lugar do `f` de "formação".
+export const TEXTOS = {
+  pt: {
+    zonaVoltar: "Voltar para o início",
+    voltar: "oltar",
+    titulo: "(sobre mim)",
+    legenda: "navegação:",
+    filtro: "filtro",
+    abas: [
+      { id: "perfil", rotulo: "perfil", tecla: "p" },
+      { id: "skills", rotulo: "skills", tecla: "s" },
+      { id: "formação", rotulo: "formação", tecla: "f" },
+      { id: "certificados", rotulo: "certificados", tecla: "c" },
+    ],
+    areas: {
+      todos: "todos",
+      ia: "ia",
+      dados: "dados",
+      ferramentas: "ferramentas",
+      "full-stack": "full-stack",
+      testes: "testes",
+    },
+    // provisório: trocar pelos certificados reais
+    certs: [
+      "[certificado 1]",
+      "[certificado 2]",
+      "[certificado 3]",
+      "[certificado 4]",
+      "[certificado 5]",
+      "[certificado 6]",
+    ],
+    fala: {
+      perfil: "oi! me chamo (quá)",
+      skills: "olha quanta coisa!",
+      formação: "estudando sempre!",
+      certificados: "colecionando!",
+    },
+    falaCarinho: "quá quá! <3",
+    botaoCarinho: "(carinho)",
+    zonaCarinho: "Fazer carinho no pato",
+    nome: "nome",
+    ocupacao: "ocupação",
+    ocupacaoAqui: "[sua ocupação aqui]",
+    lema: "lema",
+    lema1: '"Se encontro um problema, desenvolvo',
+    lema2: 'a solução."',
+    hard: "hard skills",
+    soft: "soft skills",
+    hardItens: ["ia", "dados", "ferramentas", "full-stack", "testes"],
+    softItens: ["[soft skill 1]", "[soft skill 2]", "[soft skill 3]"],
+    formacao: "formação acadêmica",
+    curso1: "[curso]",
+    curso2: "[curso 2]",
+    instituicao: "[instituição] · [ano]",
+    mostrando: (/** @type {number} */ n, /** @type {number} */ total) =>
+      "mostrando " + n + " de " + total,
+    zonaFiltro: (/** @type {string} */ area) => "Filtrar certificados: " + area,
+    zonaCert: (/** @type {string} */ nome, /** @type {string} */ area) =>
+      "Abrir o PDF do certificado " + nome + " (área " + area + ")",
+    zonaAba: (/** @type {string} */ rotulo, /** @type {string} */ tecla) =>
+      "Aba " + rotulo + " (tecla " + tecla + ")",
+    aria: "Ficha de apresentação. Teclas p, s, f e c trocam de aba, v volta; teclas de 1 a 6 filtram os certificados",
+    descricao:
+      "Um pato de pixels boiando na tela de cima de um console portátil de duas telas; a tela de baixo tem o botão de carinho. Ao lado, uma ficha estilo monitor de terminal com abas perfil, skills, formação e certificados",
+  },
+  en: {
+    zonaVoltar: "Back to home",
+    voltar: " back",
+    titulo: "(about me)",
+    legenda: "keys:",
+    filtro: "filter",
+    abas: [
+      { id: "perfil", rotulo: "profile", tecla: "p" },
+      { id: "skills", rotulo: "skills", tecla: "s" },
+      { id: "formação", rotulo: "education", tecla: "e" },
+      { id: "certificados", rotulo: "certificates", tecla: "c" },
+    ],
+    areas: {
+      todos: "all",
+      ia: "ai",
+      dados: "data",
+      ferramentas: "tools",
+      "full-stack": "full-stack",
+      testes: "testing",
+    },
+    certs: [
+      "[certificate 1]",
+      "[certificate 2]",
+      "[certificate 3]",
+      "[certificate 4]",
+      "[certificate 5]",
+      "[certificate 6]",
+    ],
+    fala: {
+      perfil: "hi! i'm (quack)",
+      skills: "look at all this!",
+      formação: "always learning!",
+      certificados: "collecting them!",
+    },
+    falaCarinho: "quack quack! <3",
+    botaoCarinho: "(pet me)",
+    zonaCarinho: "Pet the duck",
+    nome: "name",
+    ocupacao: "role",
+    ocupacaoAqui: "[your role here]",
+    lema: "motto",
+    lema1: '"If I find a problem, I build',
+    lema2: 'the solution."',
+    hard: "hard skills",
+    soft: "soft skills",
+    hardItens: ["ai", "data", "tools", "full-stack", "testing"],
+    softItens: ["[soft skill 1]", "[soft skill 2]", "[soft skill 3]"],
+    formacao: "academic background",
+    curso1: "[degree]",
+    curso2: "[degree 2]",
+    instituicao: "[institution] · [year]",
+    mostrando: (/** @type {number} */ n, /** @type {number} */ total) =>
+      "showing " + n + " of " + total,
+    zonaFiltro: (/** @type {string} */ area) => "Filter certificates: " + area,
+    zonaCert: (/** @type {string} */ nome, /** @type {string} */ area) =>
+      "Open the PDF of certificate " + nome + " (area " + area + ")",
+    zonaAba: (/** @type {string} */ rotulo, /** @type {string} */ tecla) =>
+      "Tab " + rotulo + " (key " + tecla + ")",
+    aria: "About me card. Keys p, s, e and c switch tabs, v goes back; keys 1 to 6 filter the certificates",
+    descricao:
+      "A pixel duck floating on the top screen of a two-screen handheld console; the bottom screen has the pet button. Next to it, a terminal-monitor style card with tabs profile, skills, education and certificates",
+  },
 };
+const AREAS = ["todos", "ia", "dados", "ferramentas", "full-stack", "testes"];
+// provisório: trocar pelos caminhos dos PDFs
+const CERTS = [
+  { a: "ia", href: "#certificado-1" },
+  { a: "dados", href: "#certificado-2" },
+  { a: "ia", href: "#certificado-3" },
+  { a: "full-stack", href: "#certificado-4" },
+  { a: "testes", href: "#certificado-5" },
+  { a: "ferramentas", href: "#certificado-6" },
+];
 const PX = 45,
   PY = 4;
 
-const FIXO = {
-  perfil: [
-    [["nome", 3]],
-    [
-      ["╚═ ", 0],
-      ["eduarda silva (thinkmadu)", 2],
+/** As linhas fixas de cada aba (menos certificados), com os textos do idioma. */
+function fixo(T) {
+  return {
+    perfil: [
+      [[T.nome, 3]],
+      [
+        ["╚═ ", 0],
+        ["eduarda silva (thinkmadu)", 2],
+      ],
+      [],
+      [[T.ocupacao, 3]],
+      [
+        ["╚═ ", 0],
+        [T.ocupacaoAqui, 1],
+      ],
+      [],
+      [[T.lema, 3]],
+      [
+        ["╚═ ", 0],
+        [T.lema1, 2],
+      ],
+      [
+        ["   ", 0],
+        [T.lema2, 2],
+      ],
     ],
-    [],
-    [["ocupação", 3]],
-    [
-      ["╚═ ", 0],
-      ["[sua ocupação aqui]", 1],
+    skills: [
+      [[T.hard, 3]],
+      ...T.hardItens.map((nome, i) => [
+        [i < T.hardItens.length - 1 ? "╠═ " : "╚═ ", 0],
+        [nome, 2],
+      ]),
+      [],
+      [[T.soft, 3]],
+      ...T.softItens.map((nome, i) => [
+        [i < T.softItens.length - 1 ? "╠═ " : "╚═ ", 0],
+        [nome, 1],
+      ]),
     ],
-    [],
-    [["lema", 3]],
-    [
-      ["╚═ ", 0],
-      ['"Se encontro um problema, desenvolvo', 2],
+    formação: [
+      [[T.formacao, 3]],
+      [
+        ["╠═ ", 0],
+        [T.curso1, 2],
+      ],
+      [
+        ["║  ", 0],
+        ["╚═ ", 0],
+        [T.instituicao, 1],
+      ],
+      [
+        ["╚═ ", 0],
+        [T.curso2, 2],
+      ],
+      [
+        ["   ", 0],
+        ["╚═ ", 0],
+        [T.instituicao, 1],
+      ],
     ],
-    [
-      ["   ", 0],
-      ['a solução."', 2],
-    ],
-  ],
-  skills: [
-    [["hard skills", 3]],
-    [
-      ["╠═ ", 0],
-      ["ia", 2],
-    ],
-    [
-      ["╠═ ", 0],
-      ["dados", 2],
-    ],
-    [
-      ["╠═ ", 0],
-      ["ferramentas", 2],
-    ],
-    [
-      ["╠═ ", 0],
-      ["full-stack", 2],
-    ],
-    [
-      ["╚═ ", 0],
-      ["testes", 2],
-    ],
-    [],
-    [["soft skills", 3]],
-    [
-      ["╠═ ", 0],
-      ["[soft skill 1]", 1],
-    ],
-    [
-      ["╠═ ", 0],
-      ["[soft skill 2]", 1],
-    ],
-    [
-      ["╚═ ", 0],
-      ["[soft skill 3]", 1],
-    ],
-  ],
-  formação: [
-    [["formação acadêmica", 3]],
-    [
-      ["╠═ ", 0],
-      ["[curso]", 2],
-    ],
-    [
-      ["║  ", 0],
-      ["╚═ ", 0],
-      ["[instituição] · [ano]", 1],
-    ],
-    [
-      ["╚═ ", 0],
-      ["[curso 2]", 2],
-    ],
-    [
-      ["   ", 0],
-      ["╚═ ", 0],
-      ["[instituição] · [ano]", 1],
-    ],
-  ],
-};
+  };
+}
 
-function certContent(area, onFiltro) {
+function certContent(T, area, onFiltro) {
   const lines = [],
     zs = [];
   const chipLine = (from, to, y) => {
@@ -135,11 +237,12 @@ function certContent(area, onFiltro) {
     let off = 0;
     for (let i = from; i < to; i++) {
       const on = AREAS[i] === area;
-      const len = AREAS[i].length + 4;
+      const nome = T.areas[AREAS[i]];
+      const len = nome.length + 4;
       segs.push(
         [on ? "(" : " ", 1],
         [String(i + 1), 6],
-        [" " + AREAS[i], on ? 2 : 3],
+        [" " + nome, on ? 2 : 3],
         [on ? ")" : " ", 1],
         [" ", 0],
       );
@@ -148,7 +251,7 @@ function certContent(area, onFiltro) {
         x: PX + off,
         y: y,
         w: len,
-        label: "Filtrar certificados: " + AREAS[i],
+        label: T.zonaFiltro(nome),
         pick: () => onFiltro(AREAS[i]),
       });
       off += len + 1;
@@ -157,14 +260,15 @@ function certContent(area, onFiltro) {
   };
   chipLine(0, 4, PY);
   chipLine(4, 6, PY + 1);
-  const filtrados = CERTS.filter((c) => area === "todos" || c.a === area);
-  lines.push([["mostrando " + filtrados.length + " de " + CERTS.length, 3]]);
+  const certs = CERTS.map((c, i) => ({ ...c, n: T.certs[i] }));
+  const filtrados = certs.filter((c) => area === "todos" || c.a === area);
+  lines.push([[T.mostrando(filtrados.length, certs.length), 3]]);
   lines.push([]);
   let yy = PY + 4;
   AREAS.slice(1).forEach((a) => {
     const itens = filtrados.filter((c) => c.a === a);
     if (!itens.length) return;
-    lines.push([[a, 3]]);
+    lines.push([[T.areas[a], 3]]);
     yy++;
     itens.forEach((c, j) => {
       const ult = j === itens.length - 1;
@@ -180,7 +284,7 @@ function certContent(area, onFiltro) {
         y: yy,
         w: c.n.length + 7,
         href: c.href,
-        label: "Abrir o PDF do certificado " + c.n + " (área " + a + ")",
+        label: T.zonaCert(c.n, T.areas[a]),
       });
       yy++;
     });
@@ -247,6 +351,12 @@ function duckLayers(f, mode, dm) {
 }
 
 class Sobre extends Cena {
+  /** @param {typeof TEXTOS.pt} T */
+  constructor(T) {
+    super();
+    this.T = T;
+    this.fixo = fixo(T);
+  }
   montar() {
     if (movimentoReduzido()) {
       this.setState({ f: 200 });
@@ -275,7 +385,7 @@ class Sobre extends Cena {
   }
   teclar(e) {
     const k = String((e && e.key) || "").toLowerCase();
-    const mapa = { p: "perfil", s: "skills", f: "formação", c: "certificados" };
+    const mapa = Object.fromEntries(this.T.abas.map((a) => [a.tecla, a.id]));
     if (k === "v") {
       location.hash = "#inicio";
       return;
@@ -289,6 +399,7 @@ class Sobre extends Cena {
       this.filtrar(AREAS[Number(k) - 1]);
   }
   quadro() {
+    const T = this.T;
     const s = this.state || {};
     const f = s.f || 0;
     const tab = s.tab || "perfil",
@@ -308,14 +419,14 @@ class Sobre extends Cena {
       w: 8,
       href: "#inicio",
       alvo: "_self",
-      label: "Voltar para o início",
+      label: T.zonaVoltar,
     });
 
     put(g, 1, 2, 0, "‹");
     put(g, 6, 4, 0, "v");
-    put(g, 1, 5, 0, "oltar");
+    put(g, 1, 5, 0, T.voltar);
     put(g, 0, 11, 0, "│");
-    put(g, 2, 13, 0, "(sobre mim)");
+    put(g, 2, 13, 0, T.titulo);
 
     // console portátil de duas telas
     box(g, 0, 1, 1, 40, 12);
@@ -357,10 +468,10 @@ class Sobre extends Cena {
     if (mode === "happy") put(g, 1, 12, 4 - (dm % 2), "*");
 
     // tela de baixo: fala, botão de carinho e contador
-    const say = mode === "carinho" ? "quá quá! <3" : FALA[tab];
+    const say = mode === "carinho" ? T.falaCarinho : T.fala[tab];
     put(g, 2, 12 + Math.floor((18 - say.length) / 2), 16, say);
     box(g, 1, 13, 18, 16, 3);
-    put(g, 2, 16, 19, "(carinho)");
+    put(g, 2, 16, 19, T.botaoCarinho);
     put(g, 1, 13, 21, "<3 " + hearts);
     zonas.push({
       tipo: "b",
@@ -368,15 +479,15 @@ class Sobre extends Cena {
       y: 18,
       w: 16,
       h: 48,
-      label: "Fazer carinho no pato",
+      label: T.zonaCarinho,
       pick: () => this.carinho(),
     });
 
     // ficha estilo btop
     box(g, 0, 43, 1, 49, 23);
     let tx = PX;
-    TABS.forEach((k) => {
-      const on = k === tab;
+    T.abas.forEach(({ id, rotulo: k, tecla }) => {
+      const on = id === tab;
       put(g, 0, tx, 1, "┤");
       put(g, 6, tx + 1, 1, k[0]);
       put(g, on ? 2 : 3, tx + 2, 1, k.slice(1));
@@ -389,16 +500,16 @@ class Sobre extends Cena {
         w: k.length + 2,
         h: 22,
         dy: 3,
-        label: "Aba " + k + " (tecla " + k[0] + ")",
-        pick: () => this.abrir(k),
+        label: T.zonaAba(k, tecla),
+        pick: () => this.abrir(id),
       });
       tx += k.length + 3;
     });
 
-    let linhas = FIXO[tab],
+    let linhas = this.fixo[tab],
       rate = 3;
     if (tab === "certificados") {
-      const cc = certContent(area, (a) => this.filtrar(a));
+      const cc = certContent(T, area, (a) => this.filtrar(a));
       linhas = cc.lines;
       rate = 10;
       cc.zs.forEach((z) => zonas.push(z));
@@ -426,8 +537,9 @@ class Sobre extends Cena {
       g,
       PX,
       22,
-      ["p", "s", "f", "c", "v"],
-      tab === "certificados" ? ["filtro", "1-6"] : null,
+      [...T.abas.map((a) => a.tecla), "v"],
+      tab === "certificados" ? [T.filtro, "1-6"] : null,
+      T.legenda,
     );
 
     return { camadas: split(g), zonas };
@@ -444,12 +556,17 @@ const CONFIG = {
   linhas: false,
   intervalo: 140,
   nitido: true,
-  aria: "Ficha de apresentação. Teclas p, s, f e c trocam de aba, v volta; teclas de 1 a 6 filtram os certificados",
-  descricao:
-    "Um pato de pixels boiando na tela de cima de um console portátil de duas telas; a tela de baixo tem o botão de carinho. Ao lado, uma ficha estilo monitor de terminal com abas perfil, skills, formação e certificados",
 };
 
-/** @param {HTMLElement} raiz */
-export function montar(raiz) {
-  return montarTela(raiz, CONFIG, new Sobre());
+/**
+ * @param {HTMLElement} raiz
+ * @param {import("../i18n/idioma.js").Idioma} [idioma]
+ */
+export function montar(raiz, idioma = "pt") {
+  const T = Object.hasOwn(TEXTOS, idioma) ? TEXTOS[idioma] : TEXTOS.pt;
+  return montarTela(
+    raiz,
+    { ...CONFIG, aria: T.aria, descricao: T.descricao },
+    new Sobre(T),
+  );
 }
