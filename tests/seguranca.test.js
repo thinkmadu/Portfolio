@@ -1029,7 +1029,7 @@ describe("links", () => {
   afterEach(() => document.body.replaceChildren());
 
   it.each(["pt", "en"])(
-    "abertura em %s: todo href é hash ou ?lang=, sem target",
+    "abertura em %s: todo href é hash, ?lang= ou um perfil conhecido, sem target",
     (l) => {
       const t = document.createElement("div");
       document.body.append(t);
@@ -1039,10 +1039,15 @@ describe("links", () => {
       );
       const links = [...t.querySelectorAll("a[href]")];
       expect(links.length).toBeGreaterThan(10);
+      // github e linkedin saem do site; só esses dois endereços, nada montado de dado externo
+      const PERFIS = [
+        "https://github.com/thinkmadu",
+        "https://www.linkedin.com/in/mariasilva2004/",
+      ];
       for (const a of links) {
-        expect(a.getAttribute("href"), a.textContent ?? "").toMatch(
-          HREF_SEGURO,
-        );
+        const href = a.getAttribute("href") ?? "";
+        if (!PERFIS.includes(href))
+          expect(href, a.textContent ?? "").toMatch(HREF_SEGURO);
         expect(a.hasAttribute("target")).toBe(false);
       }
       inst.destroy();

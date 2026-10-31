@@ -8,7 +8,7 @@ Site: https://thinkmadu.github.io/Portfolio/
 
 ## Situação
 
-A abertura e cinco páginas em terminal estão no ar: sobre mim, IA, ferramentas, testes e e-mail, mais a transição entre elas. Os links dos planetas `(github)`, `(linkedin)`, `(dados)` e `(full-stack)` ainda apontam para âncoras, e a página de dados ainda não foi portada. As páginas em terminal estão só em português, e parte do conteúdo é provisório: as abas de sobre mim e de IA e os nomes das ferramentas e técnicas de testes ainda são marcadores entre colchetes. `CartaoProjeto` e `BlocoFechado` seguem prontos para as páginas de projeto, sem uso.
+A abertura e cinco páginas em terminal estão no ar: sobre mim, IA, ferramentas, testes e e-mail, mais a transição entre elas. Os links dos planetas `(github)`, `(linkedin)`, `(dados)` e `(full-stack)` ainda apontam para âncoras, e a página de dados ainda não foi portada. As páginas em terminal existem em português e em inglês, e parte do conteúdo é provisório: as abas de sobre mim e de IA e os nomes das ferramentas e técnicas de testes ainda são marcadores entre colchetes. `CartaoProjeto` e `BlocoFechado` seguem prontos para as páginas de projeto, sem uso.
 
 ## Início rápido
 
@@ -109,7 +109,9 @@ Cada página é uma cena sobre a grade de caracteres de `src/terminal`: 92 colun
 
 As páginas abrem pelo hash da URL: `#sobre` (o sol), `#ia`, `#ferramentas`, `#testes` e `#email`, os mesmos destinos dos planetas. `v` ou `‹ voltar` leva à abertura (`#inicio`). Entre duas páginas, a transição roda antes; clique ou tecla pulam. Cada módulo de página carrega sob demanda.
 
-A página de IA (`src/paginas/ia.js`) é um fluxo de três telas numa só cena: a principal, com o robô-pato e os quatro projetos do GitHub (clique, foco ou teclas 1 a 4); a transição, em que o texto do projeto vira os nós de uma rede neural (qualquer tecla ou clique pula); e o detalhe, com a rede em quatro colunas (linguagem, ferramentas, conceitos, resultados) em que o ponteiro ou o foco num nó acende o caminho. `v` ou `Esc` volta uma tela, e na principal leva ao `#inicio`. Os nomes dos projetos e a rede do detalhe são placeholders no topo do arquivo (`PROJETOS`, `COLS3`); `repo` e `demo` de cada projeto viram links quando preenchidos. As letras em voo da transição andam em pixels, fora da grade, em elementos reaproveitados por cima da imagem.
+Cada módulo exporta `montar(raiz, idioma = "pt")`, e o idioma vale na montagem: trocá-lo com a página aberta não a remonta. Os textos de cada página ficam num objeto `TEXTOS` no topo do arquivo, uma entrada por idioma (rótulos de zona, `aria`, `descricao`, falas, legendas). Idioma sem entrada cai no português. A grade tem largura fixa, então o texto de cada idioma tem de caber nas mesmas caixas e colunas; `tests/paginas-encaixe.test.js` confere os limites. As teclas são as mesmas nos dois idiomas (`v`, `a`, `r`, `1` a `4`, `e` e `l` na carta); só as abas cuja tecla é a inicial do rótulo mudam de letra onde a tradução muda a inicial (`e` de education em sobre mim, `t` e `m` de tools e methods em testes).
+
+A página de IA (`src/paginas/ia.js`) é um fluxo de três telas numa só cena: a principal, com o robô-pato e os quatro projetos do GitHub (clique, foco ou teclas 1 a 4); a transição, em que o texto do projeto vira os nós de uma rede neural (qualquer tecla ou clique pula); e o detalhe, com a rede em quatro colunas (linguagem, ferramentas, conceitos, resultados) em que o ponteiro ou o foco num nó acende o caminho. `v` ou `Esc` volta uma tela, e na principal leva ao `#inicio`. Os nomes dos projetos e a rede do detalhe são placeholders no topo do arquivo (`TEXTOS`, `COLS3`); `repo` e `demo` de cada projeto viram links quando preenchidos. As letras em voo da transição andam em pixels, fora da grade, em elementos reaproveitados por cima da imagem.
 
 Para criar uma página: uma classe que estende `Cena` (`tick`, `teclar`, `quadro`) em `src/paginas/`, a paleta das camadas numa classe `pf-tema-*` em `src/estilos/terminal.css`, e uma linha em `src/paginas/index.js` e em `INFO` (`src/transicao/index.js`). As cenas foram portadas do quadro de design sem tipos (`// @ts-nocheck`); a tipagem fica para uma passada própria.
 
@@ -133,6 +135,7 @@ Para adicionar uma língua:
 3. Acrescente a linha `hreflang` no `index.html`.
 4. Meça as palavras grandes da assinatura no navegador (largura a 100px, como em `tests/assinatura.test.js`) e acrescente a coluna do idioma em `tests/idiomas-layout.test.js`; `npm run bench` mostra fonte e tempo por tamanho.
 5. `npm test` confere chaves iguais, nenhuma string vazia e nenhum travessão.
+6. Páginas em terminal: acrescente a entrada do idioma no `TEXTOS` de cada página em `src/paginas/` e confira o encaixe em `tests/paginas-encaixe.test.js`.
 
 Em inglês, os 13 tamanhos de referência encaixam como em português. A única fonte de nome que muda é a de 1536x864 (20 contra 19), porque o rótulo mais largo da órbita de fora passa de `(ferramentas)` a `(full-stack)`. A fonte grande da frase fica cerca de 0,6% menor, porque `solution.` é mais larga que `solução.`.
 

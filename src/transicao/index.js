@@ -138,6 +138,99 @@ export const INFO = {
   },
 };
 
+/**
+ * Inglês: título, legenda e palavras soltas; alfabeto e cor são os mesmos do português.
+ * @type {Record<string, Pick<Info, "t" | "d" | "w">>}
+ */
+export const INFO_EN = {
+  inicio: {
+    t: "(home)",
+    d: "a solar system of characters",
+    w: [
+      "hello",
+      "quack",
+      "thinkmadu",
+      "good morning",
+      "home",
+      "duck",
+      "about",
+      "~/",
+      "orbit",
+      "sun",
+    ],
+  },
+  sobre: {
+    t: "(about me)",
+    d: "a duck on a two-screen console",
+    w: [
+      "profile",
+      "skills",
+      "education",
+      "quack quack",
+      "pet me",
+      "<3",
+      "pixel",
+      "duck",
+      "certs",
+      "name",
+    ],
+  },
+  ia: {
+    t: "(ai)",
+    d: "text turns into a neural net",
+    w: [
+      "tokens",
+      "embed",
+      "attn",
+      "tensor",
+      "loss",
+      "gpt",
+      "softmax",
+      "epoch",
+      "0.97",
+      "python",
+      "weights",
+      "net",
+    ],
+  },
+  ferramentas: {
+    t: "(tools)",
+    d: "a BBS with a pipeline and a duck",
+    w: INFO.ferramentas.w,
+  },
+  testes: {
+    t: "(tests)",
+    d: "a general duck on watch",
+    w: INFO.testes.w,
+  },
+  email: {
+    t: "(email)",
+    d: "a letter that travels as text",
+    w: [
+      "@",
+      "To:",
+      "Re:",
+      "Cc:",
+      "inbox",
+      "send",
+      "mailto",
+      "SMTP",
+      "hi!",
+      "bye",
+      "letter",
+      "sent",
+    ],
+  },
+};
+
+/** Info da página no idioma; fora do inglês, o português. @param {string} k @param {string} idioma */
+function infoEm(k, idioma) {
+  if (!Object.hasOwn(INFO, k)) return undefined;
+  return idioma === "en" && Object.hasOwn(INFO_EN, k)
+    ? { ...INFO[k], ...INFO_EN[k] }
+    : INFO[k];
+}
+
 const BASE = ".......···:::++*,,'`-~";
 const GLIFOS = "!<>-_/[]{}=+*^?#%&";
 const CINZA = "#8c8993";
@@ -186,9 +279,13 @@ function ruido(px, py) {
  * @type {Record<string, { w: string, x: number, y: number }[]>}
  */
 const PALAVRAS = {};
-Object.keys(INFO).forEach((k, ki) => {
+/** Palavras de uma página no idioma, posicionadas uma vez e guardadas. @param {string} k @param {string} idioma */
+function palavrasDe(k, idioma) {
+  const chave = (idioma === "en" ? "en:" : "pt:") + k;
+  if (Object.hasOwn(PALAVRAS, chave)) return PALAVRAS[chave];
+  const ki = Object.keys(INFO).indexOf(k);
   const lista = /** @type {{ w: string, x: number, y: number }[]} */ ([]);
-  INFO[k].w.forEach((w, i) => {
+  /** @type {Info} */ (infoEm(k, idioma)).w.forEach((w, i) => {
     for (let tent = 0; tent < 6; tent++) {
       const x =
         Math.floor(hash(i, ki, 21 + tent) * (COLUNAS - w.length - 4)) + 2;
@@ -206,8 +303,9 @@ Object.keys(INFO).forEach((k, ki) => {
       break;
     }
   });
-  PALAVRAS[k] = lista;
-});
+  PALAVRAS[chave] = lista;
+  return lista;
+}
 
 /** Texto que troca de `de` para `para` letra por letra; as que faltam ficam embaralhadas. */
 function embaralha(
@@ -235,8 +333,9 @@ function embaralha(
  * @param {string} para
  * @param {number} dt
  * @param {number} f
+ * @param {string} idioma
  */
-function campo(A, B, de, para, dt, f) {
+function campo(A, B, de, para, dt, f, idioma) {
   const r = dt * 2.4;
   const L = [0, 1, 2, 3].map(() =>
     Array.from({ length: LINHAS }, () => Array(COLUNAS).fill(" ")),
@@ -282,7 +381,7 @@ function campo(A, B, de, para, dt, f) {
     /** @type {string} */ k,
     /** @type {(d: number) => boolean} */ visivel,
   ) =>
-    PALAVRAS[k].forEach((p) => {
+    palavrasDe(k, idioma).forEach((p) => {
       for (let j = 0; j < p.w.length; j++) {
         const ex = p.x + j - CX;
         const ey = (p.y - CY) * 2;
@@ -303,11 +402,12 @@ function campo(A, B, de, para, dt, f) {
  * @param {HTMLElement} raiz
  * @param {string} de
  * @param {string} para
+ * @param {string} [idioma] "en" usa INFO_EN; qualquer outro, o português
  * @returns {{ fim: Promise<void>, destroy(): void }}
  */
-export function transicao(raiz, de, para) {
-  const infoDe = Object.hasOwn(INFO, de) ? INFO[de] : undefined;
-  const infoPara = Object.hasOwn(INFO, para) ? INFO[para] : undefined;
+export function transicao(raiz, de, para, idioma = "pt") {
+  const infoDe = infoEm(de, idioma);
+  const infoPara = infoEm(para, idioma);
   if (!infoDe || !infoPara || de === para || movimentoReduzido())
     return { fim: Promise.resolve(), destroy() {} };
   const A = infoDe;
@@ -347,7 +447,7 @@ export function transicao(raiz, de, para) {
   function quadro() {
     const f = (Date.now() - ini) / 70;
     const dt = f;
-    const [l0, l1, l2, l3] = campo(A, B, de, para, dt, f);
+    const [l0, l1, l2, l3] = campo(A, B, de, para, dt, f, idioma);
     [l0, l1, l2, l3].forEach((t, k) => (camadas[k].textContent = t));
     const r = dt * 2.4;
     const cB = B.c;

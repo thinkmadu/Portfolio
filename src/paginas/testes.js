@@ -134,96 +134,270 @@ function olhandoTras(f) {
 }
 
 // ---------- ferramentas e técnicas: u = usei, c = conheço ----------
-const DADOS = {
-  ferramentas: [
-    {
-      g: "automação de UI",
-      c: 0,
-      it: [
-        ["[ferramenta 1]", "u"],
-        ["[ferramenta 2]", "u"],
-        ["[ferramenta 3]", "c"],
+// Textos por idioma. Os ids dos grupos (`ferramentas`, `técnicas`) são internos. A tecla de
+// cada grupo é a primeira letra do rótulo (vai em negrito): em inglês, "tools" e "techniques"
+// brigariam pelo mesmo `t`, então o segundo grupo é "methods" e a tecla é `m`.
+export const TEXTOS = {
+  pt: {
+    zonaVoltar: "Voltar para o início",
+    voltar: "oltar",
+    titulo: "(testes)",
+    legenda: "navegação:",
+    grupos: [
+      { id: "ferramentas", rotulo: "ferramentas", tecla: "f" },
+      { id: "técnicas", rotulo: "técnicas", tecla: "t" },
+    ],
+    filtros: ["todos", "usei", "conheço"],
+    dados: {
+      ferramentas: [
+        {
+          g: "automação de UI",
+          c: 0,
+          it: [
+            ["[ferramenta 1]", "u"],
+            ["[ferramenta 2]", "u"],
+            ["[ferramenta 3]", "c"],
+          ],
+        },
+        {
+          g: "api e contrato",
+          c: 0,
+          it: [
+            ["[ferramenta 4]", "u"],
+            ["[ferramenta 5]", "c"],
+          ],
+        },
+        { g: "carga e desempenho", c: 1, it: [["[ferramenta 6]", "c"]] },
+        {
+          g: "integração contínua",
+          c: 1,
+          it: [
+            ["[ferramenta 7]", "u"],
+            ["[ferramenta 8]", "u"],
+          ],
+        },
+      ],
+      técnicas: [
+        {
+          g: "níveis de teste",
+          c: 0,
+          it: [
+            ["[técnica 1]", "u"],
+            ["[técnica 2]", "u"],
+            ["[técnica 3]", "u"],
+            ["[técnica 4]", "c"],
+          ],
+        },
+        {
+          g: "projeto de casos",
+          c: 1,
+          it: [
+            ["[técnica 5]", "u"],
+            ["[técnica 6]", "c"],
+            ["[técnica 7]", "c"],
+          ],
+        },
+        {
+          g: "abordagens",
+          c: 0,
+          it: [
+            ["[técnica 8]", "u"],
+            ["[técnica 9]", "c"],
+          ],
+        },
       ],
     },
-    {
-      g: "api e contrato",
-      c: 0,
-      it: [
-        ["[ferramenta 4]", "u"],
-        ["[ferramenta 5]", "c"],
+    // piadinhas: aparecem durante o carregamento, em ordem, e o pato comenta quando está ocioso
+    carga: [
+      "chamada geral...",
+      "o general não dorme",
+      "em formação, soldados!",
+      "conferindo se o bug é feature...",
+      "esperando o CI: 3 min, jura",
+      "culpando o fuso horário...",
+      "cobertura de 100%? o general desconfia",
+      "sem novidades no front",
+    ],
+    ocioso: [
+      "descansar, soldados.",
+      "sem bugs no meu turno",
+      "quá! (é continência)",
+      "nenhum bug passa por mim",
+      "inspeção de rotina...",
+      "estou de olho em tudo",
+    ],
+    falas: {
+      auto: "opa! um bug!",
+      atras: "ei! quem foi?",
+      vai: "deixa comigo!",
+      vaiAtras: "te peguei!",
+      capturando: "capturando...",
+      capturado: "capturado!",
+      frasco: "mais um pro frasco",
+      volta: "de volta ao posto",
+      ouvi: "hmm? ouvi algo...",
+      usei: "condecorado!",
+      conheco: "na reserva.",
+      inspecionando: "inspecionando...",
+    },
+    ondeUsei: "onde usei",
+    emConstrucao: "em construção",
+    ondeEstudei: "onde estudei",
+    cursoOuLeitura: "[curso ou leitura]",
+    naoPrecisei: "ainda não precisei em projeto",
+    seloUsei: ["USEI", 70],
+    seloConheco: ["CONHEÇO", 68],
+    bugs: "bugs capturados:",
+    rodar: "odar tudo",
+    tenta: "tenta clicar nos bugs",
+    legendaUsei: "usei",
+    legendaConheco: "conheço",
+    zonaGrupo: (/** @type {string} */ rotulo, /** @type {string} */ tecla) =>
+      "Grupo " + rotulo + " (tecla " + tecla + ")",
+    zonaFiltro: (/** @type {string} */ nome, /** @type {number} */ n) =>
+      "Mostrar: " + nome + " (tecla " + n + ")",
+    zonaDetalhe: (/** @type {string} */ nome) => "Ver o detalhe de " + nome,
+    zonaRodar: "Rodar a verificação de novo (tecla r)",
+    zonaBug: "Chamar o general para capturar o bug",
+    aria: "Página de testes. Teclas f e t trocam de grupo, 1 a 3 filtram, r roda a verificação, v volta",
+    descricao:
+      "Lista de ferramentas e técnicas de teste marcadas como usei ou conheço, e um general pato em terra firme que vigia a lista, nota os bugs que aparecem, marcha até eles e carimba corrigido",
+  },
+  en: {
+    zonaVoltar: "Back to home",
+    voltar: " back",
+    titulo: "(testing)",
+    legenda: "keys:",
+    grupos: [
+      { id: "ferramentas", rotulo: "tools", tecla: "t" },
+      { id: "técnicas", rotulo: "methods", tecla: "m" },
+    ],
+    filtros: ["all", "used", "know"],
+    dados: {
+      ferramentas: [
+        {
+          g: "UI automation",
+          c: 0,
+          it: [
+            ["[tool 1]", "u"],
+            ["[tool 2]", "u"],
+            ["[tool 3]", "c"],
+          ],
+        },
+        {
+          g: "api and contract",
+          c: 0,
+          it: [
+            ["[tool 4]", "u"],
+            ["[tool 5]", "c"],
+          ],
+        },
+        { g: "load and performance", c: 1, it: [["[tool 6]", "c"]] },
+        {
+          g: "continuous integration",
+          c: 1,
+          it: [
+            ["[tool 7]", "u"],
+            ["[tool 8]", "u"],
+          ],
+        },
+      ],
+      técnicas: [
+        {
+          g: "test levels",
+          c: 0,
+          it: [
+            ["[method 1]", "u"],
+            ["[method 2]", "u"],
+            ["[method 3]", "u"],
+            ["[method 4]", "c"],
+          ],
+        },
+        {
+          g: "test case design",
+          c: 1,
+          it: [
+            ["[method 5]", "u"],
+            ["[method 6]", "c"],
+            ["[method 7]", "c"],
+          ],
+        },
+        {
+          g: "approaches",
+          c: 0,
+          it: [
+            ["[method 8]", "u"],
+            ["[method 9]", "c"],
+          ],
+        },
       ],
     },
-    { g: "carga e desempenho", c: 1, it: [["[ferramenta 6]", "c"]] },
-    {
-      g: "integração contínua",
-      c: 1,
-      it: [
-        ["[ferramenta 7]", "u"],
-        ["[ferramenta 8]", "u"],
-      ],
+    carga: [
+      "roll call...",
+      "the general never sleeps",
+      "fall in, soldiers!",
+      "checking if the bug is a feature...",
+      "waiting for CI: 3 min, promise",
+      "blaming the time zone...",
+      "100% coverage? the general doubts it",
+      "all quiet on the front end",
+    ],
+    ocioso: [
+      "at ease, soldiers.",
+      "no bugs on my watch",
+      "quack! (that's a salute)",
+      "no bug gets past me",
+      "routine inspection...",
+      "keeping an eye on everything",
+    ],
+    falas: {
+      auto: "oops! a bug!",
+      atras: "hey! who's there?",
+      vai: "leave it to me!",
+      vaiAtras: "got you!",
+      capturando: "capturing...",
+      capturado: "captured!",
+      frasco: "one more for the jar",
+      volta: "back to my post",
+      ouvi: "hmm? heard something...",
+      usei: "decorated!",
+      conheco: "in the reserve.",
+      inspecionando: "inspecting...",
     },
-  ],
-  técnicas: [
-    {
-      g: "níveis de teste",
-      c: 0,
-      it: [
-        ["[técnica 1]", "u"],
-        ["[técnica 2]", "u"],
-        ["[técnica 3]", "u"],
-        ["[técnica 4]", "c"],
-      ],
-    },
-    {
-      g: "projeto de casos",
-      c: 1,
-      it: [
-        ["[técnica 5]", "u"],
-        ["[técnica 6]", "c"],
-        ["[técnica 7]", "c"],
-      ],
-    },
-    {
-      g: "abordagens",
-      c: 0,
-      it: [
-        ["[técnica 8]", "u"],
-        ["[técnica 9]", "c"],
-      ],
-    },
-  ],
+    ondeUsei: "where i used it",
+    emConstrucao: "under construction",
+    ondeEstudei: "where i studied",
+    cursoOuLeitura: "[course or reading]",
+    naoPrecisei: "haven't needed it in a project yet",
+    seloUsei: ["USED", 70],
+    seloConheco: ["KNOW", 70],
+    bugs: "bugs captured:",
+    rodar: "un all",
+    tenta: "try clicking the bugs",
+    legendaUsei: "used",
+    legendaConheco: "know",
+    zonaGrupo: (/** @type {string} */ rotulo, /** @type {string} */ tecla) =>
+      "Group " + rotulo + " (key " + tecla + ")",
+    zonaFiltro: (/** @type {string} */ nome, /** @type {number} */ n) =>
+      "Show: " + nome + " (key " + n + ")",
+    zonaDetalhe: (/** @type {string} */ nome) => "See details of " + nome,
+    zonaRodar: "Run the check again (key r)",
+    zonaBug: "Call the general to catch the bug",
+    aria: "Testing page. Keys t and m switch group, 1 to 3 filter, r runs the check, v goes back",
+    descricao:
+      "List of testing tools and methods marked as used or know, and a general duck on solid ground who watches the list, spots the bugs that show up, marches to them and stamps them fixed",
+  },
 };
-const GRUPOS = ["ferramentas", "técnicas"];
-const FILT = ["todos", "usei", "conheço"];
 const LX = 3,
   SX0 = 46,
   GR = 20;
-// piadinhas: aparecem durante o carregamento, em ordem, e o pato comenta quando está ocioso
-const CARGA = [
-  "chamada geral...",
-  "o general não dorme",
-  "em formação, soldados!",
-  "conferindo se o bug é feature...",
-  "esperando o CI: 3 min, jura",
-  "culpando o fuso horário...",
-  "cobertura de 100%? o general desconfia",
-  "sem novidades no front",
-];
-const OCIOSO = [
-  "descansar, soldados.",
-  "sem bugs no meu turno",
-  "quá! (é continência)",
-  "nenhum bug passa por mim",
-  "inspeção de rotina...",
-  "estou de olho em tudo",
-];
 
-function linhas(tab, filtro) {
+function linhas(T, tab, filtro) {
   const itens = [],
     titulos = [];
   let n = 0,
     y = 5;
-  DADOS[tab].forEach((gr) => {
+  T.dados[tab].forEach((gr) => {
     const its = gr.it.filter(
       (i) =>
         filtro === 0 ||
@@ -318,6 +492,11 @@ function terra(g, f) {
 }
 
 class Testes extends Cena {
+  /** @param {typeof TEXTOS.pt} T */
+  constructor(T) {
+    super();
+    this.T = T;
+  }
   montar() {
     if (movimentoReduzido()) {
       this.setState({ f: 400, t0: 0 });
@@ -356,12 +535,12 @@ class Testes extends Cena {
       location.hash = "#inicio";
       return;
     }
-    if (k === "f") this.grupo("ferramentas");
-    if (k === "t") this.grupo("técnicas");
+    for (const gr of this.T.grupos) if (k === gr.tecla) this.grupo(gr.id);
     if (k === "r") this.rodar();
     if (k >= "1" && k <= "3") this.filtrar(Number(k) - 1);
   }
   quadro() {
+    const T = this.T;
     const s = this.state || {};
     const f = s.f || 0;
     const tab = s.tab || "ferramentas",
@@ -369,7 +548,7 @@ class Testes extends Cena {
       t0 = s.t0 || 0,
       sel = s.sel == null ? -1 : s.sel;
     const caps = s.caps || [];
-    const L = linhas(tab, filtro);
+    const L = linhas(T, tab, filtro);
     const rel = f - t0,
       ritmo = 2,
       inicio = 5;
@@ -385,19 +564,19 @@ class Testes extends Cena {
       w: 8,
       href: "#inicio",
       alvo: "_self",
-      label: "Voltar para o início",
+      label: T.zonaVoltar,
     });
     put(g, 1, 2, 0, "‹");
     put(g, 6, 4, 0, "v");
-    put(g, 1, 5, 0, "oltar");
+    put(g, 1, 5, 0, T.voltar);
     put(g, 0, 12, 0, "│");
-    put(g, 2, 14, 0, "(testes)");
+    put(g, 2, 14, 0, T.titulo);
     box(g, 0, 1, 1, 91, 29);
 
     // abas e filtros
     let cx = LX;
-    GRUPOS.forEach((k) => {
-      const on = k === tab;
+    T.grupos.forEach(({ id, rotulo: k, tecla }) => {
+      const on = id === tab;
       put(g, 0, cx, 2, "[");
       put(g, 6, cx + 1, 2, k[0]);
       put(g, on ? 1 : 3, cx + 2, 2, k.slice(1));
@@ -407,13 +586,13 @@ class Testes extends Cena {
         x: cx,
         y: 2,
         w: k.length + 2,
-        label: "Grupo " + k + " (tecla " + k[0] + ")",
-        pick: () => this.grupo(k),
+        label: T.zonaGrupo(k, tecla),
+        pick: () => this.grupo(id),
       });
       cx += k.length + 4;
     });
     cx = LX;
-    FILT.forEach((nm, i) => {
+    T.filtros.forEach((nm, i) => {
       const on = i === filtro,
         len = nm.length + 4;
       put(g, 1, cx, 3, on ? "(" : " ");
@@ -425,7 +604,7 @@ class Testes extends Cena {
         x: cx,
         y: 3,
         w: len,
-        label: "Mostrar: " + nm + " (tecla " + (i + 1) + ")",
+        label: T.zonaFiltro(nm, i + 1),
         pick: () => this.filtrar(i),
       });
       cx += len + 1;
@@ -453,7 +632,7 @@ class Testes extends Cena {
         x: x,
         y: y,
         w: 20,
-        label: "Ver o detalhe de " + r.nome,
+        label: T.zonaDetalhe(r.nome),
         pick: () => this.selecionar(r.idx),
       });
     });
@@ -465,21 +644,20 @@ class Testes extends Cena {
       const j =
         rel < inicio
           ? 0
-          : 1 + (Math.floor((rel - inicio) / 3.2) % (CARGA.length - 1));
-      put(g, 3, LX, 22, CARGA[j]);
+          : 1 + (Math.floor((rel - inicio) / 3.2) % (T.carga.length - 1));
+      put(g, 3, LX, 22, T.carga[j]);
     }
     if (selItem) {
       put(g, 2, LX, 24, selItem.nome);
       put(g, 0, LX, 25, "╠═");
       put(g, 0, LX, 26, "╚═");
       if (selItem.st === "u") {
-        put(g, 3, LX + 3, 25, "onde usei");
-        put(g, 2, LX + 13, 25, "[projeto]");
-        put(g, 2, LX + 3, 26, "[o que fiz, em uma linha]");
+        put(g, 3, LX + 3, 25, T.ondeUsei);
+        put(g, 4, LX + 4 + T.ondeUsei.length, 25, T.emConstrucao);
       } else {
-        put(g, 3, LX + 3, 25, "onde estudei");
-        put(g, 2, LX + 16, 25, "[curso ou leitura]");
-        put(g, 3, LX + 3, 26, "ainda não precisei em projeto");
+        put(g, 3, LX + 3, 25, T.ondeEstudei);
+        put(g, 2, LX + 4 + T.ondeEstudei.length, 25, T.cursoOuLeitura);
+        put(g, 3, LX + 3, 26, T.naoPrecisei);
       }
     }
 
@@ -506,25 +684,25 @@ class Testes extends Cena {
         rumo = v.auto ? 0 : 1;
       if (e < v.ms) {
         face = rumo;
-        fala = v.auto ? "opa! um bug!" : "ei! quem foi?";
+        fala = v.auto ? T.falas.auto : T.falas.atras;
       } else if (e < v.jarra - 1) {
         gx = POST + ((v.alvo - POST) * (e - v.ms)) / v.M;
         face = v.alvo < POST ? 0 : 1;
         anda = true;
-        fala = v.auto ? "deixa comigo!" : "te peguei!";
+        fala = v.auto ? T.falas.vai : T.falas.vaiAtras;
       } else if (e < v.t3) {
         gx = v.alvo;
         face = rumo;
-        fala = e < v.jarra + 4 ? "capturando..." : "capturado!";
+        fala = e < v.jarra + 4 ? T.falas.capturando : T.falas.capturado;
       } else if (e < v.t4) {
         gx = v.alvo;
         face = rumo;
-        fala = "mais um pro frasco";
+        fala = T.falas.frasco;
       } else {
         gx = v.alvo + ((POST - v.alvo) * (e - v.t4)) / v.M;
         face = v.alvo < POST ? 1 : 0;
         anda = true;
-        fala = "de volta ao posto";
+        fala = T.falas.volta;
       }
     }
     const ol = Math.max(olhandoTras(f), face === 1 ? 1 : 0);
@@ -543,22 +721,23 @@ class Testes extends Cena {
       const ini = comecoDe(q, caps);
       if (ini && f >= ini.ts + captura(q, ini.ms).jarra + 4) nCap++;
     }
-    put(g, 3, SX0, 2, "bugs capturados:");
-    put(g, 1, SX0 + 17, 2, String(nCap));
-    put(g, 1, 78, 2, "(");
-    put(g, 6, 79, 2, "r");
-    put(g, 2, 80, 2, "odar tudo");
+    put(g, 3, SX0, 2, T.bugs);
+    put(g, 1, SX0 + T.bugs.length + 1, 2, String(nCap));
+    // o botão fica encostado na direita: o ")" é sempre a coluna 89
+    const rx = 87 - T.rodar.length;
+    put(g, 1, rx, 2, "(");
+    put(g, 6, rx + 1, 2, "r");
+    put(g, 2, rx + 2, 2, T.rodar);
     put(g, 1, 89, 2, ")");
     zonas.push({
       tipo: "b",
-      x: 78,
+      x: rx,
       y: 2,
-      w: 12,
-      label: "Rodar a verificação de novo (tecla r)",
+      w: T.rodar.length + 3,
+      label: T.zonaRodar,
       pick: () => this.rodar(),
     });
-    if (Math.floor(f / 40) % 5 !== 4)
-      put(g, 4, 69, 26, "tenta clicar nos bugs");
+    if (Math.floor(f / 40) % 5 !== 4) put(g, 4, 69, 26, T.tenta);
 
     // vistoria: um marcador percorre a lista enquanto o general vigia a lista
     if (!ocupado && !rodando && !selItem && face === 0 && L.total > 0) {
@@ -566,11 +745,11 @@ class Testes extends Cena {
       if (v) put(g, 4, v.x + 2, v.y, "›");
     }
     if (fala == null) {
-      if (face === 1) fala = "hmm? ouvi algo...";
+      if (face === 1) fala = T.falas.ouvi;
       else if (selItem)
-        fala = selItem.st === "u" ? "condecorado!" : "na reserva.";
-      else if (rodando) fala = "inspecionando...";
-      else fala = OCIOSO[Math.floor(f / 60) % OCIOSO.length];
+        fala = selItem.st === "u" ? T.falas.usei : T.falas.conheco;
+      else if (rodando) fala = T.falas.inspecionando;
+      else fala = T.ocioso[Math.floor(f / 60) % T.ocioso.length];
     }
     put(
       g,
@@ -581,8 +760,9 @@ class Testes extends Cena {
     );
     if (selItem) {
       const us = selItem.st === "u";
+      const [selo, sx] = us ? T.seloUsei : T.seloConheco;
       box(g, us ? 1 : 4, 67, 2, 9, 3);
-      put(g, us ? 1 : 4, us ? 70 : 68, 3, us ? "USEI" : "CONHEÇO");
+      put(g, us ? 1 : 4, sx, 3, selo);
     }
 
     // bugs: os da frente o general vê; os de trás somem quando ele olha
@@ -611,7 +791,7 @@ class Testes extends Cena {
             y: GR - 2,
             w: 6,
             h: 32,
-            label: "Chamar o general para capturar o bug",
+            label: T.zonaBug,
             pick: () => this.chamar(k),
           });
       } else {
@@ -624,18 +804,25 @@ class Testes extends Cena {
             y: GR - 2,
             w: 6,
             h: 32,
-            label: "Chamar o general para capturar o bug",
+            label: T.zonaBug,
             pick: () => this.chamar(k),
           });
       }
     }
 
     put(g, 0, 1, 29 - 2, "├" + "─".repeat(89) + "┤");
-    legenda(g, LX, 28, ["f", "t", "1", "2", "3", "r", "v"]);
+    legenda(
+      g,
+      LX,
+      28,
+      [...T.grupos.map((gr) => gr.tecla), "1", "2", "3", "r", "v"],
+      null,
+      T.legenda,
+    );
     put(g, 1, SX0, 28, "•");
-    put(g, 3, SX0 + 2, 28, "usei");
+    put(g, 3, SX0 + 2, 28, T.legendaUsei);
     put(g, 4, SX0 + 8, 28, "s");
-    put(g, 3, SX0 + 10, 28, "conheço");
+    put(g, 3, SX0 + 10, 28, T.legendaConheco);
 
     return { camadas: split(g, ex), zonas };
   }
@@ -651,12 +838,17 @@ const CONFIG = {
   linhas: false,
   intervalo: 33,
   nitido: true,
-  aria: "Página de testes. Teclas f e t trocam de grupo, 1 a 3 filtram, r roda a verificação, v volta",
-  descricao:
-    "Lista de ferramentas e técnicas de teste marcadas como usei ou conheço, e um general pato em terra firme que vigia a lista, nota os bugs que aparecem, marcha até eles e carimba corrigido",
 };
 
-/** @param {HTMLElement} raiz */
-export function montar(raiz) {
-  return montarTela(raiz, CONFIG, new Testes());
+/**
+ * @param {HTMLElement} raiz
+ * @param {import("../i18n/idioma.js").Idioma} [idioma]
+ */
+export function montar(raiz, idioma = "pt") {
+  const T = Object.hasOwn(TEXTOS, idioma) ? TEXTOS[idioma] : TEXTOS.pt;
+  return montarTela(
+    raiz,
+    { ...CONFIG, aria: T.aria, descricao: T.descricao },
+    new Testes(T),
+  );
 }

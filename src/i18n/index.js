@@ -60,6 +60,11 @@ export function frase(idioma) {
 }
 
 const CONTATOS = ["github", "linkedin", "email"];
+/** Contatos que levam para fora do site; os outros abrem a página do próprio id. */
+const EXTERNOS = {
+  github: "https://github.com/thinkmadu",
+  linkedin: "https://www.linkedin.com/in/mariasilva2004/",
+};
 const AREAS = ["ia", "dados", "ferramentas", "full-stack", "testes"];
 
 /**
@@ -72,7 +77,9 @@ export function opcoesDoSistema(idioma) {
   const item = (/** @type {string} */ id) => ({
     id,
     rotulo: t(idioma, /** @type {Chave} */ ("planeta." + id)),
-    href: "#" + id,
+    href: Object.hasOwn(EXTERNOS, id)
+      ? EXTERNOS[/** @type {keyof typeof EXTERNOS} */ (id)]
+      : "#" + id,
   });
   return {
     contatos: CONTATOS.map(item),

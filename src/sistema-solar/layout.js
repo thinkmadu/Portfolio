@@ -46,6 +46,7 @@ const NODE_POS = [
  * @property {number} ap fonte das linhas pequenas
  * @property {number} lp altura da linha pequena
  * @property {number} lg altura da linha grande
+ * @property {number} descida espaço abaixo da palavra grande de cima
  * @property {number} folga espaço antes do rodapé, para a descendente da palavra grande
  * @property {number} respiro espaço entre o filete do rodapé e o texto dele
  * @typedef {Caixa & { cwm: number, lines: string[], grande?: MedidasGrande }} Assinatura
@@ -419,6 +420,7 @@ export const GRANDE = Object.freeze({
   LH_GRANDE: 0.82,
   LH_PEQUENO: 1.17,
   FOLGA: 0.16, // em fração da fonte grande
+  DESCIDA: 0.2, // abaixo da palavra grande de cima, para a perna do "p" não encostar na linha pequena
   RESPIRO: 0.35, // em fração da fonte pequena
   MARGEM_DIREITA: 12,
   MARGEM_INFERIOR: 10,
@@ -448,8 +450,13 @@ export function medidasGrande(g, s, ap, cwp, medir) {
   const lg = s * GRANDE.LH_GRANDE;
   const folga = s * GRANDE.FOLGA;
   const respiro = ap * GRANDE.RESPIRO;
-  const h = 3 * lp + 2 * lg + folga + 1 + respiro;
-  return { w, h, medidas: { textos: g, s, ap, lp, lg, folga, respiro } };
+  const descida = s * GRANDE.DESCIDA;
+  const h = 3 * lp + 2 * lg + descida + folga + 1 + respiro;
+  return {
+    w,
+    h,
+    medidas: { textos: g, s, ap, lp, lg, descida, folga, respiro },
+  };
 }
 
 /**

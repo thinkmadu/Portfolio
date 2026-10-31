@@ -178,7 +178,7 @@ async function mostrar() {
   if (de === null && id && modulo) {
     // abertura -> página: mergulha no planeta
     const centro = centroDoCorpo(raiz, id);
-    pagina = modulo.montar(camadaPaginas);
+    pagina = modulo.montar(camadaPaginas, idioma);
     if (animar) {
       emTransicao = zoom({
         inicio: raiz,
@@ -215,15 +215,15 @@ async function mostrar() {
     // página -> página: campo de caracteres
     pagina?.destroy();
     pagina = null;
-    const tr = transicao(camadaPaginas, de, id);
+    const tr = transicao(camadaPaginas, de, id, idioma);
     emTransicao = { fim: tr.fim, concluir: () => tr.destroy() };
     await tr.fim;
     if (minha !== versao) return;
     tr.destroy();
     emTransicao = null;
-    pagina = modulo.montar(camadaPaginas);
+    pagina = modulo.montar(camadaPaginas, idioma);
   } else if (id && modulo) {
-    pagina = modulo.montar(camadaPaginas);
+    pagina = modulo.montar(camadaPaginas, idioma);
   } else {
     montar();
   }
